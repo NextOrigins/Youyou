@@ -19,6 +19,7 @@ import com.neworld.youyou.bean.AddressBean;
 import com.neworld.youyou.dialog.DialogUtils;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.LogUtils;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ThreadUtils;
 import com.neworld.youyou.utils.ToastUtil;
@@ -35,12 +36,17 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     private String mUserId;
     private Adapter<AddressBean.MenuListBean> mAdapter;
+    private boolean fromSetting;
+    private boolean fromPay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         initView();
+        Intent intent = getIntent();
+        fromSetting = intent.getBooleanExtra("fromSetting", false);
+        fromPay = intent.getBooleanExtra("fromPay", false);
     }
 
     @Override
@@ -60,6 +66,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this
                 , LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter = new Adapter<>(obs, addressList));
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         findViewById(R.id.rl_addAddress).setOnClickListener(this);
         findViewById(R.id.iv_cancel).setOnClickListener(this);
@@ -89,49 +96,57 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             //设置删除监听
             holder.find(R.id.rl_address_delete).setOnClickListener(v ->
                     DialogUtils.showDialog(AddressActivity.this, "确定要删除该地址吗?"
-                    , "确定", "取消", (dialog, which) ->
-                            new Thread(() -> {
-                String base64 = Base64.encodeToString(("{\"addressId\":\"" + menuListBean.getId() + "\"}").getBytes(), Base64.DEFAULT);
-                String replace = base64.replace("\n", "");
-                String s = NetManager.getInstance().getContent(replace, "183");
-                if (!TextUtils.isEmpty(s)) {
-                    //{"msg":"ERROR: null","status":1}
-                    if (s.contains("\"status\":0")) {
-                        ToastUtil.showToast("删除成功");
-                        initData();
-                    } else {
-                        ToastUtil.showToast("删除失败, 请稍后重试");
-                    }
-                }
-            }).start()));
+                            , "确定", "取消", (dialog, which) ->
+                                    new Thread(() -> {
+                                        String base64 = Base64.encodeToString(("{\"addressId\":\"" + menuListBean.getId() + "\"}").getBytes(), Base64.DEFAULT);
+                                        String replace = base64.replace("\n", "");
+                                        String s = NetManager.getInstance().getContent(replace, "183");
+                                        if (!TextUtils.isEmpty(s)) {
+                                            //{"msg":"ERROR: null","status":1}
+                                            if (s.contains("\"status\":0")) {
+                                                ToastUtil.showToast("删除成功");
+                                                initData();
+                                            } else {
+                                                ToastUtil.showToast("删除失败, 请稍后重试");
+                                            }
+                                        }
+                                    }).start()));
 
             // 在购买商品页面点击条目返回地址并关闭
             holder.find(R.id.linear_finish).setOnClickListener(v -> {
-                if (getIntent().getBooleanExtra("fromSetting", false)) {
+                if (fromSetting) {
                     openEdit(menuListBean);
+                } else if (fromPay) {
+                    setResult(66);
                 } else {
-                    setResult(20, getIntent().putExtra("msg", menuListBean.getAddress()));
+                    Intent intent = getIntent();
+                    intent.putExtra("msg", menuListBean.getAddress());
+                    intent.putExtra("name", menuListBean.getConsignee());
+                    intent.putExtra("phone", menuListBean.getPhone());
+                    LogUtils.E("address = " + menuListBean.getAddress());
+                    setResult(20, intent);
                     finish();
                 }
             });
 
             // 设置默认地址点击事件
-            holder.find(R.id.rl_check_address).setOnClickListener(view -> new Thread(() -> {
-                String dataPhone = menuListBean.getPhone();
-                String dataName = menuListBean.getConsignee();
-                String address = menuListBean.getAddress();
-                String base64 = Base64.encodeToString(("{\"addressId\":\"" + menuListBean.getId()
-                        + "\", \"userId\":\"" + mUserId + "\", \"phone\":\"" + dataPhone + "\", \"consignee\":\""
-                        + dataName + "\", \"status\":\"" + 0 + "\",\"address\":\"" + address + "\" }").getBytes(), Base64.DEFAULT);
-                String replace = base64.replace("\n", "");
-                String s = NetManager.getInstance().getContent(replace, "182");
-                if (!TextUtils.isEmpty(s)) {
-                    if (s.contains("0")) getData();
-                    else ToastUtil.showToast("未知错误");
+            holder.find(R.id.rl_check_address).setOnClickListener(view ->
+                    new Thread(() -> {
+                        String dataPhone = menuListBean.getPhone();
+                        String dataName = menuListBean.getConsignee();
+                        String address = menuListBean.getAddress();
+                        String base64 = Base64.encodeToString(("{\"addressId\":\"" + menuListBean.getId()
+                                + "\", \"userId\":\"" + mUserId + "\", \"phone\":\"" + dataPhone + "\", \"consignee\":\""
+                                + dataName + "\", \"status\":\"" + 0 + "\",\"address\":\"" + address + "\" }").getBytes(), Base64.DEFAULT);
+                        String replace = base64.replace("\n", "");
+                        String s = NetManager.getInstance().getContent(replace, "182");
+                        if (!TextUtils.isEmpty(s)) {
+                            if (s.contains("0")) getData();
+                            else ToastUtil.showToast("未知错误");
 
-                } else ToastUtil.showToast("网络不佳");
+                        } else ToastUtil.showToast("网络不佳");
 
-            }).start());
+                    }).start());
         }
 
         @Override
@@ -164,13 +179,27 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.rl_addAddress:
                 findViewById(R.id.rl_addAddress).setOnClickListener(null);
                 new Handler().postDelayed(() -> findViewById(R.id.rl_addAddress).setOnClickListener(this), 800);
-                startActivity(new Intent(this, AddNewAddressActivity.class));
+                startActivityForResult(new Intent(this, AddNewAddressActivity.class), 666);
                 break;
             case R.id.iv_cancel:
-                finish();
+                onBackPressed();
                 break;
-
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 5) {
+            setResult(resultCode, data);
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(66);
+        super.onBackPressed();
     }
 
     private List<AddressBean.MenuListBean> addressList = new ArrayList<>();
@@ -190,7 +219,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             ToastUtil.showToast("网络不佳");
         }
-
     }
 
     @Override

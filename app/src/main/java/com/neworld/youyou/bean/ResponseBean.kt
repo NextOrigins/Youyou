@@ -72,4 +72,19 @@ class ResponseBean {
             val createDate: String, //2017-08-20 11:44:43
             val status: Int //0
     )
+
+    // 收货地址列表
+    data class AddressBean(
+            val menuList: List<AddressDetailList>,
+            val status: Int //0
+    )
+
+    data class AddressDetailList(
+            val consignee: String, //打的
+            val address: String, //哒哒哒哒哒
+            val phone: String, //13888888888
+            val id: Int, //127
+            val userId: Int, //33866
+            val status: Int //0
+    )
 }

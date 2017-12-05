@@ -128,7 +128,12 @@ public class AddNewAddressActivity extends AppCompatActivity implements View.OnC
         if (!TextUtils.isEmpty(content)) {
             if (edit) ToastUtil.showToast("修改成功!");
             else ToastUtil.showToast("保存成功!");
-            finish();
+            Intent intent = getIntent();
+            intent.putExtra("name", username);
+            intent.putExtra("phone", userphone);
+            intent.putExtra("address", useraddress);
+            setResult(5, intent);
+            runOnUiThread(this::finish);
         } else {
             ToastUtil.showToast("网络不佳");
         }

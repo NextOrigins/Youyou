@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <ImageView
+    <android.support.v4.view.ViewPager
+        android:layout_marginBottom="@dimen/dp30"
         android:id="@+id/big_pic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

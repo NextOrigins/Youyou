@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@id/line">
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/_name"
             style="@style/style_books_pay_address"
             android:layout_marginLeft="@dimen/dp45"
             android:layout_marginStart="@dimen/dp45"
@@ -51,14 +51,14 @@
             tools:text="东方老赢" />
 
         <TextView
-            android:id="@+id/detail_address"
+            android:id="@+id/_address"
             style="@style/style_books_pay_address"
             android:layout_marginTop="@dimen/dp_15"
             android:maxEms="15"
             android:paddingBottom="@dimen/dp_15"
             android:singleLine="true"
-            app:layout_constraintLeft_toLeftOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintLeft_toLeftOf="@id/_name"
+            app:layout_constraintTop_toBottomOf="@id/_name"
             tools:text="亿哈丢晒USD秀爱丢弃都会第九器我电话六千地区的以后千万西好滴好滴 " />
 
         <ImageView
@@ -70,7 +70,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/address"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/detail_address" />
+            app:layout_constraintTop_toTopOf="@id/_address" />
 
         <ImageView
             android:id="@+id/right_icon"
@@ -83,12 +83,12 @@
             app:layout_constraintRight_toRightOf="parent" />
 
         <TextView
-            android:id="@+id/phone"
+            android:id="@+id/_phone"
             style="@style/style_books_pay_address"
             android:maxLength="11"
             android:maxLines="1"
             app:layout_constraintRight_toLeftOf="@id/right_icon"
-            app:layout_constraintTop_toTopOf="@id/name"
+            app:layout_constraintTop_toTopOf="@id/_name"
             tools:text="13078787899" />
     </android.support.constraint.ConstraintLayout>
 
@@ -146,10 +146,7 @@
 
         <View
             android:id="@+id/line1"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="@dimen/dp10"
-            android:background="#F0EFF5"
+            style="@style/book_line"
             app:layout_constraintTop_toBottomOf="@id/book_icon" />
 
         <TextView
@@ -195,10 +192,7 @@
 
         <View
             android:id="@+id/line2"
-            style="@style/lines"
-            android:layout_height="2dp"
-            android:layout_marginTop="@dimen/dp10"
-            android:background="#F0EFF5"
+            style="@style/book_line"
             app:layout_constraintTop_toBottomOf="@id/buy_count" />
 
         <TextView
@@ -220,10 +214,7 @@
 
         <View
             android:id="@+id/line3"
-            style="@style/lines"
-            android:layout_height="2dp"
-            android:layout_marginTop="@dimen/dp10"
-            android:background="#F0EFF5"
+            style="@style/book_line"
             app:layout_constraintTop_toBottomOf="@id/courier_mode" />
 
         <TextView
@@ -251,10 +242,7 @@
 
         <View
             android:id="@+id/line4"
-            style="@style/lines"
-            android:layout_height="2dp"
-            android:layout_marginTop="@dimen/dp10"
-            android:background="#F0EFF5"
+            style="@style/book_line"
             app:layout_constraintTop_toBottomOf="@id/buyer_msg" />
 
         <TextView

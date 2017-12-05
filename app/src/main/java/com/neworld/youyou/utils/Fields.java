@@ -8,8 +8,8 @@ public class Fields {
     /**
      * 访问数据的url
      */
-     public static final String BASEURL = "http://106.14.251.200:8082/neworld/android/";
-//    public static final String BASEURL = "http://192.168.1.123:8080/neworld/android/"; // 局域网URL
+//     public static final String BASEURL = "http://106.14.251.200:8082/neworld/android/";
+    public static final String BASEURL = "http://192.168.1.123:8080/neworld/android/"; // 局域网URL
 
     public static final String APK_URL = "http://www.uujz.me:8082/olopicture/uujz.apk";
 
@@ -27,4 +27,6 @@ public class Fields {
     public static final String ACHIEVEMENT = "http://www.uujz.me:8082/neworld/admin/jsp/chengji/query_android.jsp";
 
     public static final String YOUYOU = "";
+
+    public static final String SP_KEY_USER = "sp_key_default_userId";
 }

@@ -224,5 +224,12 @@
         <item name="android:textSize">@dimen/sp16</item>
     </style>
 
+    <style name="book_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">@dimen/dp10</item>
+        <item name="android:background">#F0EFF5</item>
+    </style>
+
     <dimen name="sp12">12sp</dimen>
 </resources>

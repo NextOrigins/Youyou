@@ -10,10 +10,8 @@ import android.support.v7.app.AlertDialog;
 
 public class DialogUtils {
 
-    private static AlertDialog.Builder sBuilder;
-
     public static void showDialog(Context context, String message, String positive, String negative, final onDiaLogBtnListener listener) {
-        sBuilder = new AlertDialog.Builder(context);
+        AlertDialog.Builder sBuilder = new AlertDialog.Builder(context);
         sBuilder.setMessage(message);
         sBuilder.setNegativeButton(negative, (dialog, which) -> dialog.dismiss());
         sBuilder.setPositiveButton(positive, listener::onPositiveListener);

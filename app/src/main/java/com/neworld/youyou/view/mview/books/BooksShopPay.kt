@@ -1,20 +1,20 @@
 package com.neworld.youyou.view.mview.books
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.WindowManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neworld.youyou.R
+import com.neworld.youyou.activity.AddressActivity
 import com.neworld.youyou.add.base.Activity
-import com.neworld.youyou.utils.LogUtils
-import com.neworld.youyou.utils.NetBuild
-import com.neworld.youyou.utils.SpUtil
+import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.utils.*
 import kotlinx.android.synthetic.main.activity_books_pay.*
-import org.jetbrains.anko.doAsync
 import kotlin.properties.Delegates
 
 /**
@@ -28,8 +28,24 @@ class BooksShopPay : Activity() {
 
     private val userId by lazy { SpUtil.getString(baseContext, "userId") }
 
-    private var totalPrice by Delegates.observable(1) {
-        _, _, new ->
+    private val dialog by lazy {
+        val builder = AlertDialog.Builder(this@BooksShopPay)
+        builder.setMessage("请添加地址")
+        builder.setPositiveButton("前往") { dialog, _ ->
+            val intent = Intent(this, AddressActivity::class.java)
+            intent.putExtra("fromPay", true)
+            startActivityForResult(intent, totalPrice)
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("取消") { dialog, _ ->
+            dialog.dismiss()
+            finish()
+        }
+        builder.setCancelable(true)
+        builder
+    }
+
+    private var totalPrice by Delegates.observable(1) { _, _, new ->
 
         val d = new * price
 
@@ -66,7 +82,7 @@ class BooksShopPay : Activity() {
 
     override fun initWidget() {
         delivery.setOnClickListener {
-            // TODO : 选择学生界面
+            startActivityForResult(Intent(this@BooksShopPay, AddressActivity::class.java), totalPrice)
         }
         description.setOnClickListener {
             // TODO : 编辑界面
@@ -84,6 +100,7 @@ class BooksShopPay : Activity() {
             totalPrice = i
         }
         description.clearFocus()
+        close.setOnClickListener { finish() }
     }
 
     override fun initData() {
@@ -95,10 +112,43 @@ class BooksShopPay : Activity() {
 
         Glide.with(book_icon).load(icon).apply(options).into(book_icon)
         book_name.text = name
-        doAsync {
-            LogUtils.E("userId = $userId")
-            val response = NetBuild.getResponse("{\"userId\":$userId", 141)
-            LogUtils.LOG_JSON(response)
+
+        loadAddress()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            20 -> {
+                _address.text = data?.getStringExtra("msg") ?: "_"
+                _name.text = data?.getStringExtra("name") ?: "_"
+                _phone.text = data?.getStringExtra("phone") ?: "_"
+            }
+            66 -> {
+                loadAddress()
+            }
+            else -> {
+                _address.text = data?.getStringExtra("address") ?: "_"
+                _name.text = data?.getStringExtra("name") ?: "_"
+                _phone.text = data?.getStringExtra("phone") ?: "_"
+            }
         }
+    }
+
+    private fun loadAddress() {
+        val map = hashMapOf<CharSequence, CharSequence>()
+        map.put("userId", userId)
+        NetBuild.response({
+            val list = it.menuList
+            if (list.isEmpty()) dialog.show()
+            else list.firstOrNull { it.status == 0 }
+                    .let {
+                        val at = it ?: list[0]
+                        _name.text = at.consignee
+                        _phone.text = at.phone
+                        _address.text = at.address
+                    }
+        }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBean::class.java, map)
+
     }
 }

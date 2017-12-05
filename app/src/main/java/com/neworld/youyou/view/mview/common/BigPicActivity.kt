@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import com.bumptech.glide.Glide
 import com.neworld.youyou.R
 import kotlinx.android.synthetic.main.activity_big_pig.*
 
@@ -26,7 +25,7 @@ class BigPicActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_big_pig)
         val url = intent.getStringExtra(EXTRA_URL)
-        Glide.with(this).load(url).into(big_pic)
+//        Glide.with(this).load(url).into(big_pic)
         group.setOnClickListener { onBackPressed() }
     }
 

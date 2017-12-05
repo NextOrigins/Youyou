@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         if (application == null) {
-            application = (MyApplication)getApplication();
+            application = (MyApplication) getApplication();
         }
         application.removeALLActivity_();
         initView();
@@ -78,14 +78,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 getPsw();
                 break;
             case R.id.bt_login:
-               login();
+                login();
+                btLogin.setOnClickListener(null);
                 break;
         }
     }
 
     private void initButton() {
         //new倒计时对象,总共的时间,每隔多少秒更新一次时间
-        final MyCountDownTimer myCountDownTimer = new MyCountDownTimer(120000,1000);
+        final MyCountDownTimer myCountDownTimer = new MyCountDownTimer(120000, 1000);
         myCountDownTimer.start();
     }
 
@@ -94,14 +95,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(() -> {
             String trim = etPsw.getText().toString().trim();
             if (trim.equals(userName) || etNumber.getText().toString().trim().equals("123456789")) {
-                String base64 = Base64.encodeToString(("{\"mobile\":\""+photoNumber+"\"}").getBytes(), Base64.DEFAULT);
+                String base64 = Base64.encodeToString(("{\"mobile\":\"" + photoNumber + "\"}").getBytes(), Base64.DEFAULT);
                 String replace = base64.replace("\n", "");
                 String content = NetManager.getInstance().getContent(replace, "125");
                 if (content != null && content.length() > 0) {
                     LoginUserIdBean loginUserIdBean = GsonUtil.parseJsonToBean(content, LoginUserIdBean.class);
                     if (loginUserIdBean != null && loginUserIdBean.getStatus() == 0) {
                         if (loginUserIdBean.getUserId() != null && loginUserIdBean.getUserId().length() > 0) {
-                            Sputil.saveString(LoginActivity.this,"userId", loginUserIdBean.getUserId());
+                            Sputil.saveString(LoginActivity.this, "userId", loginUserIdBean.getUserId());
                             Sputil.saveString(LoginActivity.this, "number", photoNumber);
                             Sputil.saveString(LoginActivity.this, "token", loginUserIdBean.getToken());
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -113,13 +114,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 ToastUtil.showToast("验证码错误");
             }
+            runOnUiThread(() -> btLogin.setOnClickListener(this));
         }).start();
     }
 
     public void getPsw() {
         String trim = etNumber.getText().toString().trim();
         if (trim.length() > 0) {
-            if (isMobileNo(trim) ) {
+            if (isMobileNo(trim)) {
                 initButton();
                 judgePsw(trim);
             } else {
@@ -136,19 +138,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String base64 = Base64.encodeToString(("{\"mobile\":\""+trim+"\"}").getBytes(), Base64.DEFAULT);
+                String base64 = Base64.encodeToString(("{\"mobile\":\"" + trim + "\"}").getBytes(), Base64.DEFAULT);
                 String replace = base64.replace("\n", "");
-                            String content = NetManager.getInstance().getContent(replace, "124");
-                            if (content != null && content.length() > 0) {
-                                LoginBean loginBean = GsonUtil.parseJsonToBean(content, LoginBean.class);
-                                if (loginBean != null && loginBean.getStatus() == 0) {
-                                    final String authCode = loginBean.getAuthCode();
+                String content = NetManager.getInstance().getContent(replace, "124");
+                if (content != null && content.length() > 0) {
+                    LoginBean loginBean = GsonUtil.parseJsonToBean(content, LoginBean.class);
+                    if (loginBean != null && loginBean.getStatus() == 0) {
+                        final String authCode = loginBean.getAuthCode();
 //                                    ToastUtil.showToast(authCode);
 //                                    runOnUiThread(() -> etPsw.setText(authCode));
 
-                                    if (authCode != null && authCode.length() > 0) {
-                                        userName = authCode;
-                                        photoNumber = trim;
+                        if (authCode != null && authCode.length() > 0) {
+                            userName = authCode;
+                            photoNumber = trim;
                         }
                     }
                 }
@@ -176,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void showExit() {
-        final AlertDialog.Builder ad=new AlertDialog.Builder(LoginActivity.this);
+        final AlertDialog.Builder ad = new AlertDialog.Builder(LoginActivity.this);
         ad.setMessage("确定退出应用吗");
         ad.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
@@ -211,7 +213,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onTick(long l) {
             //防止计时过程中重复点击
             btGet.setClickable(false);
-            btGet.setText(l/1000+"秒");
+            btGet.setText(l / 1000 + "秒");
 
         }
 
