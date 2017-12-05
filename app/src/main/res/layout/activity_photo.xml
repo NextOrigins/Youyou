@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_photo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/parent_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/photo_cancle"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:scaleType="centerInside"
+                android:src="@mipmap/cancel" />
+
+            <TextView
+                android:id="@+id/photo_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="头像"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/photo_more"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/arrow" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <com.neworld.youyou.view.PhotoViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/parent_toolbar">
+
+    </com.neworld.youyou.view.PhotoViewPager>
+</RelativeLayout>

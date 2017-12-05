@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF"
+    android:padding="15dp">
+
+    <TextView
+        android:id="@+id/back_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/back_img"
+        android:layout_toStartOf="@+id/back_img"
+        android:textColor="#000"
+        android:textIsSelectable="true"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/back_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/back_state"
+        style="@style/style_back_12"
+        android:background="@drawable/feed_back_bg"
+        android:paddingBottom="1dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="1dp"
+        android:textColor="#A00" />
+
+    <TextView
+        android:id="@+id/back_date"
+        style="@style/style_back_12"
+        android:layout_alignBaseline="@id/back_state"
+        android:layout_below="@+id/back_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@id/back_state"
+        android:layout_toRightOf="@id/back_state"
+        android:textColor="#C000" />
+
+    <TextView
+        android:id="@+id/back_delete"
+        style="@style/style_back_12"
+        android:layout_alignBaseline="@id/back_date"
+        android:layout_below="@+id/back_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@id/back_date"
+        android:layout_toRightOf="@id/back_date"
+        android:text="@string/delete"
+        android:textColor="#CC3696d3" />
+
+    <View
+        android:id="@+id/back_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/back_state"
+        android:layout_marginTop="7dp"
+        android:background="#2b2b2b" />
+
+    <TextView
+        android:id="@+id/back_admin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/back_state"
+        android:layout_marginTop="15dp"
+        android:maxLines="1"
+        android:textSize="16sp" />
+</RelativeLayout>

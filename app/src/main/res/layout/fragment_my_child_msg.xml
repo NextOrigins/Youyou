@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_synthesize"
+    android:layout_width="match_parent"
+    android:background="#e7e7e7"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/parent_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        app:contentInsetStart="0dp"
+        android:background="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageView
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:id="@+id/iv_canel"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/cancel" />
+
+            <TextView
+                android:text="姓名"
+                android:layout_centerInParent="true"
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:textSize="18sp"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:text="保存"
+                android:id="@+id/tv_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <RelativeLayout
+        android:background="#ffff"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/parent_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <EditText
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/et_name"
+        android:hint=""
+        android:background="@null"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+    </RelativeLayout>
+</RelativeLayout>

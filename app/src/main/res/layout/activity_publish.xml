@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_publish"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/publish_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_cancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:text="取消"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_choose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="5dp"
+                android:drawableRight="@drawable/list"
+                android:text="请选择"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_publish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:text="发布"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/et_add_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:focusableInTouchMode="false"
+        android:hint="请输入主题" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#f2f2f2" />
+
+    <EditText
+        android:id="@+id/et_add_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:gravity="left"
+        android:hint="请输入内容" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#f2f2f2" />
+    <!--    <com.neworld.youyou.select.NoScrollGridView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/gridView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnWidth="90dp"
+            android:numColumns="4"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            />-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/iv_1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/iv_4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/iv_7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_8"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_9"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@mipmap/add_pick"
+            android:visibility="gone" />
+    </LinearLayout>
+    <!--    <ImageView
+            android:layout_marginLeft="15dp"
+            android:clickable="true"
+            android:id="@+id/iv_publish"
+            android:src="@mipmap/add_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />-->
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3696d3</color>
+    <color name="colorPrimaryDark">#3696d3</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="navpage">#FFE1E8EB</color>
+    <color name="black">#000</color>
+    <color name="backgroud">#ffffff</color>
+    <color name="jinse">#f37f13</color>
+    <color name="color_money">#F37F13</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="white_transparent">#FFF8F8F9</color>
+    <color name="status_bar">#08000000</color>
+</resources>

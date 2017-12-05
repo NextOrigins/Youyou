@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/activity_subject"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        app:contentInsetStart="0dp"
+        android:layout_height="48dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/cancel"
+                android:id="@+id/iv_cancel"
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/tv_activity_title"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:layout_centerInParent="true"
+                android:text="中华经典古诗文"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
+        android:id="@+id/subject_scroll"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginRight="60dp"
+                    android:id="@+id/tv_title"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:gravity="center_vertical"
+                    android:text="中华经典古诗文活动"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:background="#e7e7e7"
+                    android:layout_marginRight="20dp"
+                    android:layout_toLeftOf="@+id/tv_share"
+                    android:layout_width="1dp"
+                    android:layout_height="30dp" />
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/tv_share"
+                    android:drawablePadding="3dp"
+                    android:drawableTop="@mipmap/parent_share_item"
+                    android:layout_marginRight="15dp"
+                    android:text="分享"
+                    android:textSize="12sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/tv_time"
+                    android:layout_marginLeft="15dp"
+                    android:layout_below="@id/tv_title"
+                    android:text="截止时间"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tv_have"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="#f37f13"
+                    android:text="已经有0人报名"
+                    android:layout_marginRight="15dp"
+                    android:layout_below="@+id/tv_share"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@mipmap/shuxian"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:layout_marginLeft="15dp"
+                android:text="活动介绍"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:lineSpacingExtra="6dp"
+                android:textSize="16sp"
+                android:textColor="#000"
+                android:id="@+id/tv_jieshao"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="15dp"
+                android:text="活动介绍"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@mipmap/shuxian"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:textColor="#000"
+                android:textSize="16sp"
+                android:text="考试费用"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+            <com.neworld.youyou.view.FocusListView
+                android:id="@+id/list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </com.neworld.youyou.view.FocusListView>
+
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@mipmap/shuxian"
+                android:textColor="#000"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:text="考试时间"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/tv_test_time"
+                android:textColor="#000"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@mipmap/shuxian"
+                android:textColor="#000"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:text="考试地点"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:id="@+id/tv_location"
+                android:textColor="#000"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:text="考场地址"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+
+            <RelativeLayout
+                android:id="@+id/query"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@mipmap/shuxian"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:text="成绩查询"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <ImageView
+                    android:layout_marginRight="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@mipmap/jiantou"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <RelativeLayout
+
+                android:id="@+id/rl_test"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@mipmap/shuxian"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:text="考前辅导"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <ImageView
+                    android:layout_marginRight="15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@mipmap/jiantou"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="招生机构：新贝青少儿教育中心"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="咨询电话：400-8812-318"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="学校为沪上专业青少儿考证培训基地，拥有15个教学网点，师资力量雄厚，学员考证合格率屡创新高！"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+           <ImageView
+               android:layout_marginTop="10dp"
+               android:background="#f2f2f2"
+               android:layout_width="match_parent"
+               android:layout_height="20dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@mipmap/shuxian"
+                android:textColor="#000"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:text="备注说明"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:text="1、报名成功后，可通过本APP“我的考证”下载打印"
+                android:textColor="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:text="2、考试结束后，可通过本APP”我的考证“查询，成绩合格的考生，选择领取地点，证书自取。"
+                android:textColor="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:text="3、最新的报考信息，我们将通过手机短信通知"
+                android:textColor="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:background="#f2f2f2"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+        </LinearLayout>
+    </ScrollView>
+
+
+    <ImageView
+        android:background="#e1e1e1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+    <LinearLayout
+        android:weightSum="10"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <RelativeLayout
+            android:gravity="center"
+            android:id="@+id/rl_zan"
+            android:layout_weight="1.5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/iv_zan"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/web_zan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/iv_zan"
+                android:gravity="center"
+                android:text="0"
+                android:id="@+id/detail_zan"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_comment"
+            android:gravity="center"
+            android:layout_weight="1.5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_comment"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/web_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/iv_comment"
+                android:gravity="center"
+                android:text="0"
+                android:id="@+id/detail_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:gravity="center"
+            android:id="@+id/rl_fav"
+            android:layout_weight="1.5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_centerVertical="true"
+                android:id="@+id/iv_fav"
+                android:src="@mipmap/web_collect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/iv_fav"
+                android:text="0"
+                android:background="#fff"
+                android:id="@+id/detail_fav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_buy"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:text="立即购买"
+            android:background="#f37f13"
+            android:layout_weight="5.5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</LinearLayout>

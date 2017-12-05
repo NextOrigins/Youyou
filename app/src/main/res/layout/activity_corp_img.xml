@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/parent_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetEnd="0dp"
+        android:background="@color/colorPrimary"
+        >
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:scaleType="centerInside"
+                android:layout_gravity="center"
+                android:id="@+id/iv_cancel"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:src="@mipmap/cancel" />
+
+
+
+
+            <Button
+                android:layout_marginRight="15dp"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:text="使用"
+                android:background="#50f0"
+                android:layout_centerVertical="true"
+                android:id="@+id/iv_parent_publish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <ImageView
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/parent_toolbar"
+        android:scaleType="centerCrop"
+        android:id="@+id/crop_handler_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <RelativeLayout
+        android:background="@drawable/photo_button_shape"
+        android:id="@+id/crop_handler_layout"
+        android:layout_centerInParent="true"
+        android:layout_width="250dp"
+        android:layout_height="250dp">
+        <View
+            android:id="@+id/crop_handler_select"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+</RelativeLayout>

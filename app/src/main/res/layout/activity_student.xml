@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/student_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:contentInsetStart="0dp">
+
+        <ImageView
+            android:id="@+id/student_close"
+            style="@style/style_img_all_close"
+            android:contentDescription="@null"
+            android:src="@mipmap/cancel" />
+
+        <TextView
+            style="@style/style_text_all_title"
+            android:text="@string/select_student" />
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/student_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/student_toolbar" />
+
+    <Button
+        android:id="@+id/student_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/login_shape"
+        android:text="@string/add"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/student_recycler" />
+</android.support.constraint.ConstraintLayout>

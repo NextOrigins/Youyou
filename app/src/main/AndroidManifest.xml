@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.neworld.youyou">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <application
+        android:name=".manager.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/my_icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.PublishActivity" />
+        <activity android:name=".activity.FocusActivity" />
+        <activity
+            android:name=".activity.ParentDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/SplashTheme">
+
+            <!--
+                <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            -->
+        </activity>
+        <activity android:name=".activity.CommentActivity" />
+        <activity android:name=".activity.DetailDataActivity" />
+        <activity android:name=".activity.PhotoActivity" />
+        <activity android:name=".activity.PersonDataActivity" />
+        <activity android:name=".activity.SynthesizeActivity" />
+        <activity android:name=".activity.MyChildActivity" />
+        <activity android:name=".activity.AddChildActivity" />
+        <activity android:name=".activity.MySubjectActivity" />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.MyCollectActivity" />
+        <activity android:name=".activity.PhotoDetailActivity" />
+        <activity android:name=".select.ImageSelectorActivity" />
+        <activity android:name=".select.PreviewActivity" />
+        <activity android:name=".activity.FocusDetailActivity" />
+        <activity android:name=".activity.BlackNameActivity" />
+        <activity android:name=".activity.SubjectActivity" />
+        <activity android:name=".activity.PaymentActivity" />
+        <activity android:name=".activity.CollectDetailActivity" />
+        <activity android:name=".activity.TestActivity" />
+        <activity android:name=".activity.HotActivity" />
+        <activity android:name=".activity.AllStudentActivity" />
+
+        <service android:name=".update.DownloadService" />
+
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity android:name=".activity.ClipImageActivity" />
+        <!-- 分享qq完整版 -->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent1106358422" />
+            </intent-filter>
+        </activity>
+        <!-- 友盟key -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="599cf596e88bad4d760001f3" />
+        <!-- 授权登录 -->
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <!-- 分享进入  .apshare.ShareEntryActivity -->
+        <activity android:name=".activity.PersonDetailActivity" />
+        <activity android:name=".activity.SubjectWebActivity" />
+        <activity android:name=".activity.HotCommentActivity" />
+        <activity android:name=".activity.SubjectCommentActivity" />
+        <activity android:name=".activity.PublishDetailActivity" />
+        <activity android:name=".activity.AddressActivity" />
+        <!-- ============================ -->
+        <activity android:name=".add.feed.FeedbackActivity" />
+        <activity android:name=".add.feed.PostedActivity" />
+        <activity android:name=".add.StudentActivity" />
+        <activity android:name=".view.mview.comment.DetailViewImpl" />
+        <activity android:name=".view.mview.books.BooksDetailsViewImpl" />
+        <activity android:name=".view.mview.common.BigPicActivity" />
+        <activity android:name=".view.mview.books.BooksShopPay" />
+        <!-- ============================ -->
+
+        <activity android:name=".activity.AddNewAddressActivity">
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            -->
+        </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.neworld.youyou.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity android:name=".add.AchievementActivity" />
+    </application>
+
+</manifest>

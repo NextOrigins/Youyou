@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+    </FrameLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#f2f2f2" />
+
+    <RadioGroup
+        android:id="@+id/rg_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_parent"
+            style="@style/rb_bottom_style"
+            android:checked="true"
+            android:drawableTop="@drawable/bottom_bar_parent_selector"
+            android:text="家长圈" />
+
+        <RadioButton
+            android:id="@+id/rb_subject"
+            style="@style/rb_bottom_style"
+            android:drawableTop="@drawable/bottom_bar_subject_selector"
+            android:text="考证" />
+
+        <RadioButton
+            android:id="@+id/rb_hot"
+            style="@style/rb_bottom_style"
+            android:drawableTop="@drawable/bottom_bar_hot_selector"
+            android:text="热文" />
+
+        <RadioButton
+            android:id="@+id/rb_books"
+            style="@style/rb_bottom_style"
+            android:drawableTop="@drawable/books_select"
+            android:text="图书" />
+
+        <RadioButton
+            android:id="@+id/rb_my"
+            style="@style/rb_bottom_style"
+            android:drawableTop="@drawable/bottom_bar_my_selector"
+            android:text="我" />
+
+    </RadioGroup>
+</LinearLayout>

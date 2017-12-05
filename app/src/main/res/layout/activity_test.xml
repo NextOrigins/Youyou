@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_test"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:background="@color/colorPrimary"
+        app:contentInsetStart="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:src="@mipmap/cancel"
+                android:scaleType="centerInside"
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+            <TextView
+                android:layout_centerInParent="true"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:text="考前辅导"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <WebView
+        android:id="@+id/wv_test"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </WebView>
+</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="publish_choose">
+        <item>小升初</item>
+        <item>幼升小</item>
+        <item>育儿</item>
+        <item>生活</item>
+        <item>学习</item>
+    </string-array>
+</resources>

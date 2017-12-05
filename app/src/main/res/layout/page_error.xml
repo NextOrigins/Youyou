@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/page_tv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/page_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/load_error" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/page_iv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="网络不佳，请点击屏幕重试" />
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/parent_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:contentInsetStart="0dp"
+        android:layout_alignParentRight="true"
+        android:background="@color/colorPrimary">
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:id="@+id/add_child_cancel"
+                android:src="@mipmap/cancel"
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/add_child_my_name"
+                android:textSize="20dp"
+                android:textColor="#fff"
+                android:layout_centerInParent="true"
+                android:text="学校"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/add_child_save"
+                android:layout_marginRight="15dp"
+                android:textColor="#fff"
+                android:textSize="22sp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:id="@+id/add_child_you"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:text="幼儿园"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:id="@+id/tv_add_you"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/jiantou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </RelativeLayout>
+    <ImageView
+        android:background="#e7e7e7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/add_child_xiao"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="15dp"
+            android:textSize="18sp"
+            android:layout_centerVertical="true"
+            android:text="小学"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="16sp"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center"
+                android:id="@+id/tv_add_xiao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/jiantou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:background="#e7e7e7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+    <RelativeLayout
+        android:id="@+id/add_child_chu"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="15dp"
+            android:textSize="18sp"
+            android:layout_centerVertical="true"
+            android:text="初中"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="16sp"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center"
+                android:id="@+id/tv_add_chu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/jiantou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RelativeLayout>
+    <ImageView
+        android:background="#e7e7e7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+</LinearLayout>

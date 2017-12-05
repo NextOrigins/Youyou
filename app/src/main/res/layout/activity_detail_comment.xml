@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:contentInsetStart="0dp">
+
+        <ImageView
+            android:id="@+id/close"
+            style="@style/style_img_all_close"
+            android:contentDescription="@null"
+            android:src="@mipmap/cancel"
+            android:tint="@android:color/black" />
+
+        <TextView
+            android:text="回复"
+            android:id="@+id/title"
+            style="@style/style_text_all_title"
+            android:textColor="@android:color/black"/>
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+</android.support.constraint.ConstraintLayout>

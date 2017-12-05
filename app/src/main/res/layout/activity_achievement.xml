@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.neworld.youyou.add.AchievementActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        app:contentInsetStart="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/ac_close"
+            android:src="@mipmap/cancel"
+            style="@style/style_img_all_close"/>
+
+        <TextView
+            android:text="@string/chengji"
+            style="@style/style_text_all_title" />
+    </android.support.v7.widget.Toolbar>
+
+    <WebView
+        android:id="@+id/query_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tool_bar" />
+</RelativeLayout>

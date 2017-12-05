@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_centerInParent="true"
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="热文"
+                android:textSize="18sp"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="#FFF" />
+            <ImageView
+                android:id="@+id/iv_hot"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@mipmap/font"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tl_hot"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="scrollable"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        >
+
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_hot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

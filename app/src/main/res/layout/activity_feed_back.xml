@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1111">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/feed_back_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:contentInsetStart="0dp">
+
+        <ImageView
+            android:id="@+id/feed_close"
+            style="@style/style_img_all_close"
+            android:contentDescription="@null"
+            android:src="@mipmap/cancel" />
+
+        <TextView
+            style="@style/style_text_all_title"
+            android:text="@string/feed_back_title" />
+
+        <ImageView
+            android:id="@+id/feed_posted"
+            style="@style/style_img_all_posted"
+            android:contentDescription="@null"
+            android:src="@mipmap/parent_share"
+            tools:ignore="RtlHardcoded" />
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/feed_back_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:overScrollMode="never" />
+</android.support.constraint.ConstraintLayout>
