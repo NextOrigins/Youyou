@@ -11,10 +11,13 @@ class PullToAdapter<T>(onUp: (Int) -> Unit, obs: AdapterObs<T>, list: List<T>) :
     private val scrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                val lp = recyclerView?.layoutManager as GridLayoutManager
-                val last = lp.findLastVisibleItemPosition()
-                if (last == itemCount - 1)
-                    onUp(last)
+//                val lp = recyclerView?.layoutManager as GridLayoutManager
+//                val last = lp.findLastVisibleItemPosition()
+//                if (last == itemCount - 1)
+//                    onUp(last)
+                if (!recyclerView!!.canScrollVertically(1)) {
+                    onUp(itemCount - 1)
+                }
             }
         }
     }

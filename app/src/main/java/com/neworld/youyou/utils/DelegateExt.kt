@@ -3,6 +3,7 @@ package com.neworld.youyou.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.neworld.youyou.manager.MyApplication
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -13,7 +14,7 @@ import kotlin.reflect.KProperty
 /**
  * SharedPreference 自动存取
  */
-fun <T : Any> preference(context: Context, name: String, default: T):
+fun <T : Any> preference(name: String, default: T, context: Context = MyApplication.sContext):
         ReadWriteProperty<Any?, T> = Preference(context, name, default)
 
 /**
@@ -32,14 +33,13 @@ private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {
         this.value = if (this.value == null) value
         else throw IllegalStateException("already initialized")
     }
-
 }
 
 private class Preference<T>(val context: Context, val name: String, val default: T)
     : ReadWriteProperty<Any?, T> {
 
     private val prefs: SharedPreferences by lazy {
-        context.getSharedPreferences("default", Context.MODE_PRIVATE)
+        context.getSharedPreferences("config", Context.MODE_PRIVATE)
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {

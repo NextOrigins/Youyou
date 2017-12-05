@@ -3,7 +3,6 @@ package com.neworld.youyou.view.mview.books
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.Point
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -15,17 +14,14 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.neworld.youyou.R
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.SpacesItemDecoration
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.PullToAdapter
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.presenter.books.BooksImpl
 import com.neworld.youyou.showSnackbar
 import com.neworld.youyou.utils.*
@@ -46,22 +42,23 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     private var swipe: SwipeRefreshLayout? = null
 
     private val list: ArrayList<ResponseBean.Menu> = ArrayList()
-    private var mAdapter: PullToAdapter<ResponseBean.Menu>? = null
+    private var mAdapter: Adapter<ResponseBean.Menu> by notNullSingleValue()
     private var presenter: BooksImpl<ResponseBean.BooksBean>? = null
 
-    private var recycler: RecyclerView? = null
+    private var recycler: RecyclerView by notNullSingleValue()
 
     private var b = true
 
-    private val token by lazy { SpUtil.getString(context, "token") }
-    private val userId by lazy { SpUtil.getString(context, "userId") }
+    private val token by preference("token", "")
+    private val userId by preference("userId", "")
+
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("type", "0"), Pair("CreateDate", "")
                 , Pair("token", token), Pair("userId", userId))
     }
 
-    private var requestCount by Delegates.observable(0) { _, old, new ->
-//        LogUtils.E("old = $old, new = $new")
+    private var requestCount by Delegates.observable(0) {
+        _, old, new ->
         if (old != new) {
             val upMap = HashMap<CharSequence, CharSequence>()
             upMap.put("type", "0")
@@ -69,7 +66,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
             upMap.put("token", token)
             upMap.put("userId", userId)
             presenter?.up(upMap, 178, ResponseBean.BooksBean::class.java)
-            b = true
+            b = false
         } else if (b) {
             showSnackbar(swipe!!, "没有更多数据了_", 2000)
             b = false
@@ -125,6 +122,14 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
         override fun layoutId(): Int = R.layout.item_books
     }
 
+    private val scrollListener = object: RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                if (!recyclerView!!.canScrollVertically(1))
+                    requestCount = mAdapter.itemCount - 1
+        }
+    }
+
     override fun getContentLayoutId(): Int = R.layout.fragment_books
 
     override fun initArgs(bundle: Bundle?) {
@@ -142,13 +147,12 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     }
 
     override fun initWidget(root: View) {
-        recycler = root.findViewById(R.id.recycler)
         swipe = root.findViewById(R.id.swipe)
-
-        recycler!!.layoutManager = GridLayoutManager(activity, spanCount)
-        mAdapter = PullToAdapter({ requestCount = it }, obs, list)
-        recycler!!.adapter = mAdapter
-        recycler!!.addItemDecoration(SpacesItemDecoration(spanCount, spacing, false))
+        recycler = root.findViewById(R.id.recycler)
+        recycler.layoutManager = GridLayoutManager(activity, spanCount)
+        mAdapter = Adapter(obs, list)
+        recycler.adapter = mAdapter
+        recycler.addItemDecoration(SpacesItemDecoration(spanCount, spacing, false))
     }
 
     override fun initData() {
@@ -159,7 +163,8 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     }
 
     override fun notifyData() {
-        mAdapter?.notifyDataSetChanged()
+        mAdapter.notifyDataSetChanged()
+        b = true
     }
 
     override fun removeData(index: Int) {
@@ -185,12 +190,12 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     }
 
     override fun onStart() {
-        mAdapter?.pullUpRefresh(recycler!!)
+        recycler.addOnScrollListener(scrollListener)
         super.onStart()
     }
 
     override fun onStop() {
-        mAdapter?.removeListener(recycler!!)
+        recycler.removeOnScrollListener(scrollListener)
         super.onStop()
     }
 

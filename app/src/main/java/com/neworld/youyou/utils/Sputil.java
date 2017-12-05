@@ -10,7 +10,7 @@ import java.util.Set;
  */
 
 public class Sputil {
-    public static final String CONFIG = "config";
+    private static final String CONFIG = "config";
     private static SharedPreferences mSp;
 
     //保存boolean

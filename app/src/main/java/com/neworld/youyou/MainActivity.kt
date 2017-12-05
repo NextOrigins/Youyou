@@ -26,7 +26,9 @@ import com.neworld.youyou.fragment.ParentPageFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.NetworkObs
+import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.ToastUtil
+import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.umeng.socialize.UMShareAPI
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //        private set
     private var finished: Boolean = false
     private var netObs: NetworkObs? = null
+
+    private var userId: String by preference("userId", "")
+    private var token: String by preference("token", "");
 
     val windowData: WindowManager
         get() = windowManager
@@ -138,6 +143,9 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
         //默认显示首页
         changePage(parentFragment, null)
+
+        userId = SpUtil.getString(this, "userId")
+        token = SpUtil.getString(this, "token")
     }
 
     //切换页面 并把上一个界面添加到退栈中
