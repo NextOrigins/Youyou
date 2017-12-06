@@ -433,7 +433,7 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            Toast.makeText(HotActivity.this, "成功了", Toast.LENGTH_LONG).show();
+            Toast.makeText(HotActivity.this, "分享成功!", Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -443,7 +443,7 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(HotActivity.this, "取消了", Toast.LENGTH_LONG).show();
+            Toast.makeText(HotActivity.this, "已取消", Toast.LENGTH_LONG).show();
         }
     };
 

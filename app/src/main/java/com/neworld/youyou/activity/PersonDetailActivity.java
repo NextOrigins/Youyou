@@ -475,7 +475,7 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            Toast.makeText(PersonDetailActivity.this,"成功了",Toast.LENGTH_LONG).show();
+            Toast.makeText(PersonDetailActivity.this,"分享成功!",Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -485,7 +485,7 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(PersonDetailActivity.this,"取消了",Toast.LENGTH_LONG).show();
+            Toast.makeText(PersonDetailActivity.this,"已取消",Toast.LENGTH_LONG).show();
         }
     };
 }

@@ -23,10 +23,9 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.presenter.books.DetailImpl
-import com.neworld.youyou.utils.LogUtils
 import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.ToastUtil
-import com.neworld.youyou.view.mview.common.BigPicActivity
+import com.neworld.youyou.utils.notNullSingleValue
 import com.neworld.youyou.view.mview.common.LinearImage
 import kotlinx.android.synthetic.main.activity_books_detail.*
 
@@ -61,7 +60,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
 
     private val userId by lazy { SpUtil.getString(baseContext, "userId") }
     private val map by lazy {
-        hashMapOf<CharSequence, CharSequence>(Pair("userId", userId), Pair("taskId", tkId.toString())
+        hashMapOf<CharSequence, CharSequence>(Pair("userId", userId), Pair("taskId", bkId.toString())
                 , Pair("type", "4"))
     }
 
@@ -77,7 +76,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         BitmapDrawable(resources, decode)
     }
 
-    private var tkId = 0
+    private var bkId: Int by notNullSingleValue()
 
     private var presenter: DetailImpl<ResponseBean.BooksDetailBean>? = null
 
@@ -129,6 +128,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
             intent.putExtra("price", price.text.substring(1, price.text.length))
             intent.putExtra("iconImg", iconImg)
             intent.putExtra("name", name)
+            intent.putExtra("bookId", bkId)
             startActivity(intent)
         }
 
@@ -182,7 +182,6 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         sale.text = sl                                  // 月销
         author_text.text = menuList.author              // 作者
         press_text.text = menuList.publishDate          // 地址
-//        content.text = menuList.suggest                 // 简介
 
         praise.text = menuList.likeSum.toString()
         stars.text = menuList.collectSum.toString()
@@ -210,7 +209,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
             }
         }
 
-        tkId = menuList.id
+        bkId = menuList.id
     }
 
     override fun showError(str: String) {

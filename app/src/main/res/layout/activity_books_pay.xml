@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/_parent"
     android:layout_height="match_parent"
     android:background="#F0EFF5">
 
@@ -227,18 +228,19 @@
 
         <EditText
             android:id="@+id/description"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_15"
-            android:layout_marginStart="@dimen/dp_15"
             android:background="@null"
             android:hint="@string/_12_4"
             android:inputType="text"
             android:maxEms="12"
             android:maxLines="1"
             android:textSize="@dimen/sp14"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             app:layout_constraintBottom_toBottomOf="@id/buyer_msg"
-            app:layout_constraintLeft_toRightOf="@id/buyer_msg" />
+            app:layout_constraintLeft_toRightOf="@id/buyer_msg"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <View
             android:id="@+id/line4"

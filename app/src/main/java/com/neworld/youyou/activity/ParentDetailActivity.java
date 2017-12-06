@@ -537,7 +537,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            Toast.makeText(ParentDetailActivity.this, "成功了", Toast.LENGTH_LONG).show();
+            Toast.makeText(ParentDetailActivity.this, "分享成功!", Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -547,7 +547,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(ParentDetailActivity.this, "取消了", Toast.LENGTH_LONG).show();
+            Toast.makeText(ParentDetailActivity.this, "已取消", Toast.LENGTH_LONG).show();
         }
     };
 

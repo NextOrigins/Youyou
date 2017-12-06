@@ -123,7 +123,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                     intent.putExtra("msg", menuListBean.getAddress());
                     intent.putExtra("name", menuListBean.getConsignee());
                     intent.putExtra("phone", menuListBean.getPhone());
-                    LogUtils.E("address = " + menuListBean.getAddress());
+                    intent.putExtra("addressId", menuListBean.getId());
                     setResult(20, intent);
                     finish();
                 }

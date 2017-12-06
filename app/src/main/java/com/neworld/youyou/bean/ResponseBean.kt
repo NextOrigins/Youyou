@@ -83,7 +83,7 @@ class ResponseBean {
             val consignee: String, //打的
             val address: String, //哒哒哒哒哒
             val phone: String, //13888888888
-            val id: Int, //127
+            val id: String, //127
             val userId: Int, //33866
             val status: Int //0
     )

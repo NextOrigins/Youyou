@@ -5,16 +5,24 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import android.view.View
 import android.view.WindowManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.activity.AddressActivity
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.showSnackbar
 import com.neworld.youyou.utils.*
+import com.tencent.mm.opensdk.modelpay.PayReq
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.properties.Delegates
 
 /**
@@ -25,8 +33,18 @@ class BooksShopPay : Activity() {
     private val price by lazy { intent.getStringExtra("price").toDouble() }
     private val icon by lazy { intent.getStringExtra("iconImg") }
     private val name by lazy { intent.getStringExtra("name") }
+    private val bookId by lazy { intent.getStringExtra("bookId") }
+    private val map by lazy {
+        hashMapOf<CharSequence, CharSequence>(Pair("userId", userId),
+                Pair("orderId", orderId), Pair("addressId", addressId))
+    }
 
-    private val userId by lazy { SpUtil.getString(baseContext, "userId") }
+    private val userId by preference("userId", "")
+
+    private var orderId: String by notNullSingleValue()
+    private var addressId: String by Delegates.notNull()
+    private var money: String by Delegates.notNull()
+    private val ip: String? by lazy { NetUtil.wifiConfig() }
 
     private val dialog by lazy {
         val builder = AlertDialog.Builder(this@BooksShopPay)
@@ -41,15 +59,15 @@ class BooksShopPay : Activity() {
             dialog.dismiss()
             finish()
         }
-        builder.setCancelable(true)
+        builder.setCancelable(false)
         builder
     }
 
-    private var totalPrice by Delegates.observable(1) {
-        _, _, new ->
+    private var totalPrice by Delegates.observable(1) { _, _, new ->
 
         val d = new * price
 
+        money = (d + 10).toString()
         count.text = new.toString()
 
         var str = "¥$d"
@@ -85,11 +103,50 @@ class BooksShopPay : Activity() {
         delivery.setOnClickListener {
             startActivityForResult(Intent(this@BooksShopPay, AddressActivity::class.java), totalPrice)
         }
-        description.setOnClickListener {
-            // TODO : 编辑界面
-        }
+//        description.setOnClickListener {
+//            // 没定需求. 同步iOS不需要新界面(买家留言)
+//        }
         commit.setOnClickListener {
-            // TODO : 提交订单
+            if (ip == null) {
+                showSnackbar(_parent, "未检测到WiFi模块, 请到用户反馈处反馈此问题, 我们会尽快解决", 2000)
+                return@setOnClickListener
+            }
+            hashMapOf<CharSequence, CharSequence>().run {
+                put("userId", userId)
+                put("money", money)
+                put("subjectId", "0")
+                put("typeId", "0")
+                put("babyName", name)
+                put("phone", _phone.text)
+                put("spbill_create_ip", ip!!)
+                put("orderId", orderId)
+                doAsync {
+                    val response = NetBuild.getResponse(this@run, 188)
+                    val pay: Pay = Gson().fromJson(response,
+                            object : TypeToken<Pay>() {}.type)
+                    pay.let {
+                        if (it.status == 0) {
+                            val api = WXAPIFactory.createWXAPI(this@BooksShopPay, it.appid)
+                            if (!api.isWXAppInstalled) {
+                                ToastUtil.showToast(getString(R.string.text_uninstalled_wchat))
+                                return@doAsync
+                            }
+                            PayReq().run {
+                                appId = it.appid
+                                prepayId = it.prepayid
+                                nonceStr = it.noncestr
+                                timeStamp = it.timeStamp
+                                sign = it.sign
+                                partnerId = "1480432402"
+                                packageValue = "Sign=WXPay"
+                                api.registerApp(it.appid)
+                                api.sendReq(this)
+                            }
+                        } else
+                            uiThread { showSnackbar(_parent, "商品卖完了哦亲_") }
+                    }
+                }
+            }
         }
         up.setOnClickListener {
             val i = count.text.toString().toInt() + 1
@@ -114,26 +171,37 @@ class BooksShopPay : Activity() {
         Glide.with(book_icon).load(icon).apply(options).into(book_icon)
         book_name.text = name
 
+        val map = hashMapOf<CharSequence, CharSequence>()
+        map.put("userId", userId)
+        map.put("bookId", bookId)
+        doAsync {
+            val response = NetBuild.getResponse(map, 187)
+            val data: Order = Gson().fromJson(response,
+                    object : TypeToken<Order>() {}.type)
+            orderId = if (data.status == 0) data.orderId else ""
+        }
+
         loadAddress()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            20 -> {
-                _address.text = data?.getStringExtra("msg") ?: "_"
-                _name.text = data?.getStringExtra("name") ?: "_"
-                _phone.text = data?.getStringExtra("phone") ?: "_"
+            20 -> data?.run {
+                _address.text = getStringExtra("msg")
+                _name.text = getStringExtra("name")
+                _phone.text = getStringExtra("phone")
             }
             66 -> {
                 loadAddress()
             }
-            else -> {
-                _address.text = data?.getStringExtra("address") ?: "_"
-                _name.text = data?.getStringExtra("name") ?: "_"
-                _phone.text = data?.getStringExtra("phone") ?: "_"
+            else -> data?.run {
+                _address.text = getStringExtra("address")
+                _name.text = getStringExtra("name")
+                _phone.text = getStringExtra("phone")
             }
         }
+        addressId = data?.getStringExtra("addressId") ?: ""
     }
 
     private fun loadAddress() {
@@ -142,14 +210,39 @@ class BooksShopPay : Activity() {
         NetBuild.response({
             val list = it.menuList
             if (list.isEmpty()) dialog.show()
-            else list.firstOrNull { it.status == 0 }
+            else list.firstOrNull { it.status == 0 } ?: list[0]
                     .let {
-                        val at = it ?: list[0]
-                        _name.text = at.consignee
-                        _phone.text = at.phone
-                        _address.text = at.address
+                        _name.text = it.consignee
+                        _phone.text = it.phone
+                        _address.text = it.address
+                        addressId = it.id
                     }
         }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBean::class.java, map)
-
     }
+
+    override fun onBackPressed() {
+        doAsync {
+            if (!TextUtils.isEmpty(_name.text))
+                NetBuild.getResponse(map, 184)
+        }
+        super.onBackPressed()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        doAsync {
+            if (!TextUtils.isEmpty(_name.text))
+                NetBuild.getResponse(map, 184)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    private data class Order(val orderId: String,
+                             val status: Int)
+
+    private data class Pay(val timeStamp: String,
+                           val appid: String,
+                           val sign: String,
+                           val prepayid: String,
+                           val noncestr: String,
+                           val status: Int)
 }
