@@ -37,7 +37,11 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
     private val spacing = 60F
     private val spanCount = 3
-    private var width: Int = 0
+    private val width: Int by lazy {
+        val point = Point()
+        activity.windowManager.defaultDisplay.getSize(point)
+        ((point.x - spacing * (spanCount - 1)) / spanCount).toInt()
+    }
 
     private var swipe: SwipeRefreshLayout? = null
 
@@ -140,10 +144,6 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
             activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             activity.window.statusBarColor = ContextCompat.getColor(context, R.color.status_bar)
         }
-
-        val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
-        width = ((point.x - spacing * (spanCount - 1)) / spanCount).toInt()
     }
 
     override fun initWidget(root: View) {

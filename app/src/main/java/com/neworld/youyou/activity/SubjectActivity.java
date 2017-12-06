@@ -256,7 +256,7 @@ public class SubjectActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.query).setOnClickListener(v -> {
             startActivity(new Intent(this, AchievementActivity.class));
         });
-        rlTest = (RelativeLayout) findViewById(R.id.rl_test);
+//        rlTest = (RelativeLayout) findViewById(R.id.rl_test);
         ivCancel = (ImageView) findViewById(R.id.iv_cancel);
         tvActivityTitle = (TextView) findViewById(R.id.tv_activity_title);
         tvTitle = (TextView) findViewById(R.id.tv_title);
@@ -288,7 +288,7 @@ public class SubjectActivity extends AppCompatActivity implements View.OnClickLi
         tvShare.setOnClickListener(this);
 
         tvBuy.setOnClickListener(this);
-        rlTest.setOnClickListener(this);
+//        rlTest.setOnClickListener(this);
         if (adapter == null) {
             adapter = new SubjectTestAdapter(SubjectActivity.this, mData);
             focusListView.setAdapter(adapter);
@@ -320,17 +320,17 @@ public class SubjectActivity extends AppCompatActivity implements View.OnClickLi
                 else
                     noClick();
                 break;
-            case R.id.rl_test:
-                Intent intent = new Intent();
-                intent.setClass(SubjectActivity.this, TestActivity.class);
-                Bundle bundle = new Bundle();
-                String ccaaUrl = subjectDetailBean.getMenuList().getCcaaUrl();
-                if (ccaaUrl != null) {
-                    bundle.putString("ccaaUrl", ccaaUrl);
-                }
-                intent.putExtras(bundle);
-                startActivity(intent);
-                break;
+//            case R.id.rl_test:
+//                Intent intent = new Intent();
+//                intent.setClass(SubjectActivity.this, TestActivity.class);
+//                Bundle bundle = new Bundle();
+//                String ccaaUrl = subjectDetailBean.getMenuList().getCcaaUrl();
+//                if (ccaaUrl != null) {
+//                    bundle.putString("ccaaUrl", ccaaUrl);
+//                }
+//                intent.putExtras(bundle);
+//                startActivity(intent);
+//                break;
             case R.id.iv_cancel:
                 finish();
                 break;

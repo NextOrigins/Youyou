@@ -231,61 +231,61 @@
                     android:layout_height="wrap_content" />
             </RelativeLayout>
 
-            <ImageView
-                android:background="#f2f2f2"
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-            <RelativeLayout
+            <!--<ImageView-->
+                <!--android:background="#f2f2f2"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="20dp" />-->
+            <!--<RelativeLayout-->
 
-                android:id="@+id/rl_test"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:drawablePadding="10dp"
-                    android:drawableLeft="@mipmap/shuxian"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:text="考前辅导"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <ImageView
-                    android:layout_marginRight="15dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@mipmap/jiantou"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
-            <ImageView
-                android:background="#f2f2f2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp" />
-                <TextView
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
-                    android:text="招生机构：新贝青少儿教育中心"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
-                    android:text="咨询电话：400-8812-318"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_marginRight="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
-                    android:text="学校为沪上专业青少儿考证培训基地，拥有15个教学网点，师资力量雄厚，学员考证合格率屡创新高！"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <!--android:id="@+id/rl_test"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
+                <!--<TextView-->
+                    <!--android:drawablePadding="10dp"-->
+                    <!--android:drawableLeft="@mipmap/shuxian"-->
+                    <!--android:textColor="#000"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:text="考前辅导"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
+                <!--<ImageView-->
+                    <!--android:layout_marginRight="15dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:src="@mipmap/jiantou"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+            <!--</RelativeLayout>-->
+            <!--<ImageView-->
+                <!--android:background="#f2f2f2"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp" />-->
+                <!--<TextView-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:text="招生机构：新贝青少儿教育中心"-->
+                    <!--android:textColor="#000"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
+                <!--<TextView-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:text="咨询电话：400-8812-318"-->
+                    <!--android:textColor="#000"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
+                <!--<TextView-->
+                    <!--android:layout_marginRight="15dp"-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:text="学校为沪上专业青少儿考证培训基地，拥有15个教学网点，师资力量雄厚，学员考证合格率屡创新高！"-->
+                    <!--android:textColor="#000"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
            <ImageView
                android:layout_marginTop="10dp"
                android:background="#f2f2f2"
