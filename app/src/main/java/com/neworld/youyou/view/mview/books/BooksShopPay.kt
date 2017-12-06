@@ -45,7 +45,8 @@ class BooksShopPay : Activity() {
         builder
     }
 
-    private var totalPrice by Delegates.observable(1) { _, _, new ->
+    private var totalPrice by Delegates.observable(1) {
+        _, _, new ->
 
         val d = new * price
 
