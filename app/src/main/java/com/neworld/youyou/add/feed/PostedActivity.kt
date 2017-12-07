@@ -164,7 +164,7 @@ class PostedActivity : Activity(), PhotoView {
         // 创建页面后弹出键盘
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
-        spacing = resources.getDimension(R.dimen.dp_15)
+        spacing = resources.getDimension(R.dimen.dp15)
         spanCount = 3
         val mRecyclerView = find<RecyclerView>(R.id.posted_recycler)
         mRecyclerView.layoutManager = GridLayoutManager(this, spanCount)

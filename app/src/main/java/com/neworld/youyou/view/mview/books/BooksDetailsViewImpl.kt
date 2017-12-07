@@ -23,7 +23,6 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.presenter.books.DetailImpl
-import com.neworld.youyou.utils.LogUtils
 import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.ToastUtil
 import com.neworld.youyou.utils.notNullSingleValue
@@ -46,7 +45,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         (width / 2 - pw) / 3
     }
     private val pd by lazy {
-        val dp15 = resources.getDimensionPixelSize(R.dimen.dp_15) * 2
+        val dp15 = resources.getDimensionPixelSize(R.dimen.dp15) * 2
         tv_1.measure(0, 0)
         (width - tv_1.measuredWidth * 4 - dp15) / 3
     }
@@ -54,7 +53,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     private val contentText by lazy {
         val textView = TextView(this@BooksDetailsViewImpl)
         textView.textSize = 14F
-        val dp15 = resources.getDimensionPixelSize(R.dimen.dp_15)
+        val dp15 = resources.getDimensionPixelSize(R.dimen.dp15)
         textView.setPadding(dp15, 0, dp15, 0)
         textView
     }

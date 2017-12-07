@@ -61,9 +61,9 @@
             <TextView
                 android:id="@+id/red_t"
                 style="@style/style_books_text"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginStart="@dimen/dp_15"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginLeft="@dimen/dp15"
+                android:layout_marginStart="@dimen/dp15"
+                android:layout_marginTop="@dimen/dp15"
                 android:background="@drawable/radius_text"
                 android:text="正版"
                 android:textColor="#FFF"
@@ -135,7 +135,7 @@
             <TextView
                 android:id="@+id/author"
                 style="@style/style_books_text_m"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp15"
                 android:ellipsize="end"
                 android:maxEms="22"
                 android:maxLines="1"
@@ -147,8 +147,8 @@
             <TextView
                 android:id="@+id/author_text"
                 style="@style/style_books_text_m"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginStart="@dimen/dp_15"
+                android:layout_marginLeft="@dimen/dp15"
+                android:layout_marginStart="@dimen/dp15"
                 android:ellipsize="end"
                 android:maxEms="17"
                 android:maxLines="1"
@@ -158,15 +158,15 @@
             <View
                 android:id="@+id/line3"
                 style="@style/style_lines"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginStart="@dimen/dp_15"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginLeft="@dimen/dp15"
+                android:layout_marginStart="@dimen/dp15"
+                android:layout_marginTop="@dimen/dp15"
                 app:layout_constraintTop_toBottomOf="@id/author" />
 
             <TextView
                 android:id="@+id/press"
                 style="@style/style_books_text_m"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp15"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/str_press"
@@ -185,15 +185,15 @@
             <View
                 android:id="@+id/line4"
                 style="@style/style_lines"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginStart="@dimen/dp_15"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginLeft="@dimen/dp15"
+                android:layout_marginStart="@dimen/dp15"
+                android:layout_marginTop="@dimen/dp15"
                 app:layout_constraintTop_toBottomOf="@id/press" />
 
             <TextView
                 android:id="@+id/tv_1"
                 style="@style/style_books_text_l"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp15"
                 android:drawableLeft="@drawable/right_"
                 android:drawablePadding="3dp"
                 android:drawableStart="@drawable/right_"
@@ -235,7 +235,7 @@
                 android:id="@+id/line5"
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp15"
                 android:background="#F2F2F4"
                 app:layout_constraintTop_toBottomOf="@id/tv_1" />
 
@@ -243,7 +243,7 @@
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp15"
                 app:layout_constraintTop_toBottomOf="@id/line5" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

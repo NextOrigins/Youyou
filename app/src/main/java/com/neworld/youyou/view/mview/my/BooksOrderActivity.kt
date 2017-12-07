@@ -5,10 +5,15 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.TextView
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
+import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.NetBuild
+import com.neworld.youyou.utils.ToastUtil
+import com.neworld.youyou.utils.notNullSingleValue
 import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_books_order.*
 import org.jetbrains.anko.doAsync
@@ -18,7 +23,30 @@ import org.jetbrains.anko.doAsync
  */
 class BooksOrderActivity : Activity() {
 
-    val userId by preference("userId", "")
+    private val userId by preference("userId", "")
+    private var mAdapter: Adapter<ResponseBean.OrderMenu> by notNullSingleValue()
+    private val list = arrayListOf<ResponseBean.OrderMenu>()
+
+    val obs = object : Adapter.AdapterObs<ResponseBean.OrderMenu> {
+
+        override fun onBind(holder: Adapter.Holder?, bean: MutableList<ResponseBean.OrderMenu>, position: Int) {
+            val data = bean[position]
+            val delete = holder!!.find<TextView>(R.id.item_delete)
+            val date = holder.find<TextView>(R.id.item_date)
+            val price = holder.find<TextView>(R.id.item_price)
+            val name = holder.find<TextView>(R.id.item_books_name)
+            val icon = holder.find<ImageView>(R.id.item_icon)
+            val sum = holder.find<TextView>(R.id.item_num)
+            val total = holder.find<TextView>(R.id.item_total)
+
+            delete.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.delete_address, 0)
+            delete.compoundDrawablePadding = resources.getDimensionPixelOffset(R.dimen.dp10)
+
+            date.text = data.date
+        }
+
+        override fun layoutId(): Int = R.layout.item_books_order
+    }
 
     override fun getContentLayoutId() = R.layout.activity_books_order
 
@@ -34,21 +62,20 @@ class BooksOrderActivity : Activity() {
     override fun initWidget() {
         _close.setOnClickListener { finish() }
 
+        mAdapter = Adapter(obs, list)
         _recycler.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false)
-        hashMapOf<CharSequence, CharSequence>().run {
-            put("userId", userId)
-            doAsync {
-                NetBuild.response({
-
-                }, {
-
-                }, 190, ResponseBean.OrderMenu::class.java, this@run)
-            }
-        }
+        _recycler.adapter = mAdapter
     }
 
-    override fun initData() {
-
+    override fun initData() = hashMapOf<CharSequence, CharSequence>().run {
+        put("userId", userId)
+        doAsync {
+            NetBuild.response({
+                list.addAll(it.menuList)
+                mAdapter.notifyDataSetChanged()
+            }, ToastUtil::showToast, 190, ResponseBean.BooksOrderBean::class.java, this@run)
+        }
+        Unit
     }
 }

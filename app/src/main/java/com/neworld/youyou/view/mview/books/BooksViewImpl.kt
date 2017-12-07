@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.CardView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -69,7 +70,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
                     b = false
                 }
             }
-            2 -> showSnackbar(swipe!!, "没有更多数据了_", 2000)
+            2 -> showSnackbar(swipe!!, "没有更多数据了_")
         }
     }
 
@@ -77,20 +78,21 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
         override fun onBind(holder: Adapter.Holder?, bean: MutableList<ResponseBean.Menu>?, position: Int) {
             val img = holder!!.find<ImageView>(R.id.iconImg)
+            val cd = holder.find<CardView>(R.id.cd)
             val name = holder.find<TextView>(R.id.name)
             val author = holder.find<TextView>(R.id.author)
             val price = holder.find<TextView>(R.id.price)
             val constPrice = holder.find<TextView>(R.id.const_price)
 
             constPrice.paint.flags = Paint.STRIKE_THRU_TEXT_FLAG
-            img.layoutParams.width = width
-            img.layoutParams.height = width * 1389 / 1000
+            cd.layoutParams.width = width
+            cd.layoutParams.height = width * 1389 / 1000
 
             val data = bean!![position]
             val sPrice: CharSequence = "¥${data.price}"
             val sConstPrice: CharSequence = "¥${data.constPrice}"
 
-            img.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            img.scaleType = ImageView.ScaleType.FIT_CENTER
 
             val options = RequestOptions()
                     .placeholder(R.drawable.book_place_bg)
