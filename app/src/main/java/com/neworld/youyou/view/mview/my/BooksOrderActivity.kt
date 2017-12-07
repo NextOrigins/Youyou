@@ -7,8 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
-import com.neworld.youyou.add.common.Adapter
-import com.neworld.youyou.utils.LogUtils
+import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.NetBuild
 import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_books_order.*
@@ -40,8 +39,11 @@ class BooksOrderActivity : Activity() {
         hashMapOf<CharSequence, CharSequence>().run {
             put("userId", userId)
             doAsync {
-                val response = NetBuild.getResponse(this@run, 190)
-                LogUtils.LOG_JSON(response)
+                NetBuild.response({
+
+                }, {
+
+                }, 190, ResponseBean.OrderMenu::class.java, this@run)
             }
         }
     }

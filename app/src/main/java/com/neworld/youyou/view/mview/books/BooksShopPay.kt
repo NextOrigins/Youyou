@@ -23,6 +23,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.Delegates
 
 /**
@@ -33,7 +34,7 @@ class BooksShopPay : Activity() {
     private val price by lazy { intent.getStringExtra("price").toDouble() }
     private val icon by lazy { intent.getStringExtra("iconImg") }
     private val name by lazy { intent.getStringExtra("name") }
-    private val bookId by lazy { intent.getStringExtra("bookId") }
+    private val bookId by lazy { intent.getIntExtra("bookId", 0).toString() }
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("userId", userId),
                 Pair("orderId", orderId), Pair("addressId", addressId))

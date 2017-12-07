@@ -22,19 +22,19 @@ class BooksImpl<T>(view: RecyclerDataView<T>) : BooksPresenter<T> {
         model.request({
             view?.removeAll()
             view?.addAll(it)
+            view?.hideProgress()
             view?.pullRefresh(false)
             view?.notifyData()
         }, {
+            view?.hideProgress()
             view?.showToast(it)
             view?.pullRefresh(false)
         }, map, url, clazz)
-        view?.hideProgress()
     }
 
     override fun up(map: HashMap<CharSequence, CharSequence>, url: Int, clazz: Class<T>) {
         model.request({
             view?.addAll(it)
-//            view?.notifyData()
         }, {
             view?.showToast(it)
         }, map, url, clazz)
