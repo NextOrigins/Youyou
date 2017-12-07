@@ -3,15 +3,13 @@ package com.neworld.youyou.view.mview.books
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.Point
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -19,15 +17,12 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.SpacesItemDecoration
 import com.neworld.youyou.add.base.Fragment
-import com.neworld.youyou.add.common.PullToAdapter
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.presenter.books.BooksImpl
 import com.neworld.youyou.showSnackbar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.RecyclerDataView
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 /**
@@ -50,8 +45,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     private var presenter: BooksImpl<ResponseBean.BooksBean>? = null
 
     private var recycler: RecyclerView by notNullSingleValue()
-
-    private var b = true
+    private var progress: ProgressBar by notNullSingleValue()
 
     private val token by preference("token", "")
     private val userId by preference("userId", "")
@@ -61,19 +55,21 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
                 , Pair("token", token), Pair("userId", userId))
     }
 
-    private var requestCount by Delegates.observable(0) {
-        _, old, new ->
-        if (old != new) {
-            val upMap = HashMap<CharSequence, CharSequence>()
-            upMap.put("type", "0")
-            upMap.put("CreateDate", list[new].createDate)
-            upMap.put("token", token)
-            upMap.put("userId", userId)
-            presenter?.up(upMap, 178, ResponseBean.BooksBean::class.java)
-            b = false
-        } else if (b) {
-            showSnackbar(swipe!!, "没有更多数据了_", 2000)
-            b = false
+    private var b: Boolean = true
+
+    private var requestCount by Delegates.observable(0) { _, _, new ->
+        when (new) {
+            1 -> {
+                if (b && list.isNotEmpty()) hashMapOf<CharSequence, CharSequence>().run {
+                    put("type", "0")
+                    put("CreateDate", list[list.size - 1].createDate)
+                    put("token", token)
+                    put("userId", userId)
+                    presenter?.up(this, 178, ResponseBean.BooksBean::class.java)
+                    b = false
+                }
+            }
+            2 -> showSnackbar(swipe!!, "没有更多数据了_", 2000)
         }
     }
 
@@ -126,11 +122,11 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
         override fun layoutId(): Int = R.layout.item_books
     }
 
-    private val scrollListener = object: RecyclerView.OnScrollListener() {
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
             if (newState == RecyclerView.SCROLL_STATE_IDLE)
                 if (!recyclerView!!.canScrollVertically(1))
-                    requestCount = mAdapter.itemCount - 1
+                    requestCount = 1
         }
     }
 
@@ -138,17 +134,12 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
     override fun initArgs(bundle: Bundle?) {
         presenter = BooksImpl(this@BooksViewImpl)
-        // 白底黑字状态栏 . api大于23 (Android6.0)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            activity.window.statusBarColor = ContextCompat.getColor(context, R.color.status_bar)
-        }
     }
 
     override fun initWidget(root: View) {
         swipe = root.findViewById(R.id.swipe)
         recycler = root.findViewById(R.id.recycler)
+        progress = root.findViewById(R.id._progress)
         recycler.layoutManager = GridLayoutManager(activity, spanCount)
         mAdapter = Adapter(obs, list)
         recycler.adapter = mAdapter
@@ -172,7 +163,20 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     }
 
     override fun addAll(t: ResponseBean.BooksBean) {
-        list.addAll(t.menuList)
+        if (list.isNotEmpty()) {
+            list.run {
+                val menu = get(size - 1)
+                val p0 = t.menuList
+                val p1: ResponseBean.Menu? = if (p0.isNotEmpty()) p0[p0.size - 1] else null
+                if (p1 == null || menu.createDate == p1.createDate) {
+                    requestCount = 2
+                } else {
+                    list.addAll(p0)
+                    notifyData()
+                }
+            }
+        } else
+            list.addAll(t.menuList)
     }
 
     override fun removeAll() {
@@ -182,6 +186,10 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
     override fun showToast(str: String) {
         ToastUtil.showToast(str)
     }
+
+    override fun showProgress() = progress.run { visibility = View.VISIBLE }
+
+    override fun hideProgress() = progress.run { visibility = View.GONE }
 
     override fun pullRefresh(b: Boolean) {
         swipe?.post {

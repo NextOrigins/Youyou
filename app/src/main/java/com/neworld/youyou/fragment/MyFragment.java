@@ -1,11 +1,17 @@
 package com.neworld.youyou.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,11 +32,13 @@ import com.neworld.youyou.add.feed.FeedbackActivity;
 import com.neworld.youyou.bean.HotBean;
 import com.neworld.youyou.bean.PersonDataBean;
 import com.neworld.youyou.bean.ReturnStatus;
+import com.neworld.youyou.dialog.DialogUtils;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.Util;
+import com.neworld.youyou.view.mview.my.BooksOrderActivity;
 import com.neworld.youyou.view.nine.CircleImageView;
 
 import java.util.List;
@@ -57,6 +65,9 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private MainActivity activity;
     private TextView mTv_name;
 
+    private LinearLayout parent;
+    private View dialogView;
+
 
     @Override
     public View createView() {
@@ -66,6 +77,14 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         initUser();
         initView();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        parent = root.findViewById(R.id._parent);
+        dialogView = LayoutInflater.from(context)
+                .inflate(R.layout.dialog_order, parent, false);
     }
 
     private void initUser() {
@@ -251,7 +270,20 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, AddChildActivity.class));
                 break;
             case R.id.my_subject:
-                startActivity(new Intent(context, MySubjectActivity.class));
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                if (dialogView.getParent() != null)
+                    ((ViewGroup) dialogView.getParent()).removeView(dialogView);
+                builder.setView(dialogView);
+                AlertDialog show = builder.show();
+                show.getWindow().setBackgroundDrawableResource(R.drawable.dialog_fillet);
+                dialogView.findViewById(R.id._study_order).setOnClickListener(study -> {
+                    startActivity(new Intent(context, MySubjectActivity.class));
+                    show.dismiss();
+                });
+                dialogView.findViewById(R.id._books_order).setOnClickListener(books -> {
+                    startActivity(new Intent(context, BooksOrderActivity.class));
+                    show.dismiss();
+                });
                 break;
             case R.id.my_favorites:
                 startActivity(new Intent(context, MyCollectActivity.class));

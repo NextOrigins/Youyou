@@ -96,5 +96,7 @@
     <string name="buyer_msg">买家留言 : </string>
     <string name="_12_4">选填 : 对本次交易的说明</string>
     <string name="commit_order">提交订单</string>
+    <string name="study_order">考证订单</string>
+    <string name="books_order">图书订单</string>
 
 </resources>

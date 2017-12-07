@@ -231,5 +231,14 @@
         <item name="android:background">#F0EFF5</item>
     </style>
 
+    <style name="style_item_books_order_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/dp10</item>
+        <item name="android:layout_marginStart">@dimen/dp10</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <dimen name="sp12">12sp</dimen>
 </resources>

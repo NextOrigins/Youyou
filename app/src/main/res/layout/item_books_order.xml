@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/item_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@mipmap/delete_subject"
+        android:drawablePadding="@dimen/dp10"
+        android:drawableRight="@mipmap/delete_subject"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="#FD7B1D"
+        android:textSize="@dimen/sp14"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="待支付" />
+
+    <TextView
+        android:id="@+id/item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp10"
+        android:layout_marginStart="@dimen/dp10"
+        android:padding="5dp"
+        android:textSize="@dimen/sp14"
+        app:layout_constraintBottom_toBottomOf="@id/item_delete"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2017-12-7 11:58:51" />
+
+    <View
+        android:id="@+id/line1"
+        style="@style/style_lines"
+        app:layout_constraintTop_toBottomOf="@id/item_delete" />
+
+    <TextView
+        android:id="@+id/item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
+        android:textColor="#FF4640"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_delete"
+        tools:text="¥50.00" />
+
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="@dimen/dp75"
+        android:layout_height="@dimen/dp75"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/item_price"
+        tools:src="@mipmap/bigimage"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/item_books_name"
+        android:maxEms="11"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintLeft_toRightOf="@id/item_icon"
+        app:layout_constraintTop_toTopOf="@id/item_price"
+        tools:text="新概念英语青少年版(5A)"
+        style="@style/style_item_books_order_text_style" />
+
+    <TextView
+        android:id="@+id/item_total"
+        tools:text="共1件商品 合计: ¥60.00(含运费¥10.00)"
+        style="@style/style_item_books_order_text_style"
+        app:layout_constraintLeft_toRightOf="@id/item_icon"
+        app:layout_constraintBottom_toBottomOf="@id/item_icon"
+        android:layout_width="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="@dimen/sp14" />
+
+    <TextView
+        tools:text="数量: x1"
+        android:textSize="@dimen/sp14"
+        android:textColor="#B7B7B7"
+        app:layout_constraintLeft_toRightOf="@id/item_icon"
+        app:layout_constraintTop_toTopOf="@id/item_books_name"
+        app:layout_constraintBottom_toBottomOf="@id/item_total"
+        style="@style/style_item_books_order_text_style" />
+</android.support.constraint.ConstraintLayout>

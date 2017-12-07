@@ -36,4 +36,11 @@
             android:overScrollMode="never"
             android:padding="10dp" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/_progress"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -13,7 +13,14 @@ import kotlinx.android.synthetic.main.activity_detail_comment.*
  * @author by user on 2017/11/21.
  * 回复页面
  */
-class DetailViewImpl<T> : Activity(), RecyclerDataView<T> {
+class ReplyViewImpl<T> : Activity(), RecyclerDataView<T> {
+    override fun showProgress() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hideProgress() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun pullRefresh(b: Boolean) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -53,7 +60,7 @@ class DetailViewImpl<T> : Activity(), RecyclerDataView<T> {
         }
 
         close.setOnClickListener { onBackPressed() }
-        recycler.layoutManager = LinearLayoutManager(this@DetailViewImpl,
+        recycler.layoutManager = LinearLayoutManager(this@ReplyViewImpl,
                 LinearLayoutManager.VERTICAL, false)
 
     }

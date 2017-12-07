@@ -3,6 +3,7 @@ package com.neworld.youyou
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 
 import android.os.Handler
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
+import android.view.View
 import android.view.ViewGroup
 
 import android.view.WindowManager
@@ -32,6 +34,7 @@ import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.umeng.socialize.UMShareAPI
+import com.umeng.socialize.utils.DeviceConfig.context
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 
@@ -155,12 +158,47 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
         //clearBackStack();
+        var b = false
         when (checkedId) {
-            R.id.rb_parent -> changePage(parentFragment, null)
-            R.id.rb_subject -> changePage(subjectFragment, null)
-            R.id.rb_hot -> changePage(hotFragment, null)
-            R.id.rb_my -> changePage(myFragment, null)
-            R.id.rb_books -> changePage(booksFragment, null)
+            R.id.rb_parent -> {
+                b = false
+                changePage(parentFragment, null)
+            }
+            R.id.rb_subject -> {
+                b = false
+                changePage(subjectFragment, null)
+            }
+            R.id.rb_hot -> {
+                b = false
+                changePage(hotFragment, null)
+            }
+            R.id.rb_my -> {
+                b = false
+                changePage(myFragment, null)
+            }
+            R.id.rb_books -> {
+                b = true
+                changePage(booksFragment, null)
+            }
+        }
+        statusBar(b)
+    }
+
+    private fun statusBar(b: Boolean) {
+        if (b) {
+            // 白底黑字状态栏 . api大于23 (Android6.0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
+            }
+        } else {
+            // 改回蓝底白字 . api大于23 (Android6.0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                window.statusBarColor = ContextCompat.getColor(baseContext, R.color.colorPrimaryDark)
+            }
         }
     }
 

@@ -43,6 +43,7 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
 
         if (!TextUtils.isEmpty(result)) {
             parseJson(result!!)
+//            LogUtils.LOG_JSON("UpDate ? $result")
         }
     }
 

@@ -139,7 +139,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 
         feed_close.setOnClickListener { finish() }
         feed_posted.setOnClickListener(this)
-//        feed_posted.setOnClickListener { startActivity(Intent(this@FeedbackActivity, DetailViewImpl::class.java)) }
+//        feed_posted.setOnClickListener { startActivity(Intent(this@FeedbackActivity, ReplyViewImpl::class.java)) }
     }
 
     override fun initData() {

@@ -24,6 +24,7 @@ public abstract class BaseFragment extends Fragment {
     private LoadPager mLoadPager;
     public Context context;
     public FragmentActivity mActivity;
+    protected View root;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +51,11 @@ public abstract class BaseFragment extends Fragment {
             };
         }
         return mLoadPager; //返回加载的页面
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        root = view;
     }
 
     //返回界面

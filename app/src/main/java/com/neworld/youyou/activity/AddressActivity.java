@@ -179,7 +179,11 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.rl_addAddress:
                 findViewById(R.id.rl_addAddress).setOnClickListener(null);
                 new Handler().postDelayed(() -> findViewById(R.id.rl_addAddress).setOnClickListener(this), 800);
-                startActivityForResult(new Intent(this, AddNewAddressActivity.class), 666);
+                boolean fromPay = getIntent().getBooleanExtra("fromPay", false);
+                if (fromPay)
+                    startActivityForResult(new Intent(this, AddNewAddressActivity.class), 666);
+                else
+                    startActivity(new Intent(this, AddNewAddressActivity.class));
                 break;
             case R.id.iv_cancel:
                 onBackPressed();
