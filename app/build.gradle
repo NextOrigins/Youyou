@@ -18,18 +18,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-//            signingConfig signingConfigs.debug
         }
 
-        signingConfigs {
-            debug {
-                storeFile file('C:\\Users\\user\\Desktop\\youyou.jks')
-                storePassword "123456"
-                keyAlias "you"
-                keyPassword "123456"
-            }
-        }
+//        signingConfigs {
+//            debug {
+//                storeFile file('C:\\Users\\user\\Desktop\\youyou.jks')
+//                storePassword "123456"
+//                keyAlias "you"
+//                keyPassword "123456"
+//            }
+//        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
