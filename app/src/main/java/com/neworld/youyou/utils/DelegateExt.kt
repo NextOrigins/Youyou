@@ -2,8 +2,12 @@ package com.neworld.youyou.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.preference.Preference
+import com.neworld.youyou.dialog.DialogUtils
 import com.neworld.youyou.manager.MyApplication
+import com.umeng.socialize.utils.DeviceConfig.context
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -22,6 +26,25 @@ fun <T : Any> preference(name: String, default: T, context: Context = MyApplicat
  */
 fun <T> notNullSingleValue():
         ReadWriteProperty<Any?, T> = NotNullInitialized()
+
+/**
+ * dialog
+ */
+fun displayDialog(context: Context, content: String, enter: () -> Unit = { },
+                  positive: String = "确定", cancel: () -> Unit = { }, negative: String = "取消") {
+    DialogUtils.showDialog(context, content, "确定", negative,
+            object : DialogUtils.onDiaLogBtnListener {
+                override fun onNegativeListener(dialog: DialogInterface?) {
+                    cancel.invoke()
+                    dialog?.dismiss()
+                }
+
+                override fun onPositiveListener(dialog: DialogInterface?) {
+                    enter.invoke()
+                    dialog?.dismiss()
+                }
+            })
+}
 
 private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {
     private var value: T? = null

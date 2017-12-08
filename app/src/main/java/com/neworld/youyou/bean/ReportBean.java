@@ -32,7 +32,7 @@ public class ReportBean {
 
         public int sumCount;
         public String Iconimgs;
-        public int bugId;
+        public String bugId;
         public int parent_cid;
         public int from_uid;
         public String content;

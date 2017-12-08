@@ -15,6 +15,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.widget.GridLayoutManager
@@ -24,6 +25,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 
@@ -34,12 +36,13 @@ import com.neworld.youyou.activity.PublishDetailActivity
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.SpacesItemDecoration
-import com.neworld.youyou.dialog.DialogUtils
 import com.neworld.youyou.presenter.me.PhotoPresenterImpl
 import com.neworld.youyou.select.ImageSelectorUtils
 import com.neworld.youyou.utils.LogUtils
 import com.neworld.youyou.utils.ToastUtil
+import com.neworld.youyou.utils.displayDialog
 import com.neworld.youyou.view.mview.PhotoView
+import kotlinx.android.synthetic.main.activity_posted.*
 
 import java.io.File
 import java.util.ArrayList
@@ -175,7 +178,8 @@ class PostedActivity : Activity(), PhotoView {
         val content = find<EditText>(R.id.posted_content)
 
         find<View>(R.id.posted_close).setOnClickListener { finished() }
-        find<View>(R.id.posted_commit).setOnClickListener { // 提交
+        find<View>(R.id.posted_commit).setOnClickListener {
+            // 提交
             photoImpl?.commitFeedBack(content.text.toString(), compressionPhotos)
         }
     }
@@ -277,7 +281,7 @@ class PostedActivity : Activity(), PhotoView {
         super.onActivityResult(requestCode, resultCode, data)
         val photoShop = 4
         when (requestCode) {
-            // 照相意图返回
+        // 照相意图返回
             openCamera -> if (resultCode == Activity.RESULT_OK) {
                 val uri = Uri.fromFile(tempFile)
                 val intent = Intent(this, ClipImageActivity::class.java)
@@ -285,7 +289,7 @@ class PostedActivity : Activity(), PhotoView {
                 intent.data = uri
                 startActivityForResult(intent, photoShop)
             }
-            // 图片剪切后
+        // 图片剪切后
             photoShop -> {
                 val uri = data?.data ?: return
                 val path = uri.path
@@ -365,7 +369,8 @@ class PostedActivity : Activity(), PhotoView {
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 openCamera()
             else
-                DialogUtils.showDialog(this, "请到权限管理中添加照相机或存储数据权限, 否则不能调用相机保存照片", "确定", "") { dialog, _ -> dialog.dismiss() }
+                displayDialog(this, "请到权限管理中添加照相机或存储数据权限, 否则不能调用相机保存照片",
+                        {}, "确定", {}, "")
             writeExternalPermission -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 openCamera()
             else
@@ -398,14 +403,14 @@ class PostedActivity : Activity(), PhotoView {
     }
 
     private fun finished(b: Boolean = true) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (imm.isActive)
+            if (this@PostedActivity.currentFocus.windowToken != null)
+                imm.hideSoftInputFromWindow(currentFocus.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         if (b) {
-            DialogUtils.showDialog(this, "确定关闭吗", "确定", "取消") { dialog, _ ->
-                dialog.dismiss()
-                super.onBackPressed()
-            }
+            displayDialog(this, "确定关闭吗", { finished(false) })
 
         } else super.onBackPressed()
-
     }
 
     /**

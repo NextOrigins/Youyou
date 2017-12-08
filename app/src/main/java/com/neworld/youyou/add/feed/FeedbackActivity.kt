@@ -19,10 +19,10 @@ import com.neworld.youyou.activity.PhotoDetailActivity
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.bean.ReportBean
-import com.neworld.youyou.dialog.DialogUtils
 import com.neworld.youyou.utils.NetBuild
 import com.neworld.youyou.utils.Sputil
 import com.neworld.youyou.utils.ToastUtil
+import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_feed_back.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -40,6 +40,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 
     private var mAdapter: Adapter<ReportBean.ResultsBean>? = null
     internal var list: MutableList<ReportBean.ResultsBean> = ArrayList()
+    private val userId by preference("userId", "")
 
     /**
      * 回调onBindViewHolder
@@ -98,26 +99,39 @@ class FeedbackActivity : Activity(), View.OnClickListener {
                 startActivity(intentImage)
             }
 
-            // 删除条目，暂不需简化
+            // 删除条目
             holder.find<View>(R.id.back_delete).setOnClickListener {
-                DialogUtils.showDialog(this@FeedbackActivity, "确定删除吗", "确定", "取消") { dialog, _ ->
-                    val userId = Sputil.getString(baseContext, "userId", "")
+                com.neworld.youyou.utils.displayDialog(this@FeedbackActivity, "确定删除吗", {
                     doAsync {
-                        val map = HashMap<String, String>()
-                        map.put("userId", userId)
-                        map.put("bugId", data.bugId.toString())
-                        val response = NetBuild.getResponse(map, 175)
-                        if (response.contains("{\"status\":0}")) {
-                            uiThread {
-                                mAdapter?.remove(position)
-                            }
-                        } else {
-                            uiThread { ToastUtil.showToast("删除失败, 请稍后重试") }
+                        hashMapOf<CharSequence, CharSequence>().run {
+                            put("userId", userId)
+                            put("bugId", data.bugId)
+                            val response = NetBuild.getResponse(this@run, 175)
+                            if (response.contains("0"))
+                                uiThread { mAdapter?.remove(position) }
+                            else
+                                uiThread { ToastUtil.showToast("删除失败, 请检查网络后重试") }
                         }
                     }
-
-                    dialog.dismiss()
-                }
+                })
+//                DialogUtils.displayDialog(this@FeedbackActivity, "确定删除吗", "确定", "取消") { dialog, _ ->
+//                    val userId = Sputil.getString(baseContext, "userId", "")
+//                    doAsync {
+//                        val map = HashMap<String, String>()
+//                        map.put("userId", userId)
+//                        map.put("bugId", data.bugId.toString())
+//                        val response = NetBuild.getResponse(map, 175)
+//                        if (response.contains("{\"status\":0}")) {
+//                            uiThread {
+//                                mAdapter?.remove(position)
+//                            }
+//                        } else {
+//                            uiThread { ToastUtil.showToast("删除失败, 请稍后重试") }
+//                        }
+//                    }
+//
+//                    dialog.dismiss()
+//                }
             }
         }
 

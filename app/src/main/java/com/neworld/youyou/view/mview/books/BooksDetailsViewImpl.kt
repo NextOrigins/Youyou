@@ -77,6 +77,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     }
 
     private var bkId: Int by notNullSingleValue()
+    private var expressFee: Double by notNullSingleValue()
 
     private var presenter: DetailImpl<ResponseBean.BooksDetailBean>? = null
 
@@ -129,6 +130,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
             intent.putExtra("iconImg", iconImg)
             intent.putExtra("name", name)
             intent.putExtra("bookId", bkId)
+            intent.putExtra("expressFee", expressFee)
             startActivity(intent)
         }
 
@@ -174,6 +176,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         val ep: CharSequence = "快递: ${menuList.expressFee}"
         val cps: CharSequence = "¥ ${menuList.constPrice}"
         val sl: CharSequence = "销售${menuList.count}笔"
+        val es = "快递费: ${menuList.expressFee}"
 
         name.text = menuList.bookName                   // 书名
         price.text = sps                                // 售价
@@ -182,6 +185,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         sale.text = sl                                  // 月销
         author_text.text = menuList.author              // 作者
         press_text.text = menuList.publishDate          // 地址
+        ems.text = es                                    // 邮费
 
         praise.text = menuList.likeSum.toString()
         stars.text = menuList.collectSum.toString()
@@ -210,6 +214,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         }
 
         bkId = menuList.id
+        expressFee = menuList.expressFee
     }
 
     override fun showError(str: String) {

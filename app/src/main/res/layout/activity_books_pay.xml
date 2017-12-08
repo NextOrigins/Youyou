@@ -205,10 +205,11 @@
             app:layout_constraintTop_toBottomOf="@id/line2" />
 
         <TextView
+            android:id="@+id/_express_fee"
             style="@style/style_books_text_m"
             android:layout_marginEnd="@dimen/dp15"
             android:layout_marginRight="@dimen/dp15"
-            android:text="@string/_10_00"
+            tools:text="@string/_10_00"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/courier_mode"
             app:layout_constraintRight_toRightOf="parent" />

@@ -90,6 +90,46 @@
             android:tint="#33000000" />
     </FrameLayout>
 
+    <View
+        android:id="@+id/line1"
+        style="@style/lines"
+        android:background="#33000000"
+        app:layout_constraintTop_toBottomOf="@id/address_manager" />
+
+    <FrameLayout
+        android:id="@+id/message_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/line1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp5"
+            android:layout_marginStart="@dimen/dp5"
+            android:padding="@dimen/dp10"
+            android:text="@string/message_control"
+            android:textColor="#2b2b2b"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:contentDescription="@null"
+            android:src="@mipmap/jiantou"
+            android:tint="#33000000" />
+    </FrameLayout>
+
+    <View
+        android:id="@+id/line2"
+        style="@style/lines"
+        android:background="#33000000"
+        app:layout_constraintTop_toBottomOf="@id/message_control" />
+
     <Button
         android:id="@+id/bt_quit"
         android:layout_width="match_parent"
@@ -101,11 +141,5 @@
         android:text="@string/login_out"
         android:textColor="#FFF"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/address_manager" />
-
-    <View
-        android:id="@+id/line1"
-        style="@style/lines"
-        android:background="#33000000"
-        app:layout_constraintTop_toBottomOf="@id/address_manager" />
+        app:layout_constraintTop_toBottomOf="@id/line2" />
 </android.support.constraint.ConstraintLayout>

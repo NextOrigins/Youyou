@@ -41,7 +41,6 @@ class ResponseBean {
             val createDate: String //2017-08-20 11:48:43
     )
 
-
     // 图书详情
     data class BooksDetailBean(
             val menuList: MenuList,
@@ -98,13 +97,13 @@ class ResponseBean {
             val date: String, //null
             val msg: String, //null
             val updateDate: String, //2017-08-20 11:44:43
-            val orderMoney: Int, //50
-            val orderId: Int, //2604
-            val bookCount: String, //null
+            val orderMoney: Double, //50
+            val orderId: String, //2604
+            val bookCount: String, //1
             val publishDate: String, //外语教学与研究出版社
             val type: Int, //0
             val title: String,
-            val expressFee: Int, //10
+            val expressFee: Double, //10
             val contentImg: String, //http://106.14.251.200:8082/olopicture/book/3bq_book1.png
             val addressId: Int, //198
             val orderCreateDate: String, //2017-12-07 18:19:54.475
@@ -112,7 +111,7 @@ class ResponseBean {
             val likeSum: Int, //1
             val examinee_name: String, //新概念英语青少版(3B)
             val school: String, //null
-            val price: Int, //40
+            val price: Double, //40
             val outTradeNo: String, //201712071819546111
             val introduceImg: String, //null
             val id: Int, //24

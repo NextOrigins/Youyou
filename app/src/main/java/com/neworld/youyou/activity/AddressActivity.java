@@ -1,5 +1,6 @@
 package com.neworld.youyou.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,7 +97,9 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             //设置删除监听
             holder.find(R.id.rl_address_delete).setOnClickListener(v ->
                     DialogUtils.showDialog(AddressActivity.this, "确定要删除该地址吗?"
-                            , "确定", "取消", (dialog, which) ->
+                            , "确定", "取消", new DialogUtils.onDiaLogBtnListener() {
+                                @Override
+                                public void onPositiveListener(DialogInterface dialog) {
                                     new Thread(() -> {
                                         String base64 = Base64.encodeToString(("{\"addressId\":\"" + menuListBean.getId() + "\"}").getBytes(), Base64.DEFAULT);
                                         String replace = base64.replace("\n", "");
@@ -110,7 +113,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                                 ToastUtil.showToast("删除失败, 请稍后重试");
                                             }
                                         }
-                                    }).start()));
+                                    }).start();
+                                }
+
+                                @Override
+                                public void onNegativeListener(DialogInterface dialog) {
+                                    dialog.dismiss();
+                                }
+                            }));
 
             // 在购买商品页面点击条目返回地址并关闭
             holder.find(R.id.linear_finish).setOnClickListener(v -> {

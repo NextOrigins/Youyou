@@ -31,12 +31,12 @@ import kotlin.properties.Delegates
  */
 class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
-    private val spacing = 60F
+    private val spacing = 40F
     private val spanCount = 3
     private val width: Int by lazy {
         val point = Point()
         activity.windowManager.defaultDisplay.getSize(point)
-        ((point.x - spacing * (spanCount - 1)) / spanCount).toInt()
+        ((point.x - spacing * (spanCount - 1)) / spanCount).toInt() - 20
     }
 
     private var swipe: SwipeRefreshLayout? = null
@@ -86,7 +86,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
             constPrice.paint.flags = Paint.STRIKE_THRU_TEXT_FLAG
             cd.layoutParams.width = width
-            cd.layoutParams.height = width * 1389 / 1000
+            cd.layoutParams.height = width * 1420 / 1000
 
             val data = bean!![position]
             val sPrice: CharSequence = "¥${data.price}"
@@ -146,6 +146,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
         mAdapter = Adapter(obs, list)
         recycler.adapter = mAdapter
         recycler.addItemDecoration(SpacesItemDecoration(spanCount, spacing, false))
+        recycler.addOnScrollListener(scrollListener)
     }
 
     override fun initData() {
@@ -197,16 +198,6 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
         swipe?.post {
             swipe?.isRefreshing = b
         }
-    }
-
-    override fun onStart() {
-        recycler.addOnScrollListener(scrollListener)
-        super.onStart()
-    }
-
-    override fun onStop() {
-        recycler.removeOnScrollListener(scrollListener)
-        super.onStop()
     }
 
     override fun onDestroy() {

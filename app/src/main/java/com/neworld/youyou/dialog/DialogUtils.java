@@ -13,14 +13,15 @@ public class DialogUtils {
     public static void showDialog(Context context, String message, String positive, String negative, final onDiaLogBtnListener listener) {
         AlertDialog.Builder sBuilder = new AlertDialog.Builder(context);
         sBuilder.setMessage(message);
-        sBuilder.setNegativeButton(negative, (dialog, which) -> dialog.dismiss());
-        sBuilder.setPositiveButton(positive, listener::onPositiveListener);
+        sBuilder.setNegativeButton(negative, (dialog, which) -> listener.onNegativeListener(dialog));
+        sBuilder.setPositiveButton(positive, (dialog, which) -> listener.onPositiveListener(dialog));
         sBuilder.setCancelable(true);
         sBuilder.show();
     }
 
     public interface onDiaLogBtnListener {
-        void onPositiveListener(DialogInterface dialog, int which);
+        void onPositiveListener(DialogInterface dialog);
+        void onNegativeListener(DialogInterface dialog);
     }
 
 }

@@ -3,17 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/dp15">
 
     <TextView
         android:id="@+id/item_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp10"
         android:drawableEnd="@mipmap/delete_subject"
-        android:drawablePadding="@dimen/dp10"
+        android:drawablePadding="@dimen/dp5"
         android:drawableRight="@mipmap/delete_subject"
         android:gravity="center"
-        android:padding="5dp"
+        android:paddingBottom="@dimen/dp5"
+        android:paddingTop="@dimen/dp10"
         android:textColor="#FD7B1D"
         android:textSize="@dimen/sp14"
         app:layout_constraintRight_toRightOf="parent"
@@ -41,12 +46,10 @@
         android:id="@+id/item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp10"
-        android:layout_marginRight="@dimen/dp10"
         android:layout_marginTop="@dimen/dp10"
         android:textColor="#FF4640"
         android:textSize="@dimen/sp16"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toRightOf="@id/item_delete"
         app:layout_constraintTop_toBottomOf="@id/item_delete"
         tools:text="¥50.00" />
 
@@ -54,10 +57,11 @@
         android:id="@+id/item_icon"
         android:layout_width="@dimen/dp75"
         android:layout_height="@dimen/dp75"
-        android:layout_marginLeft="@dimen/dp15"
-        android:layout_marginStart="@dimen/dp15"
+        android:layout_marginLeft="@dimen/dp5"
+        android:layout_marginStart="@dimen/dp5"
         android:contentDescription="@null"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:scaleType="centerCrop"
+        app:layout_constraintLeft_toLeftOf="@id/item_date"
         app:layout_constraintTop_toTopOf="@id/item_price"
         tools:src="@mipmap/bigimage" />
 

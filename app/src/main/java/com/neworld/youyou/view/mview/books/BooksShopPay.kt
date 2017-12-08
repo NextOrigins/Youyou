@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.exp
 import kotlin.properties.Delegates
 
 /**
@@ -35,6 +36,7 @@ class BooksShopPay : Activity() {
     private val icon by lazy { intent.getStringExtra("iconImg") }
     private val name by lazy { intent.getStringExtra("name") }
     private val bookId by lazy { intent.getIntExtra("bookId", 0).toString() }
+    private val expressFee by lazy { intent.getDoubleExtra("expressFee", 0.0) }
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("userId", userId),
                 Pair("orderId", orderId), Pair("addressId", addressId))
@@ -68,7 +70,7 @@ class BooksShopPay : Activity() {
 
         val d = new * price
 
-        money = (d + 10).toString()
+        money = (d + expressFee).toString()
         count.text = new.toString()
 
         var str = "¥$d"
@@ -80,7 +82,7 @@ class BooksShopPay : Activity() {
         str = "共${new}件商品"
         commodity.text = str
 
-        str = "¥${d + 10}"
+        str = "¥$money"
         total.text = str
 
         str = "合计: $str"
@@ -121,6 +123,7 @@ class BooksShopPay : Activity() {
                 put("phone", _phone.text)
                 put("spbill_create_ip", ip!!)
                 put("orderId", orderId)
+                put("count", totalPrice.toString())
                 doAsync {
                     val response = NetBuild.getResponse(this@run, 188)
                     val pay: Pay = Gson().fromJson(response,
@@ -164,6 +167,8 @@ class BooksShopPay : Activity() {
 
     override fun initData() {
         totalPrice = 1
+        val str = "快递费用${expressFee}元"
+        _express_fee.text = str
 
         val options = RequestOptions()
                 .placeholder(R.drawable.book_place_bg)

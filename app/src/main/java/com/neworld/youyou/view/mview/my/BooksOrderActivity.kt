@@ -2,21 +2,21 @@ package com.neworld.youyou.view.mview.my
 
 import android.os.Build
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.utils.NetBuild
-import com.neworld.youyou.utils.ToastUtil
-import com.neworld.youyou.utils.notNullSingleValue
-import com.neworld.youyou.utils.preference
+import com.neworld.youyou.utils.*
 import kotlinx.android.synthetic.main.activity_books_order.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /**
  * @author by user on 2017/12/7.
@@ -39,10 +39,48 @@ class BooksOrderActivity : Activity() {
             val sum = holder.find<TextView>(R.id.item_num)
             val total = holder.find<TextView>(R.id.item_total)
 
-            delete.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.delete_address, 0)
-            delete.compoundDrawablePadding = resources.getDimensionPixelOffset(R.dimen.dp10)
+            when (data.payStatus) {
+                0 -> {
+                    delete.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.delete_address, 0)
+                    delete.compoundDrawablePadding = resources.getDimensionPixelOffset(R.dimen.dp10)
+                    delete.text = "待支付"
+                    delete.setOnClickListener {
+                        displayDialog(this@BooksOrderActivity, "确定删除吗", {
+                            hashMapOf<CharSequence, CharSequence>().run {
+                                put("orderId", data.orderId)
+                                doAsync {
+                                    val response = NetBuild.getResponse(this@run, 148)
+                                    if (response.contains("0"))
+                                        uiThread { mAdapter.remove(position) }
+                                    else
+                                        ToastUtil.showToast("网络错误, 请重试")
+                                }
+                            }
+                        })
+                    }
+                }
+                1 -> {
+                    delete.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    delete.text = "已支付"
+                    delete.setOnClickListener(null)
+                }
+                else -> {
+                    delete.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    delete.text = "已发货"
+                    delete.setOnClickListener(null)
+                }
+            }
 
-            date.text = data.date
+            val s1 = "¥${data.price}"
+            val s2 = "数量: x${data.bookCount}"
+            val s3 = "共${data.bookCount}件商品 合计:¥${data.orderMoney}(含运费¥${data.expressFee})"
+            date.text = data.updateDate
+            name.text = data.bookName
+            price.text = s1
+            sum.text = s2
+            total.text = s3
+
+            Glide.with(icon).load(data.iconImg).into(icon)
         }
 
         override fun layoutId(): Int = R.layout.item_books_order
@@ -66,6 +104,7 @@ class BooksOrderActivity : Activity() {
         _recycler.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false)
         _recycler.adapter = mAdapter
+        _recycler.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
     override fun initData() = hashMapOf<CharSequence, CharSequence>().run {
