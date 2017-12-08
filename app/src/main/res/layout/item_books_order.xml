@@ -54,39 +54,38 @@
         android:id="@+id/item_icon"
         android:layout_width="@dimen/dp75"
         android:layout_height="@dimen/dp75"
-        android:layout_marginLeft="@dimen/dp15"
-        android:layout_marginStart="@dimen/dp15"
-        android:contentDescription="@null"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/item_price"
-        tools:src="@mipmap/bigimage" />
+        tools:src="@mipmap/bigimage"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/item_books_name"
-        style="@style/style_item_books_order_text_style"
         android:maxEms="11"
         android:textSize="@dimen/sp16"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
         app:layout_constraintTop_toTopOf="@id/item_price"
-        tools:text="新概念英语青少年版(5A)" />
+        tools:text="新概念英语青少年版(5A)"
+        style="@style/style_item_books_order_text_style" />
 
     <TextView
         android:id="@+id/item_total"
+        tools:text="共1件商品 合计: ¥60.00(含运费¥10.00)"
         style="@style/style_item_books_order_text_style"
-        android:layout_width="0dp"
-        android:textSize="@dimen/sp14"
-        app:layout_constraintBottom_toBottomOf="@id/item_icon"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
+        app:layout_constraintBottom_toBottomOf="@id/item_icon"
+        android:layout_width="0dp"
         app:layout_constraintRight_toRightOf="parent"
-        tools:text="共1件商品 合计: ¥60.00(含运费¥10.00)" />
+        android:textSize="@dimen/sp14" />
 
     <TextView
-        android:id="@+id/item_num"
-        style="@style/style_item_books_order_text_style"
-        android:textColor="#B7B7B7"
+        tools:text="数量: x1"
         android:textSize="@dimen/sp14"
-        app:layout_constraintBottom_toBottomOf="@id/item_total"
+        android:textColor="#B7B7B7"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
         app:layout_constraintTop_toTopOf="@id/item_books_name"
-        tools:text="数量: x1" />
+        app:layout_constraintBottom_toBottomOf="@id/item_total"
+        style="@style/style_item_books_order_text_style" />
 </android.support.constraint.ConstraintLayout>

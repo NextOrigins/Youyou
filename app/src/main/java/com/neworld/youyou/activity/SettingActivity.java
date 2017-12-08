@@ -22,6 +22,7 @@ import com.neworld.youyou.utils.Sputil;
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView ivClose;
+    private CardView rlName;
     private Button btQuit;
     private LinearLayout linearLayout;
     private String userId;
@@ -44,13 +45,14 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private void initView() {
         ivClose = $(R.id.iv_close);
+        rlName = $(R.id.rl_black_name);
         btQuit = $(R.id.bt_quit);
         linearLayout = $(R.id.ll_setting);
         ivClose.setOnClickListener(this);
+        rlName.setOnClickListener(this);
         btQuit.setOnClickListener(this);
 
-        $(R.id.black_list).setOnClickListener(this);
-        $(R.id.address_manager).setOnClickListener(this);
+        $(R.id.set_address).setOnClickListener(this);
     }
 
     @Override
@@ -59,13 +61,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.iv_close:
                 finish();
                 break;
-            case R.id.black_list:
-                startActivity(new Intent(SettingActivity.this, BlackNameActivity.class));
+            case R.id.rl_black_name:
+                enterBlackName(); // TODO : ''
                 break;
             case R.id.bt_quit:
                 tanDialog();
                 break;
-            case R.id.address_manager:
+            case R.id.set_address:
                 startActivity(new Intent(this, AddressActivity.class).putExtra("fromSetting", true));
                 break;
         }
@@ -111,6 +113,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }).start();
+    }
+
+    //进入黑明单页面
+    private void enterBlackName() {
+        startActivity(new Intent(SettingActivity.this, BlackNameActivity.class));
     }
 
     private <T extends View> T $(int res) {

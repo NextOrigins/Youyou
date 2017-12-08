@@ -41,7 +41,7 @@
     <dimen name="space_8">8dp</dimen>
     <dimen name="text_size_20">20sp</dimen>
 
-    <dimen name="dp15">15dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
     <dimen name="sp18">18sp</dimen>
 
     <dimen name="sp14">14sp</dimen>
