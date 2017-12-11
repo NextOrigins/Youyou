@@ -17,6 +17,7 @@ import com.neworld.youyou.utils.*
 import kotlinx.android.synthetic.main.activity_books_order.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.slf4j.MDC.put
 
 /**
  * @author by user on 2017/12/7.
@@ -107,13 +108,13 @@ class BooksOrderActivity : Activity() {
         _recycler.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
-    override fun initData() = hashMapOf<CharSequence, CharSequence>().run {
+    override fun initData() = with(hashMapOf<CharSequence, CharSequence>()) {
         put("userId", userId)
         doAsync {
             NetBuild.response({
                 list.addAll(it.menuList)
                 mAdapter.notifyDataSetChanged()
-            }, ToastUtil::showToast, 190, ResponseBean.BooksOrderBean::class.java, this@run)
+            }, ToastUtil::showToast, 190, ResponseBean.BooksOrderBean::class.java, this@with)
         }
         Unit
     }
