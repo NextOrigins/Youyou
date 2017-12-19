@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -78,7 +79,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
      */
     private Adapter.AdapterObs<AddressBean.MenuListBean> obs = new Adapter.AdapterObs<AddressBean.MenuListBean>() {
         @Override
-        public void onBind(Adapter.Holder holder, List<AddressBean.MenuListBean> bean, int position) {
+        public void onBind(@NonNull Adapter.Holder holder, @NonNull List<AddressBean.MenuListBean> bean, int position) {
             AddressBean.MenuListBean menuListBean = bean.get(position);
 
             TextView name = holder.find(R.id.tv_address_name);

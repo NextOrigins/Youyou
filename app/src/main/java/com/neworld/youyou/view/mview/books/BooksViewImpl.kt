@@ -76,8 +76,8 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
 
     private val obs = object : Adapter.AdapterObs<ResponseBean.Menu> {
 
-        override fun onBind(holder: Adapter.Holder?, bean: MutableList<ResponseBean.Menu>?, position: Int) {
-            val img = holder!!.find<ImageView>(R.id.iconImg)
+        override fun onBind(holder: Adapter.Holder, bean: MutableList<ResponseBean.Menu>, position: Int) {
+            val img = holder.find<ImageView>(R.id.iconImg)
             val cd = holder.find<CardView>(R.id.cd)
             val name = holder.find<TextView>(R.id.name)
             val author = holder.find<TextView>(R.id.author)
@@ -88,7 +88,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
             cd.layoutParams.width = width
             cd.layoutParams.height = width * 1420 / 1000
 
-            val data = bean!![position]
+            val data = bean[position]
             val sPrice: CharSequence = "¥${data.price}"
             val sConstPrice: CharSequence = "¥${data.constPrice}"
 

@@ -8,6 +8,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -50,6 +51,7 @@ public class ParentAdapter extends BaseAdapter {
     public void setBean(ParentBean bean) {
         menuList.clear();
         if (bean.stickNamicfoList != null) {
+
             menuList.addAll(bean.stickNamicfoList);
             LogUtils.E("top list size : " + bean.stickNamicfoList.size());
         }
@@ -120,34 +122,19 @@ public class ParentAdapter extends BaseAdapter {
             initData(menuListBean, holder, position);
         }
 
-        holder.ivIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onParentClick.onItemIcon(position);
-            }
-        });
+        holder.ivIcon.setOnClickListener(v -> onParentClick.onItemIcon(position));
 
-        holder.tvName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onParentClick.onItemName(position);
-            }
-        });
+        holder.tvName.setOnClickListener(v -> onParentClick.onItemName(position));
 
         if (menuList.get(position).isVisible) {
             holder.ivBlack.setVisibility(View.INVISIBLE);
             holder.ivBlack.setOnClickListener(null);
         } else {
             holder.ivBlack.setVisibility(View.VISIBLE);
-            holder.ivBlack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onParentClick.onItemAddBlack(position);
-                }
-            });
+            holder.ivBlack.setOnClickListener(v -> onParentClick.onItemAddBlack(position));
         }
 
-        holder.llFav.setOnClickListener(new View.OnClickListener() {
+        holder.llFav.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onParentClick.onItemFav(position);
@@ -165,20 +152,10 @@ public class ParentAdapter extends BaseAdapter {
                 }
             }
         });
-        holder.llComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onParentClick.onItemComment(v, position, menuList.get(position));
-            }
-        });
+        holder.llComment.setOnClickListener(v -> onParentClick.onItemComment(v, position, menuList.get(position)));
 
         //分享
-        holder.llShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onParentClick.onItemShare(position);
-            }
-        });
+        holder.llShare.setOnClickListener(v -> onParentClick.onItemShare(position));
 
         return convertView;
     }

@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author by user on 2017/11/13.
  */
@@ -68,7 +70,7 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
     /**
      * 初始化控件
      */
-    protected void initWidget(View root) {
+    protected void initWidget(@NotNull View root) {
     }
 
     /**

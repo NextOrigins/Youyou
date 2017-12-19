@@ -33,6 +33,7 @@ import com.neworld.youyou.utils.ToastUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
+import com.neworld.youyou.view.mview.ebook.EBooks
 import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.utils.DeviceConfig.context
 import kotlinx.android.synthetic.main.activity_main.*
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     val windowData: WindowManager
         get() = windowManager
 
-    private var booksFragment: BooksViewImpl? = null
+    private var booksFragment: EBooks? = null
 
     private var mBackPressedTime by Delegates.observable(0L) {
         _, old, new ->
@@ -90,7 +91,8 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         hotFragment = HotFragment()
         myFragment = MyFragment()
 
-        booksFragment = BooksViewImpl()
+//        booksFragment = BooksViewImpl()
+        booksFragment = EBooks()
 
         if (mainApplication == null) {
             mainApplication = application as MyApplication
@@ -176,7 +178,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 changePage(myFragment, null)
             }
             R.id.rb_books -> {
-                b = true
+//                b = true
                 changePage(booksFragment, null)
             }
         }

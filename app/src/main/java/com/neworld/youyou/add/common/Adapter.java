@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
     }
 
     public interface AdapterObs<T> {
-        void onBind(Holder holder, List<T> bean, int position);
+        void onBind(@NotNull Holder holder, @NotNull List<T> bean, int position);
         int layoutId();
     }
 }
