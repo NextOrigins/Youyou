@@ -23,8 +23,6 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.exp
 import kotlin.properties.Delegates
 
 /**
@@ -223,7 +221,7 @@ class BooksShopPay : Activity() {
                         _address.text = it.address
                         addressId = it.id
                     }
-        }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBean::class.java, map)
+        }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBody::class.java, map)
     }
 
     override fun onBackPressed() {

@@ -25,7 +25,7 @@ class ResponseBean {
 
 
     // 图书页面
-    data class BooksBean(
+    data class BooksBody(
             val tokenStatus: Int, //1
             val menuList: List<Menu>,
             val status: Int //0
@@ -42,7 +42,7 @@ class ResponseBean {
     )
 
     // 图书详情
-    data class BooksDetailBean(
+    data class BooksDetailBody(
             val menuList: MenuList,
             val likeStatus: Int, //1
             val collectStatus: Int, //1
@@ -73,7 +73,7 @@ class ResponseBean {
     )
 
     // 收货地址列表
-    data class AddressBean(
+    data class AddressBody(
             val menuList: List<AddressDetailList>,
             val status: Int //0
     )
@@ -88,7 +88,7 @@ class ResponseBean {
     )
 
     // 图书订单
-    data class BooksOrderBean(
+    data class BooksOrderBody(
             val menuList: List<OrderMenu>,
             val status: Int //0
     )

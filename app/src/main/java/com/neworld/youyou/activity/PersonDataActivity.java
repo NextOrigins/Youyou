@@ -16,6 +16,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.PersonDataBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.LogUtils;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
@@ -67,12 +68,7 @@ public class PersonDataActivity extends AppCompatActivity implements View.OnClic
                     if (personDataBean!=null && personDataBean.getStatus() == 0) {
                         final PersonDataBean.MenuListBean menuList = personDataBean.getMenuList();
                         if (menuList != null) {
-                            Util.uiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    initData(menuList);
-                                }
-                            });
+                            Util.uiThread(() -> initData(menuList));
                         }
                     } else {
                         ToastUtil.showToast("未知异常");

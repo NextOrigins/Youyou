@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.activity_books_detail.*
 /**
  * @author by user on 2017/11/23.
  */
-class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDetailBean> {
+class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDetailBody> {
 
     private val width by lazy {
         val point = Point()
@@ -79,7 +79,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     private var bkId: Int by notNullSingleValue()
     private var expressFee: Double by notNullSingleValue()
 
-    private var presenter: DetailImpl<ResponseBean.BooksDetailBean>? = null
+    private var presenter: DetailImpl<ResponseBean.BooksDetailBody>? = null
 
     private var images: ArrayList<ImageView> = arrayListOf()
     private var mAdapter: PageAdapter? = null
@@ -143,7 +143,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         val map = HashMap<CharSequence, CharSequence>()
         map.put("bookId", bookId)
         map.put("userId", userId)
-        presenter?.down(map, 179, ResponseBean.BooksDetailBean::class.java)
+        presenter?.down(map, 179, ResponseBean.BooksDetailBody::class.java)
     }
 
     private fun setText(isChecked: Boolean, i: Int): String =
@@ -158,7 +158,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         loadingPage.visibility = View.GONE
     }
 
-    override fun setData(t: ResponseBean.BooksDetailBean) {
+    override fun setData(t: ResponseBean.BooksDetailBody) {
         val menuList = t.menuList
         val list = menuList.contentImg.split("\\|".toRegex())
                 .flatMap {

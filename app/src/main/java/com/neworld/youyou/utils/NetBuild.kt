@@ -5,6 +5,7 @@ import android.util.Base64
 import android.util.Log
 
 import com.google.gson.Gson
+import com.neworld.youyou.bean.ParentBean
 import com.neworld.youyou.manager.NetManager
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -83,7 +84,8 @@ object NetBuild {
         val json = Gson().toJson(map)
         val base64 = Base64.encodeToString(json.toByteArray(), Base64.DEFAULT)
         val replace = base64.replace("\n", "")
-        return NetManager.getInstance().getContent(replace, url.toString())
+        val content = NetManager.getInstance().getContent(replace, url.toString())
+        return if (!TextUtils.isEmpty(content)) content else ""
     }
 
     // 解析map
@@ -99,5 +101,13 @@ object NetBuild {
         fun onSuccess(t: T)
 
         fun onFailed(error: String = "网络错误, 请稍后重试")
+    }
+
+    fun <T> enqueue(map: Map<CharSequence, CharSequence>, clazz: Class<T>, url: String): T? {
+        val content = getResponse(map, url)
+        return if (!TextUtils.isEmpty(content)) {
+            GsonUtil.parseJsonToBean(content, clazz)
+        } else
+            null
     }
 }

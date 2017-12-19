@@ -28,6 +28,8 @@ import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.LogUtils;
+import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.NetUtil;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
@@ -39,6 +41,9 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ParentDetailActivity extends AppCompatActivity implements View.OnClickListener {
@@ -105,16 +110,20 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
                 if (back2()) {
                     video.startWindowFullscreen(this, false, true);
                 } else {
-                    ToastUtil.showToast("点击频率太高, 请稍后重试");
+                    ToastUtil.showToast("点击频率太高, 请稍等");
                 }
             });
             video.setBackFromFullScreenListener(v -> {
                 if (back2()) {
                     GSYBaseVideoPlayer.backFromWindowFull(this);
                 } else {
-                    ToastUtil.showToast("点击频率太高, 请稍后重试");
+                    ToastUtil.showToast("点击频率太高, 请稍等");
                 }
             });
+            if (video.isIfCurrentIsFullscreen())
+                video.getBackButton().setVisibility(View.VISIBLE);
+            else
+                video.getBackButton().setVisibility(View.INVISIBLE);
         } else video.setVisibility(View.GONE);
         initData();
         final WebSettings webSettings = webView.getSettings();
@@ -125,7 +134,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
         baseUrl = "http://106.14.251.200:8082/neworld/android/108?userId=" + userId + "&taskId=" + taskId + "&maodian=1";
 //        baseUrl = "http://192.168.1.123:8080/neworld/android/108?userId=" + userId + "&taskId=" + taskId + "&maodian=1#maodian1";
         dianUrl = "http://106.14.251.200:8082/neworld/android/108?userId=" + userId + "&taskId=" + taskId + "&maodian=0";
-//        dianUrl = "http://192.168.1.123:8080/neworld/android/108?userId=" + userId + "&taskId=" + taskId + "&maodian=0"; // TODO : 暂时都用本地
+//        dianUrl = "http://192.168.1.123:8080/neworld/android/108?userId=" + userId + "&taskId=" + taskId + "&maodian=0"; // 暂时都用本地
         if (getIntent().getBooleanExtra("dian", false)) webView.loadUrl(dianUrl);
         else webView.loadUrl(baseUrl);
         webView.setWebViewClient(new WebViewClient() {
@@ -340,7 +349,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
         title = extras.getString("title", "");//
         content = extras.getString("content", "");
         from_uid = extras.getString("from_uid", "");
-        imgs = extras.getString(Fields.IMAGE, Fields.YOUYOU);
+        imgs = extras.getString("image", "");
 
         //收藏
         if (!TextUtils.isEmpty(taskId)) {
@@ -405,22 +414,19 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 
     //收藏
     private void collect() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //type 家长圈 status 是否点赞 typestatus 1是点赞  2是收藏
-                String url = Fields.BASEURL + "111?userId=" + userId + "&taskId=" + taskId + "&type=1&status=" + collectStatus + "&typeStatus=2";
-                String content = NetManager.getInstance().getDanContent(url);
-                if (content != null && content.length() > 0) {
-                    ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
-                    if (returnStatus != null && returnStatus.getStatus() == 0) {
-                        Util.uiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                refesCollecthView();
-                            }
-                        });
-                    }
+        new Thread(() -> {
+            //type 家长圈 status 是否点赞 typestatus 1是点赞  2是收藏
+            String url = Fields.BASEURL + "111?userId=" + userId + "&taskId=" + taskId + "&type=1&status=" + collectStatus + "&typeStatus=2";
+            String content = NetManager.getInstance().getDanContent(url);
+            if (content != null && content.length() > 0) {
+                ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
+                if (returnStatus != null && returnStatus.getStatus() == 0) {
+                    Util.uiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            refesCollecthView();
+                        }
+                    });
                 }
             }
         }).start();
@@ -532,22 +538,31 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onStart(SHARE_MEDIA platform) {
-
+            ToastUtil.showToast("onStart");
+            LogUtils.E("onStart");
         }
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            Toast.makeText(ParentDetailActivity.this, "分享成功!", Toast.LENGTH_LONG).show();
+            ToastUtil.showToast("分享成功!");
+//            ToastUtil.showToast("onResult");
+//            LogUtils.E("onResult");
+//            Map<CharSequence, CharSequence> map = new HashMap<>();
+//            map.put("taskId", String.valueOf(taskId));
+//            map.put("type", "1");
+//            new Thread(() -> NetBuild.getResponse(map, 144)).start();
         }
 
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
-            Toast.makeText(ParentDetailActivity.this, "失败" + t.getMessage(), Toast.LENGTH_LONG).show();
+            ToastUtil.showToast("哎呀, 分享失败了!");
+            LogUtils.E("onError");
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(ParentDetailActivity.this, "已取消", Toast.LENGTH_LONG).show();
+            ToastUtil.showToast("onCancel");
+            LogUtils.E("onCancel");
         }
     };
 

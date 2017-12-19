@@ -7,7 +7,9 @@ import android.content.Context
  */
 object SpUtil {
 
-    @Synchronized
     fun getString(context: Context, key: String, value: String = ""): String
             = Sputil.getString(context, key, value)
+
+    fun getInt(context: Context, key: String, def: Int)
+            = Sputil.getInt(context, key, def)
 }

@@ -122,6 +122,7 @@
         <activity android:name=".view.mview.common.BigPicActivity" />
         <activity android:name=".view.mview.books.BooksShopPay" />
         <activity android:name=".view.mview.my.BooksOrderActivity" />
+        <activity android:name=".view.mview.ebook.EBooks" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

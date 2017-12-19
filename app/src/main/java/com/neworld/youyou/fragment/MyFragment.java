@@ -36,6 +36,7 @@ import com.neworld.youyou.dialog.DialogUtils;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.LogUtils;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
@@ -67,7 +68,6 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 
     private LinearLayout parent;
     private View dialogView;
-
 
     @Override
     public View createView() {
@@ -109,12 +109,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
             if (data != null) {
                 boolean isRefresh = data.getBooleanExtra("isRefresh", false);
                 if (isRefresh) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getData();
-                        }
-                    }).start();
+                    new Thread(this::getData).start();
                 }
             }
         } else if (requestCode == 5) {
@@ -122,12 +117,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 boolean isRefresh = data.getBooleanExtra("isRefresh", false);
                 String url = data.getStringExtra("url");
                 if (isRefresh) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getData();
-                        }
-                    }).start();
+                    new Thread(this::getData).start();
                 } else {
                     if (!TextUtils.isEmpty(url)) {
                         RequestOptions MyFragmentOptions = new RequestOptions();
@@ -156,9 +146,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlFav.setOnClickListener(this);
         rlSetting.setOnClickListener(this);
 
-        view.findViewById(R.id.chengji).setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), AchievementActivity.class));
-        });
+        view.findViewById(R.id.chengji)
+                .setOnClickListener(v -> startActivity(new Intent(getContext(), AchievementActivity.class)));
     }
 
     @Override
@@ -166,43 +155,35 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         String base64 = Base64.encodeToString(("{\"userId\":\"" + userId + "\", \"token\":\"" + token + "\"}").getBytes(), Base64.DEFAULT);
         String replace = base64.replace("\n", "");
         final String content = NetManager.getInstance().getContent(replace, "126");
-//        System.out.println(content);
         if (!TextUtils.isEmpty(content)) {
             PersonDataBean personDataBean = GsonUtil.parseJsonToBean(content, PersonDataBean.class);
             if (personDataBean != null && personDataBean.getStatus() == 0) {
+
                 int tokenStatus = personDataBean.getTokenStatus();
                 judgeToken(tokenStatus);
                 final PersonDataBean.MenuListBean menuList = personDataBean.getMenuList();
                 if (menuList != null) {
-                    Util.uiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!TextUtils.isEmpty(menuList.getFaceImg())) {
-                                imageUrl = menuList.getFaceImg();
-                                Glide.with(context).load(menuList.getFaceImg()).into(circleImageView);
-                            } else {
-                                Glide.with(context).load(R.mipmap.my_icon).into(circleImageView);
-                            }
+                    Util.uiThread(() -> {
+                        if (!TextUtils.isEmpty(menuList.getFaceImg())) {
+                            imageUrl = menuList.getFaceImg();
+                            Glide.with(context).load(menuList.getFaceImg()).into(circleImageView);
+                        } else {
+                            Glide.with(context).load(R.mipmap.my_icon).into(circleImageView);
+                        }
 
-                            if (!TextUtils.isEmpty(menuList.getNickName())) {
-                                tvName.setText(menuList.getNickName());
-                            } else if (!TextUtils.isEmpty(menuList.getUserAccount())) {
-                                tvName.setText(menuList.getUserAccount());
-                            } else if (!TextUtils.isEmpty(menuList.getUserName())) {
-                                tvName.setText(menuList.getUserName());
-                            } else {
-                                tvName.setText("fjhjh");
-                            }
+                        if (!TextUtils.isEmpty(menuList.getNickName())) {
+                            tvName.setText(menuList.getNickName());
+                        } else if (!TextUtils.isEmpty(menuList.getUserAccount())) {
+                            tvName.setText(menuList.getUserAccount());
+                        } else if (!TextUtils.isEmpty(menuList.getUserName())) {
+                            tvName.setText(menuList.getUserName());
+                        } else {
+                            tvName.setText("fjhjh");
                         }
                     });
                 }
             } else {
-                Util.uiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        circleImageView.setImageResource(R.mipmap.my_icon);
-                    }
-                });
+                Util.uiThread(() -> circleImageView.setImageResource(R.mipmap.my_icon));
             }
         }
         return content;
@@ -221,12 +202,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     //根据token挤掉线
     private void judgeToken(final int tokenStatus) {
         if (tokenStatus == 2) {
-            Util.uiThread(new Runnable() {
-                @Override
-                public void run() {
-                    quit();
-                }
-            });
+            Util.uiThread(this::quit);
         }
     }
 

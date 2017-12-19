@@ -18,8 +18,10 @@ import com.neworld.youyou.bean.LoginBean;
 import com.neworld.youyou.bean.LoginUserIdBean;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
+import com.neworld.youyou.utils.DelegateExtKt;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.SpUtil;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
 
@@ -94,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         new Thread(() -> {
             String trim = etPsw.getText().toString().trim();
-            if (trim.equals(userName) || etNumber.getText().toString().trim().equals("123456789")) {
+            if (trim.equals(userName) || (etNumber.getText().toString().trim().equals("123456789") && etPsw.getText().toString().equals("123456"))) {
                 String base64 = Base64.encodeToString(("{\"mobile\":\"" + photoNumber + "\"}").getBytes(), Base64.DEFAULT);
                 String replace = base64.replace("\n", "");
                 String content = NetManager.getInstance().getContent(replace, "125");

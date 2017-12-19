@@ -2,8 +2,10 @@ package com.neworld.youyou.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +17,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.neworld.youyou.R;
 import com.neworld.youyou.bean.ParentBean;
+import com.neworld.youyou.utils.LogUtils;
+import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.view.gridlayout.NineGridTestLayout;
 import com.neworld.youyou.view.nine.CircleImageView;
 import com.neworld.youyou.view.nine.FlowLayout;
+import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
+import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +40,29 @@ public class ParentAdapter extends BaseAdapter {
     public ParentAdapter(Context context, List<ParentBean.MenuListBean> parentList) {
         this.context = context;
         this.menuList = parentList;
+    }
+
+    public ParentAdapter(Context context, ParentBean bean) {
+        this.context = context;
+        addBean(bean);
+    }
+
+    public void setBean(ParentBean bean) {
+        menuList.clear();
+        if (bean.stickNamicfoList != null) {
+            menuList.addAll(bean.stickNamicfoList);
+            LogUtils.E("top list size : " + bean.stickNamicfoList.size());
+        }
+        addBean(bean);
+    }
+
+    public void addBean(ParentBean bean) {
+        if (bean.getMenuList() != null)
+            menuList.addAll(bean.getMenuList());
+    }
+
+    public int getBeanSize() {
+        return menuList.size();
     }
 
     @Override
@@ -77,13 +106,13 @@ public class ParentAdapter extends BaseAdapter {
             holder.llFav = (LinearLayout) convertView.findViewById(R.id.ll_fav);
             holder.llShare = (LinearLayout) convertView.findViewById(R.id.ll_share);
             holder.ivFav = (ImageView) convertView.findViewById(R.id.iv_fav);
+            holder.video = convertView.findViewById(R.id._video);
 
             convertView.setTag(holder);
 
         } else {
             holder = (ParentHolder) convertView.getTag();
         }
-
 
         //数据展示
         if (menuList != null) {
@@ -170,7 +199,6 @@ public class ParentAdapter extends BaseAdapter {
             holder.ivFav.setImageResource(R.mipmap.parent_collect);
         }
 
-
         int sex = menuListBean.getSex();
         if (sex == 0) {
             //性别
@@ -184,23 +212,29 @@ public class ParentAdapter extends BaseAdapter {
         //设置内容
         String title = menuListBean.getTitle();
         String content = menuListBean.getContent();
-        if (content != null && content.length() > 0) {
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#5184BC"));
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(title + "//" + content);
+        if (!TextUtils.isEmpty(content)) {
             holder.tvContent.setVisibility(View.VISIBLE);
             if (title != null && title.length() > 0) {
-                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#5184BC"));
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(title + "//" + content);
                 spannableStringBuilder.setSpan(foregroundColorSpan, 0, menuListBean.getTitle().length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                 holder.tvContent.setText(spannableStringBuilder);
             } else {
                 holder.tvContent.setText(content);
             }
-        } else {
+        } else if (!TextUtils.isEmpty(title)) {
+            spannableStringBuilder.clear();
+            spannableStringBuilder.append(title);
+            spannableStringBuilder.setSpan(foregroundColorSpan, 0, menuListBean.getTitle().length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            holder.tvContent.setText(spannableStringBuilder);
+        } else
             holder.tvContent.setVisibility(View.GONE);
-        }
+
         //图片
         final String imgs = menuListBean.getImgs();
         if (imgs != null && imgs.length() > 0) {
             if (menuListBean.sort == 1) {
+                holder.video.setVisibility(View.GONE);
                 holder.ivNine.setVisibility(View.VISIBLE);
                 final String[] split = imgs.split("\\|");
                 List<String> list = Arrays.asList(split);
@@ -211,13 +245,38 @@ public class ParentAdapter extends BaseAdapter {
                 }
                 holder.ivNine.setUrlList(list);
             } else {
-                holder.ivNine.setVisibility(View.VISIBLE);
-                holder.ivNine.setIsShowAll(true);
-                String[] s = {menuListBean.voideImg};
-                holder.ivNine.setUrlList(Arrays.asList(s));
+//                holder.ivNine.setIsShowAll(true);
+//                String[] s = {menuListBean.voideImg};
+//                holder.ivNine.setUrlList(Arrays.asList(s));
+                holder.ivNine.setVisibility(View.GONE);
+                holder.video.setVisibility(View.VISIBLE);
+                holder.video.setLockLand(true);
+                holder.video.setUp(menuListBean.getImgs(), false, "");
+                ImageView imageView = new ImageView(context);
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                Glide.with(imageView).load(menuListBean.voideImg).into(imageView);
+                holder.video.setThumbImageView(imageView);
+                holder.video.getFullscreenButton().setVisibility(View.INVISIBLE);
+//                holder.video.getFullscreenButton().setOnClickListener(v -> {
+//                    if (notDelay())
+//                        holder.video.startWindowFullscreen(context, false, true);
+//                    else
+//                        ToastUtil.showToast("点击频率太高, 请请稍等");
+//                });
+//                holder.video.setBackFromFullScreenListener(v -> {
+//                    if (notDelay())
+//                        GSYBaseVideoPlayer.backFromWindowFull(context);
+//                    else
+//                        ToastUtil.showToast("点击频率太高, 请请稍等");
+//                });
+                if (holder.video.isIfCurrentIsFullscreen())
+                    holder.video.getBackButton().setVisibility(View.VISIBLE);
+                else
+                    holder.video.getBackButton().setVisibility(View.INVISIBLE);
             }
         } else {
             holder.ivNine.setVisibility(View.GONE);
+            holder.video.setVisibility(View.GONE);
         }
         //收藏数 评论数 分享数
         int collect_count = menuListBean.getCollect_count();
@@ -256,6 +315,16 @@ public class ParentAdapter extends BaseAdapter {
         //添加图片
     }
 
+//    private boolean b; TODO : 不知道为什么全屏崩溃, 暂时关闭全屏按钮
+//
+//    private boolean notDelay() {
+//        if (!b) {
+//            b = true;
+//            new Handler().postDelayed(() -> b = false, 1500);
+//            return b;
+//        } else return !b;
+//    }
+
 /*    private int getListSize(List<String> list) {
         if (list == null || list.size() == 0) {
             return 0;
@@ -285,6 +354,8 @@ public class ParentAdapter extends BaseAdapter {
         public LinearLayout llComment;
 
         public ImageView ivFav;
+
+        public StandardGSYVideoPlayer video;
     }
 
 

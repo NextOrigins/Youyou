@@ -102,5 +102,6 @@
     <string name="login_out">退出登录</string>
     <string name="address_manager">地址管理</string>
     <string name="message_control">消息中心</string>
+    <string name="top">置顶</string>
 
 </resources>

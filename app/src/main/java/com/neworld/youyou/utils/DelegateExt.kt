@@ -18,6 +18,7 @@ import kotlin.reflect.KProperty
 /**
  * SharedPreference 自动存取
  */
+@JvmOverloads
 fun <T : Any> preference(name: String, default: T, context: Context = MyApplication.sContext):
         ReadWriteProperty<Any?, T> = Preference(context, name, default)
 

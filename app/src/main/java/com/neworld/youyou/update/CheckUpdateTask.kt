@@ -73,8 +73,10 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
     }
 
     private fun toInt(str: String): Int {
-        return str.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }
-                .flatMap { listOf(it.toInt()) }.reduce { acc, i -> acc + i }
+        return str
+                .split("\\.".toRegex())
+                .map { it.toInt() }
+                .reduce { acc, i -> acc + i }
     }
 
     /**

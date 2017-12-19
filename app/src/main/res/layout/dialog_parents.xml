@@ -6,10 +6,18 @@
     android:background="#DEDEDF">
 
     <TextView
-        android:id="@+id/black"
+        android:id="@+id/_top"
         style="@style/dialog_text"
         android:background="@color/white_transparent"
-        android:text="@string/black_list" />
+        android:text="@string/top" />
+
+    <TextView
+        android:id="@+id/black"
+        style="@style/dialog_text"
+        android:layout_marginTop="1dp"
+        android:background="@color/white_transparent"
+        android:text="@string/black_list"
+        app:layout_constraintTop_toBottomOf="@id/_top" />
 
     <TextView
         android:id="@+id/hide"

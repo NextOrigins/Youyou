@@ -65,8 +65,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var netObs: NetworkObs? = null
 
     private var userId: String by preference("userId", "")
-    private var token: String by preference("token", "");
-
+    private var token: String by preference("token", "")
     val windowData: WindowManager
         get() = windowManager
 

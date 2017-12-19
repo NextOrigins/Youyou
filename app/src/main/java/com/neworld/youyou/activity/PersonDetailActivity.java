@@ -26,6 +26,7 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase;
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
@@ -37,7 +38,9 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersonDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -88,30 +91,22 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
                 if (mData != null ) {
                     ParentBean.MenuListBean menuListBean = mData.get(mData.size() -1);
                     final String createDate = menuListBean.getCreateDate();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String base64 = Base64.encodeToString(("{\"userId\":\""+userId+"\", \"target_uid\":\""+from_uid+"\", \"createDate\":\""+createDate+"\"}").getBytes(), Base64.DEFAULT);
-                            String replace = base64.replace("\n", "");
-                            String content = NetManager.getInstance().getContent(replace, "119");
-                            if (content != null && content.length() > 0) {
-                                ParentBean parentBean = GsonUtil.parseJsonToBean(content, ParentBean.class);
-                                if (parentBean != null && parentBean.getStatus() == 0) {
-                                    List<ParentBean.MenuListBean> menuList = parentBean.getMenuList();
-                                    if (menuList != null && menuList.size() > 0) {
-                                        for (ParentBean.MenuListBean bean : menuList) {
-                                            bean.isVisible = true;
-                                        }
-                                        mData.addAll(menuList);
-                                        Util.uiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                parentAdapter.notifyDataSetChanged();
-                                            }
-                                        });
-                                    } else {
-                                        ToastUtil.showToast("没有更多的数据");
+                    new Thread(() -> {
+                        String base64 = Base64.encodeToString(("{\"userId\":\""+userId+"\", \"target_uid\":\""+from_uid+"\", \"createDate\":\""+createDate+"\"}").getBytes(), Base64.DEFAULT);
+                        String replace = base64.replace("\n", "");
+                        String content = NetManager.getInstance().getContent(replace, "119");
+                        if (content != null && content.length() > 0) {
+                            ParentBean parentBean = GsonUtil.parseJsonToBean(content, ParentBean.class);
+                            if (parentBean != null && parentBean.getStatus() == 0) {
+                                List<ParentBean.MenuListBean> menuList = parentBean.getMenuList();
+                                if (menuList != null && menuList.size() > 0) {
+                                    for (ParentBean.MenuListBean bean : menuList) {
+                                        bean.isVisible = true;
                                     }
+                                    mData.addAll(menuList);
+                                    Util.uiThread(parentAdapter::notifyDataSetChanged);
+                                } else {
+                                    ToastUtil.showToast("没有更多的数据");
                                 }
                             }
                         }
@@ -121,30 +116,26 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            if (position == 0) {
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-
-                } else if (position <= mData.size()){
-                    Intent intentPhone = new Intent();
-                    intentPhone.setClass(PersonDetailActivity.this,ParentDetailActivity.class);
-                    Bundle bundleSimple = new Bundle();
-                    ParentBean.MenuListBean menuListBean = mData.get(position - 1);
-                    String from_uid = menuListBean.getFrom_uid();
-                    bundleSimple.putString("from_uid", from_uid);
-                    if (menuListBean != null) {
-                        String taskId = menuListBean.getTaskId();
-                        bundleSimple.putString("taskId", String.valueOf(taskId));
-                    }
-                    bundleSimple.putString("title", mData.get(position - 1).getTitle());
-                    bundleSimple.putString("content", mData.get(position - 1).getContent());
-                    intentPhone.putExtras(bundleSimple);
-                    startActivity(intentPhone);
+            } else if (position <= mData.size()){
+                Intent intentPhone = new Intent();
+                intentPhone.setClass(PersonDetailActivity.this,ParentDetailActivity.class);
+                Bundle bundleSimple = new Bundle();
+                ParentBean.MenuListBean menuListBean = mData.get(position - 1);
+                String from_uid = menuListBean.getFrom_uid();
+                bundleSimple.putString("from_uid", from_uid);
+                if (menuListBean != null) {
+                    String taskId = menuListBean.getTaskId();
+                    bundleSimple.putString("taskId", String.valueOf(taskId));
                 }
-
+                bundleSimple.putString("title", mData.get(position - 1).getTitle());
+                bundleSimple.putString("content", mData.get(position - 1).getContent());
+                intentPhone.putExtras(bundleSimple);
+                startActivity(intentPhone);
             }
+
         });
 
         parentAdapter.setOnParentClick(new ParentAdapter.OnParentClick() {
@@ -212,29 +203,21 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initData() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String base64 = Base64.encodeToString(("{\"userId\":\""+userId+"\", \"target_uid\":\""+from_uid+"\", \"createDate\":\"\"}").getBytes(), Base64.DEFAULT);
-                String replace = base64.replace("\n", "");
-                String content = NetManager.getInstance().getContent(replace, "119");
-                if (content != null && content.length() > 0) {
-                    ParentBean parentBean = GsonUtil.parseJsonToBean(content, ParentBean.class);
-                    if (parentBean != null && parentBean.getStatus() == 0) {
-                        List<ParentBean.MenuListBean> menuList = parentBean.getMenuList();
-                        if (menuList != null && menuList.size() > 0) {
-                            for (ParentBean.MenuListBean bean : menuList) {
-                                bean.isVisible = true;
-                            }
-                            mData.clear();
-                            mData.addAll(menuList);
-                            Util.uiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    parentAdapter.notifyDataSetChanged();
-                                }
-                            });
+        new Thread(() -> {
+            String base64 = Base64.encodeToString(("{\"userId\":\""+userId+"\", \"target_uid\":\""+from_uid+"\", \"createDate\":\"\"}").getBytes(), Base64.DEFAULT);
+            String replace = base64.replace("\n", "");
+            String content = NetManager.getInstance().getContent(replace, "119");
+            if (content != null && content.length() > 0) {
+                ParentBean parentBean = GsonUtil.parseJsonToBean(content, ParentBean.class);
+                if (parentBean != null && parentBean.getStatus() == 0) {
+                    List<ParentBean.MenuListBean> menuList = parentBean.getMenuList();
+                    if (menuList != null && menuList.size() > 0) {
+                        for (ParentBean.MenuListBean bean : menuList) {
+                            bean.isVisible = true;
                         }
+                        mData.clear();
+                        mData.addAll(menuList);
+                        Util.uiThread(parentAdapter::notifyDataSetChanged);
                     }
                 }
             }
@@ -475,7 +458,11 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            Toast.makeText(PersonDetailActivity.this,"分享成功!",Toast.LENGTH_LONG).show();
+//            Map<CharSequence, CharSequence> map = new HashMap<>();
+//            map.put("taskId", String.valueOf(taskId));
+//            map.put("type", "1");
+//            new Thread(() -> NetBuild.getResponse(map, 144)).start();
+            ToastUtil.showToast("分享成功!");
         }
 
         @Override
