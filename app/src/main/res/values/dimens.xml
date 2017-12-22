@@ -56,4 +56,5 @@
     <dimen name="dp10">10dp</dimen>
     <dimen name="dp5">5dp</dimen>
     <dimen name="dp75">75dp</dimen>
+    <dimen name="dp20">20dp</dimen>
 </resources>

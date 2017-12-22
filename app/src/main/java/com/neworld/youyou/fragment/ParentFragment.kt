@@ -438,12 +438,15 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
             put("taskId", menuListBean.taskId)
             doAsync {
                 val response = NetBuild.getResponse(this@run, 110)
-                if (response.contains("0")) {
-                    newMenuList.removeAt(parentPosition)
-                    parentAdapter?.notifyDataSetChanged()
-                } else
-                    ToastUtil.showToast("删除出现未知错误")
-                dialog.dismiss()
+                uiThread {
+                    if (response.contains("0")) {
+                        newMenuList.removeAt(parentPosition)
+                        parentAdapter?.menuList?.removeAt(parentPosition)
+                        parentAdapter?.notifyDataSetChanged()
+                    } else
+                        ToastUtil.showToast("删除出现未知错误")
+                    dialog.dismiss()
+                }
             }
         }
     }
@@ -524,7 +527,6 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
                     }
                     doAsync {
                         NetBuild.getResponse(map, url).let {
-                            LogUtils.E(map.toString())
                             if (it.contains("0")) {
                                 ToastUtil.showToast("已$msg")
                                 getParent(1)

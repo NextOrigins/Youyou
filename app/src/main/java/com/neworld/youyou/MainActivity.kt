@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 
-import android.os.Handler
 import android.support.design.widget.Snackbar
 
 import android.support.v4.app.Fragment
@@ -29,20 +28,17 @@ import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.NetworkObs
 import com.neworld.youyou.utils.SpUtil
-import com.neworld.youyou.utils.ToastUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
-import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.ebook.EBooks
 import com.umeng.socialize.UMShareAPI
-import com.umeng.socialize.utils.DeviceConfig.context
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 
-fun showSnackbar(viewGroup: ViewGroup, text: String, duration: Int = 1000) {
-    val snack = Snackbar.make(viewGroup, text, duration)
-    snack.view.setBackgroundColor(ContextCompat.getColor(viewGroup.context, R.color.colorPrimary))
-    snack.show()
+fun showSnackBar(viewGroup: ViewGroup, text: String, duration: Int = 1000)
+		= Snackbar.make(viewGroup, text, duration).apply {
+    view.setBackgroundColor(ContextCompat.getColor(viewGroup.context, R.color.colorPrimary))
+    show()
 }
 
 class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, ParentView {
@@ -75,7 +71,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var mBackPressedTime by Delegates.observable(0L) {
         _, old, new ->
         if (new - old > 1000) {
-            showSnackbar(activity_main, getString(R.string.exit_message))
+            showSnackBar(activity_main, getString(R.string.exit_message))
         }
         if (new - old in 1..1000) {
             finish()

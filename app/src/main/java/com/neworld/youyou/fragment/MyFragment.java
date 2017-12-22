@@ -246,7 +246,9 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, AddChildActivity.class));
                 break;
             case R.id.my_subject:
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+	            startActivity(new Intent(context, MySubjectActivity.class));
+                // 暂时没有图书订单
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 if (dialogView.getParent() != null)
                     ((ViewGroup) dialogView.getParent()).removeView(dialogView);
                 builder.setView(dialogView);
@@ -259,7 +261,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 dialogView.findViewById(R.id._books_order).setOnClickListener(books -> {
                     startActivity(new Intent(context, BooksOrderActivity.class));
                     show.dismiss();
-                });
+                });*/
                 break;
             case R.id.my_favorites:
                 startActivity(new Intent(context, MyCollectActivity.class));

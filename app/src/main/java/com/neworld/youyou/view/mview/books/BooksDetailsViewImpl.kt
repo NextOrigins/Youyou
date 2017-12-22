@@ -146,9 +146,11 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         presenter?.down(map, 179, ResponseBean.BooksDetailBody::class.java)
     }
 
-    private fun setText(isChecked: Boolean, i: Int): String =
-            if (isChecked) "${i + 1}"
-            else "${i - 1}"
+    private fun setText(isChecked: Boolean, i: Int) =
+            if (isChecked)
+                "${i + 1}"
+            else
+                "${i - 1}"
 
     override fun showDialog() {
         loadingPage.visibility = View.VISIBLE
@@ -219,7 +221,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
 
     override fun showError(str: String) {
         ToastUtil.showToast(str)
-//        showSnackbar(group, str, 2000)
+//        showSnackBar(group, str, 2000)
     }
 
     override fun notifyData() {

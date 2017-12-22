@@ -771,11 +771,11 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
             if (newList != null && newList.size() > 0) {
                 net();
             } else {
-                if (publish != null && publish.length() > 0) {
+                if (!TextUtils.isEmpty(publish))
                     net();
-                } else {
+                 else
                     ToastUtil.showToast("请输入内容");
-                }
+
             }
         } else {
             ToastUtil.showToast("请选择类型");

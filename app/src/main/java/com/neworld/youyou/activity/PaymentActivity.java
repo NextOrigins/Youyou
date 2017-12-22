@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.MainActivityKt;
 import com.neworld.youyou.R;
 import com.neworld.youyou.add.StudentActivity;
@@ -380,7 +379,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         if (returnChatBean != null && returnChatBean.getStatus() == 0) {
                             weChatPay(returnChatBean);
                         } else {
-                            MainActivityKt.showSnackbar(findViewById(R.id.view_group), "商品卖完了哦亲_", 1000);
+                            MainActivityKt.showSnackBar(findViewById(R.id.view_group), "商品卖完了哦亲_", 1000);
                         }
                     }
                     SystemClock.sleep(300);

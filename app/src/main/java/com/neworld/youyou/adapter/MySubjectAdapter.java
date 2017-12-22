@@ -63,6 +63,7 @@ public class MySubjectAdapter extends BaseAdapter {
             holder.llSubject = (LinearLayout) convertView.findViewById(R.id.ll_subject);
             holder.rlGone = (RelativeLayout) convertView.findViewById(R.id.rl_gone);
             holder.rlDelete = (RelativeLayout) convertView.findViewById(R.id.rl_delete);
+            holder.content = convertView.findViewById(R.id._content);
             convertView.setTag(holder);
         } else {
             holder = (SubjectHolder) convertView.getTag();
@@ -123,16 +124,35 @@ public class MySubjectAdapter extends BaseAdapter {
                 holder.tvPrice.setText("¥" + orderMoney);
                 //设置支付状态  0是未支付 1是支付
                 int payStatus = menuListBean.getPayStatus();
-                if (payStatus == 0) {
-                    holder.rlGone.setVisibility(View.GONE);
-                    holder.rlDelete.setVisibility(View.VISIBLE);
-                    //holder.tvStatus.setText("待支付");
-                } else {
-                    //holder.tvStatus.setText("已支付");
-                    //holder.ivDelete.setVisibility(View.INVISIBLE);
-                    holder.rlGone.setVisibility(View.VISIBLE);
-                    holder.rlDelete.setVisibility(View.GONE);
+                switch (payStatus) {
+                    case 0: {
+                        holder.rlGone.setVisibility(View.GONE);
+                        holder.rlDelete.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case 1: {
+                        holder.rlGone.setVisibility(View.VISIBLE);
+                        holder.rlDelete.setVisibility(View.GONE);
+	                    holder.content.setText("已支付");
+	                    break;
+                    }
+                    case 2: {
+	                    holder.rlGone.setVisibility(View.VISIBLE);
+	                    holder.rlDelete.setVisibility(View.GONE);
+	                    holder.content.setText("已退费");
+	                    break;
+                    }
                 }
+//                if (payStatus == 0) {
+//                    holder.rlGone.setVisibility(View.GONE);
+//                    holder.rlDelete.setVisibility(View.VISIBLE);
+//                    //holder.tvStatus.setText("待支付");
+//                } else {
+//                    //holder.tvStatus.setText("已支付");
+//                    //holder.ivDelete.setVisibility(View.INVISIBLE);
+//                    holder.rlGone.setVisibility(View.VISIBLE);
+//                    holder.rlDelete.setVisibility(View.GONE);
+//                }
                 //设置内容
                 String title = menuListBean.getTitle();
                 if (title != null) {
@@ -160,6 +180,7 @@ public class MySubjectAdapter extends BaseAdapter {
     }
 
     static class SubjectHolder{
+    	TextView content;
         public TextView tvTime;
         public TextView tvPrice;
         public TextView tvStatus;

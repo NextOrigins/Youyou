@@ -16,7 +16,7 @@ import com.neworld.youyou.R
 import com.neworld.youyou.activity.AddressActivity
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.showSnackbar
+import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.tencent.mm.opensdk.modelpay.PayReq
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
@@ -109,7 +109,7 @@ class BooksShopPay : Activity() {
 //        }
         commit.setOnClickListener {
             if (ip == null) {
-                showSnackbar(_parent, "未检测到WiFi模块, 请到用户反馈处反馈此问题, 我们会尽快解决", 2000)
+                showSnackBar(_parent, "未检测到WiFi模块, 请到用户反馈处反馈此问题, 我们会尽快解决", 2000)
                 return@setOnClickListener
             }
             hashMapOf<CharSequence, CharSequence>().run {
@@ -145,7 +145,7 @@ class BooksShopPay : Activity() {
                                 api.sendReq(this)
                             }
                         } else
-                            uiThread { showSnackbar(_parent, "商品卖完了哦亲_") }
+                            uiThread { showSnackBar(_parent, "商品卖完了哦亲_") }
                     }
                 }
             }

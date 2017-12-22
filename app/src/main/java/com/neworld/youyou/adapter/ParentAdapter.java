@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Base64;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -50,11 +51,9 @@ public class ParentAdapter extends BaseAdapter {
 
     public void setBean(ParentBean bean) {
         menuList.clear();
-        if (bean.stickNamicfoList != null) {
-
+        if (bean.stickNamicfoList != null)
             menuList.addAll(bean.stickNamicfoList);
-            LogUtils.E("top list size : " + bean.stickNamicfoList.size());
-        }
+
         addBean(bean);
     }
 
@@ -134,22 +133,19 @@ public class ParentAdapter extends BaseAdapter {
             holder.ivBlack.setOnClickListener(v -> onParentClick.onItemAddBlack(position));
         }
 
-        holder.llFav.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onParentClick.onItemFav(position);
-                ParentBean.MenuListBean menuListBean = menuList.get(position);
-                int collect_count = menuListBean.getCollect_count();
-                int collectStatus = menuListBean.getCollectStatus();
-                if (collectStatus == 0) { //1 shi 未收藏
-                    menuListBean.setCollectStatus(1);
-                    menuListBean.setCollect_count(collect_count - 1);
-                    //holder.ivFav.setImageResource(R.mipmap.parent_collect);
-                } else if (collectStatus == 1) {
-                    //holder.ivFav.setImageResource(R.mipmap.collect_red);
-                    menuListBean.setCollectStatus(0);
-                    menuListBean.setCollect_count(collect_count + 1);
-                }
+        holder.llFav.setOnClickListener(v -> {
+            onParentClick.onItemFav(position);
+            ParentBean.MenuListBean menuListBean = menuList.get(position);
+            int collect_count = menuListBean.getCollect_count();
+            int collectStatus = menuListBean.getCollectStatus();
+            if (collectStatus == 0) { //1 shi 未收藏
+                menuListBean.setCollectStatus(1);
+                menuListBean.setCollect_count(collect_count - 1);
+                //holder.ivFav.setImageResource(R.mipmap.parent_collect);
+            } else if (collectStatus == 1) {
+                //holder.ivFav.setImageResource(R.mipmap.collect_red);
+                menuListBean.setCollectStatus(0);
+                menuListBean.setCollect_count(collect_count + 1);
             }
         });
         holder.llComment.setOnClickListener(v -> onParentClick.onItemComment(v, position, menuList.get(position)));

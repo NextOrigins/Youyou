@@ -97,5 +97,4 @@ private class Preference<T>(val context: Context, val name: String, val default:
             else -> throw IllegalArgumentException("This type can be saved into Preference")
         }.apply()
     }
-
 }

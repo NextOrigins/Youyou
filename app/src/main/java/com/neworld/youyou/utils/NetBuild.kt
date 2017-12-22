@@ -2,10 +2,8 @@ package com.neworld.youyou.utils
 
 import android.text.TextUtils
 import android.util.Base64
-import android.util.Log
 
 import com.google.gson.Gson
-import com.neworld.youyou.bean.ParentBean
 import com.neworld.youyou.manager.NetManager
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -81,11 +79,7 @@ object NetBuild {
     // 解析map
     @JvmStatic
     fun getResponse(map: Map<out CharSequence, CharSequence>, url: Int): String {
-        val json = Gson().toJson(map)
-        val base64 = Base64.encodeToString(json.toByteArray(), Base64.DEFAULT)
-        val replace = base64.replace("\n", "")
-        val content = NetManager.getInstance().getContent(replace, url.toString())
-        return if (!TextUtils.isEmpty(content)) content else ""
+        return getResponse(map, url.toString())
     }
 
     // 解析map
@@ -94,7 +88,8 @@ object NetBuild {
         val json = Gson().toJson(map)
         val base64 = Base64.encodeToString(json.toByteArray(), Base64.DEFAULT)
         val replace = base64.replace("\n", "")
-        return NetManager.getInstance().getContent(replace, url)
+        val content = NetManager.getInstance().getContent(replace, url)
+        return if (!TextUtils.isEmpty(content)) content else "null"
     }
 
     interface ResponseObs<in T> {

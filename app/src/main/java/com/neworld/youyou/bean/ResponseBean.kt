@@ -133,4 +133,56 @@ class ResponseBean {
             val payStatus: Int, //0
             val status: Int //0
     )
+
+
+    data class EBookBody(
+            val tokenStatus: Int, //1
+            val menuList: List<EBookMenu>,
+            val status: Int //0
+    )
+
+    data class EBookMenu(
+            val price: Double, //48.0
+            val author: String,
+            val iconImg: String, //http://106.14.251.200:8082/olopicture/book/you_face1.jpg
+            val constPrice: Double, //48.0
+            val bookName: String, //2018幼升小白皮书
+            val bookId: Int, //16
+            val createDate: String //2017-08-20 11:36:43
+    )
+    
+    
+	data class EBookContentBody(
+			val menuList: EBookContentList,
+			val typeList: List<Type>,
+			val status: Int //0
+	)
+
+	data class EBookContentList(
+			val updateDate: String, //2017-08-17 11:27:43
+			val read_chapter: String, //1|2|3|4|5|6|7
+			val author: String, //亚历山大L.G. Alexander|何其莘
+			val iconImg: String, //http://106.14.251.200:8082/olopicture/book/1g_face.jpg
+			val publishDate: String, //外语教学与研究出版社、朗文出版亚洲有限公司
+			val count: Int, //0
+			val constPrice: Int, //60
+			val suggest: String, //编辑推荐
+			val type: Int, //0
+			val bookName: String, //新概念英语1
+			val contentImg: String, //http://106.14.251.200:8082/olopicture/book/1g_book1.png|http://106.14.251.200:8082/olopicture/book/1g_book2.png
+			val likeSum: Int, //0
+			val collectSum: Int, //0
+			val price: Int, //60
+			val introduceImg: Any, //null
+			val id: Int, //4
+			val createDate: String, //2017-08-17 11:27:43
+			val status: Int //0
+	)
+
+	data class Type(
+			val imgSum: Int, //3
+			val typeName: String, //升学
+			val id: Int, //1
+			val typeImg: String //http://106.14.251.200:8082/olopicture/icon/y1.jpg|http://106.14.251.200:8082/olopicture/icon/rdht.png|http://106.14.251.200:8082/olopicture/icon/f1.jpg
+	)
 }

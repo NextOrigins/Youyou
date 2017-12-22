@@ -20,7 +20,7 @@ import com.neworld.youyou.add.SpacesItemDecoration
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.presenter.books.BooksImpl
-import com.neworld.youyou.showSnackbar
+import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.RecyclerDataView
 import java.util.*
@@ -70,7 +70,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
                     b = false
                 }
             }
-            2 -> showSnackbar(swipe!!, "没有更多数据了_")
+            2 -> showSnackBar(swipe!!, "没有更多数据了_")
         }
     }
 

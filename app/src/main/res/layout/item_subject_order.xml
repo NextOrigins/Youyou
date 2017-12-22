@@ -54,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
             <TextView
+                android:id="@+id/_content"
                 android:layout_marginRight="15dp"
                 android:textColor="#f37f13"
                 android:text="已支付"
