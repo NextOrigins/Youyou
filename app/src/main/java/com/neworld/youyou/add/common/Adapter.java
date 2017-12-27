@@ -26,6 +26,14 @@ public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
         this.obs = obs;
     }
 
+    public Adapter(List<T> bean) {
+        this.bean = bean;
+    }
+
+    public void setObs(AdapterObs<T> obs) {
+        this.obs = obs;
+    }
+
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new Holder(LayoutInflater.from(parent.getContext())
