@@ -18,8 +18,6 @@ import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
-import kotlinx.android.synthetic.main.fragment_my.*
-import org.jetbrains.anko.doAsync
 import kotlin.properties.Delegates
 
 /**
@@ -45,7 +43,7 @@ class EBooks : Fragment() {
     private var swipe: SwipeRefreshLayout by notNullSingleValue()
 	private var group: ConstraintLayout by notNullSingleValue()
     private var mAdapter: Adapter<ResponseBean.EBookMenu> by notNullSingleValue()
-	private var snackBar: Snackbar by Delegates.notNull()
+	private var snackBar: Snackbar? = null
     private var createDate = ""
 	
     private val scrollListener = object : RecyclerView.OnScrollListener() {
@@ -72,12 +70,12 @@ class EBooks : Fragment() {
 			}
 			1 -> {
 				if (b) {
-					if (snackBar.isShown) {
-						snackBar.setText("没有数据了")
-						Handler().postDelayed(snackBar::dismiss, 700)
+					if (snackBar != null && snackBar!!.isShown) {
+						snackBar!!.setText("没有数据了")
+						Handler().postDelayed(snackBar!!::dismiss, 700)
 					}
 					else
-						showSnackBar(group, "没有数据了_", 700)
+						snackBar = showSnackBar(group, "没有数据了_", 700)
 				}
 				b = false
 			}

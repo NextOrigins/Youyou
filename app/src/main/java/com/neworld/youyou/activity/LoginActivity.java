@@ -11,20 +11,28 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.R;
 import com.neworld.youyou.bean.LoginBean;
 import com.neworld.youyou.bean.LoginUserIdBean;
+import com.neworld.youyou.bean.PersonDataBean;
+import com.neworld.youyou.bean.ReportBean;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.DelegateExtKt;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.SpUtil;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -107,6 +115,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Sputil.saveString(LoginActivity.this, "userId", loginUserIdBean.getUserId());
                             Sputil.saveString(LoginActivity.this, "number", photoNumber);
                             Sputil.saveString(LoginActivity.this, "token", loginUserIdBean.getToken());
+                            Map<CharSequence, CharSequence> map = new HashMap<>();
+                            map.put("userId", loginUserIdBean.getUserId());
+                            map.put("token", loginUserIdBean.getToken());
+	                        NetBuild.response(new NetBuild.ResponseObs<PersonDataBean>() {
+		                        @Override
+		                        public void onSuccess(PersonDataBean personDataBean) {
+			                        int role = personDataBean.getMenuList().getRole();
+			                        Sputil.saveInt(LoginActivity.this, "role", role);
+		                        }
+
+		                        @Override
+		                        public void onFailed(@NotNull String error) {
+			                        Toast.makeText(LoginActivity.this, "role获取失败, 请到用户反馈处反馈此信息, 我们会尽快处理, 谢谢", Toast.LENGTH_LONG).show();
+		                        }
+	                        }, 126, PersonDataBean.class, map);
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         }

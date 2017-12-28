@@ -54,20 +54,25 @@ object NetBuild {
     // 接收map
     @JvmStatic
     fun <T> response(success: (T) -> Unit, failed: (String) -> Unit,
-                     url: Int, beanClass: Class<T>, map: Map<out CharSequence, CharSequence>) {
-        doAsync {
-            val content = getResponse(map, url)
-            if (!TextUtils.isEmpty(content)) {
-                val t = GsonUtil.parseJsonToBean(content, beanClass)
-                uiThread {
-                    if (t == null) {
-                        failed("数据错误, 请到用户反馈处反馈此问题. 谢谢")
-
-                    } else success(t)
-                }
-
-            } else uiThread { failed("网络错误, 请稍后重试") }
-        }
+                     url: Int, beanClass: Class<T>, map: Map<out CharSequence, CharSequence>)
+		    = response(success, failed, url.toString(), beanClass, map)
+    
+	@JvmStatic
+    fun <T> response(success: (T) -> Unit, failed: (String) -> Unit,
+                     url: String, beanClass: Class<T>, map: Map<out CharSequence, CharSequence>) {
+	    doAsync {
+		    val content = getResponse(map, url)
+		    if (!TextUtils.isEmpty(content)) {
+			    val t = GsonUtil.parseJsonToBean(content, beanClass)
+			    uiThread {
+				    if (t == null) {
+					    failed("数据错误, 请到用户反馈处反馈此问题. 谢谢")
+					
+				    } else success(t)
+			    }
+			
+		    } else uiThread { failed("网络错误, 请稍后重试") }
+	    }
     }
 
     fun getResponse(value: String, url: Int): String? {
