@@ -103,5 +103,7 @@
     <string name="address_manager">地址管理</string>
     <string name="message_control">消息中心</string>
     <string name="top">置顶</string>
+    <string name="adm_revert">管理员回复</string>
+    <string name="QA">问答</string>
 
 </resources>

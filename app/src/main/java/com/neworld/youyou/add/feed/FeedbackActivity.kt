@@ -1,17 +1,21 @@
 package com.neworld.youyou.add.feed
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 
 import com.bumptech.glide.Glide
 import com.neworld.youyou.R
@@ -35,6 +39,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 	
 	private var mAdapter: Adapter<ReportBean.ResultsBean>? = null
 	internal var list = arrayListOf<ReportBean.ResultsBean>()
+	
 	private val userId by preference("userId", "")
 	private val role by preference("role", 1)
 	
@@ -51,16 +56,27 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 		
 		feed_close.setOnClickListener { finish() }
 		feed_posted.setOnClickListener(this)
+		_revert_btn.setOnClickListener(this)
 //        feed_posted.setOnClickListener { startActivity(Intent(this@FeedbackActivity, ReplyViewImpl::class.java)) }
 		
-		_swipe.setOnRefreshListener {
-			initData()
-			_swipe.isRefreshing = false
-		}
+		_revert_edit.addTextChangedListener(object : TextWatcher {
+			override fun afterTextChanged(s: Editable?) {
+			}
+			
+			override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+			}
+			
+			override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+				_revert_btn.text = if ((s?.length ?: -1) > 0) "回复" else "取消"
+			}
+		})
+		
+		_swipe.setOnRefreshListener { initData() }
 	}
 	
 	override fun initData() = with(hashMapOf<CharSequence, CharSequence>()) {
 		put("userId", userId)
+		_swipe.isRefreshing = true
 		when (role) {
 			1 -> {
 				NetBuild.response(this@FeedbackActivity::dataInit,
@@ -79,6 +95,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 			list.addAll(results)
 			mAdapter?.notifyDataSetChanged()
 		}
+		_swipe.isRefreshing = false
 	}
 	
 	private fun itemBind(holder: Adapter.Holder,
@@ -91,9 +108,11 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 		val mIv = holder.find<ImageView>(R.id.back_img) // 图片
 		val mLine = holder.find<View>(R.id.back_line) // 底线
 		val mAdmin = holder.find<TextView>(R.id.back_admin) // 管理员回复
+		val mDelete = holder.find<TextView>(R.id.back_delete) // 删除反馈
 		
 		mContent.text = content
 		mDate.text = createDate
+		mDelete.text = if (role == 1) "删除" else "回复"
 		
 		if (status == 1) {
 			mState.text = "待处理"
@@ -136,21 +155,31 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 			}
 		}
 		
-		// 删除条目
-		holder.find<View>(R.id.back_delete).setOnClickListener { // TODO : 删除条目管理员改为回复 .
-			displayDialog(this@FeedbackActivity, "确定删除吗", {
-				hashMapOf<CharSequence, CharSequence>().run {
-					put("userId", userId)
-					put("bugId", bugId)
-					doAsync {
-						val response = NetBuild.getResponse(this@run, 175)
-						if (response.contains("0"))
-							uiThread { mAdapter?.remove(position) }
-						else
-							uiThread { ToastUtil.showToast("删除失败, 请检查网络后重试") }
+		// 删除按钮
+		mDelete.setOnClickListener {
+			if (role == 1) {
+				displayDialog(this@FeedbackActivity, "确定删除吗", {
+					hashMapOf<CharSequence, CharSequence>().run {
+						put("userId", userId)
+						put("bugId", bugId)
+						doAsync {
+							val response = NetBuild.getResponse(this@run, 175)
+							if (response.contains("0"))
+								uiThread { mAdapter?.remove(position) }
+							else
+								uiThread { ToastUtil.showToast("删除失败, 请检查网络后重试") }
+						}
 					}
-				}
-			})
+				})
+			} else {
+				_revert_edit.visibility = View.VISIBLE
+				_revert_btn.visibility = View.VISIBLE
+				_revert_edit.isFocusable = true
+				_revert_edit.isFocusableInTouchMode = true
+				_revert_edit.requestFocus()
+				window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+				_revert_btn.tag = bugId
+			}
 		}
 	}
 	
@@ -161,6 +190,34 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 				v.setOnClickListener(null)
 				startActivity(Intent(this, PostedActivity::class.java))
 				Handler().postDelayed({ v.setOnClickListener(this) }, 1500)
+			}
+			R.id._revert_btn -> {
+				_revert_edit.visibility = View.GONE
+				_revert_btn.visibility = View.GONE
+				_revert_edit.isFocusable = false
+				_revert_edit.isFocusableInTouchMode = false
+				_revert_edit.clearFocus()
+				val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+				if (currentFocus != null && imm.isActive) {
+					if (currentFocus!!.windowToken != null) {
+						imm.hideSoftInputFromWindow(currentFocus!!.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+					}
+				}
+				
+				if (_revert_btn.text == "取消") return
+				
+				hashMapOf<CharSequence, CharSequence>().run {
+					put("userId", userId)
+					put("bugId", v.tag as String)
+					put("content", _revert_edit.text.trim())
+					doAsync {
+						val response = NetBuild.getResponse(this@run, 173)
+						if ("0" in response)
+							uiThread { initData() }
+						else
+							ToastUtil.showToast("错误 : $response")
+					}
+				}
 			}
 		}
 	}

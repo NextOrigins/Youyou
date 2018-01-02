@@ -31,6 +31,7 @@ import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.ebook.EBooks
+import com.neworld.youyou.view.mview.parents.ParentsQ
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
@@ -50,20 +51,20 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var rbSubject: RadioButton? = null
     private var rbHot: RadioButton? = null
     private var rbMy: RadioButton? = null
-    private var parentFragment: ParentPageFragment? = null
+//    private var parentFragment: ParentPageFragment? = null
+	private var parentsQA: ParentsQ by Delegates.notNull()
     private var subjectFragment: SubjectFragment? = null
     private var hotFragment: HotFragment? = null
     private var myFragment: MyFragment? = null
-    private var fragmentManager: FragmentManager? = null
+    private var fragmentManager: FragmentManager by Delegates.notNull()
     private var isSuccess = false
     var mainApplication: MyApplication? = null
 //        private set
-    private var finished: Boolean = false
     private var netObs: NetworkObs? = null
 
     private var userId: String by preference("userId", "")
     private var token: String by preference("token", "")
-    val windowData: WindowManager
+    private val windowData: WindowManager
         get() = windowManager
 
     private var booksFragment: EBooks? = null
@@ -82,13 +83,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         super.onCreate(savedInstanceState)
         //设置当前布局
         setContentView(R.layout.activity_main)
-        parentFragment = ParentPageFragment()
+//        parentFragment = ParentPageFragment() // 原 家长圈
+	    parentsQA = ParentsQ()
+        
         subjectFragment = SubjectFragment()
         hotFragment = HotFragment()
         myFragment = MyFragment()
 
-//        booksFragment = BooksViewImpl()
-        booksFragment = EBooks()
+//        booksFragment = BooksViewImpl()  // 出售图书
+        booksFragment = EBooks() // 电子书
 
         if (mainApplication == null) {
             mainApplication = application as MyApplication
@@ -142,7 +145,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         fragmentManager = supportFragmentManager
 
         //默认显示首页
-        changePage(parentFragment, null)
+//        changePage(parentFragment, null)
 
         userId = SpUtil.getString(this, "userId")
         token = SpUtil.getString(this, "token")
@@ -150,7 +153,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
     //切换页面 并把上一个界面添加到退栈中
     private fun changePage(fragment: Fragment?, tag: String?) {
-        fragmentManager!!.beginTransaction().replace(R.id.framelayout, fragment).addToBackStack(tag).commit()
+        fragmentManager.beginTransaction().replace(R.id.framelayout, fragment).addToBackStack(tag).commit()
     }
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
@@ -159,7 +162,8 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         when (checkedId) {
             R.id.rb_parent -> {
                 b = false
-                changePage(parentFragment, null)
+//                changePage(parentFragment, null)
+	            changePage(parentsQA, null)
             }
             R.id.rb_subject -> {
                 b = false

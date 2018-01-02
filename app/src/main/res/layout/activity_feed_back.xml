@@ -46,4 +46,31 @@
             android:layout_height="match_parent"
             android:overScrollMode="never" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <EditText
+        android:id="@+id/_revert_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_bg"
+        android:hint="@string/adm_revert"
+        android:inputType="text"
+        android:padding="@dimen/dp5"
+        android:textSize="@dimen/sp18"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/_revert_btn" />
+
+    <Button
+        android:id="@+id/_revert_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="#84C449"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/_revert_edit"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/_revert_edit" />
 </android.support.constraint.ConstraintLayout>
