@@ -81,7 +81,7 @@ private class Preference<T>(val context: Context, val name: String, val default:
             is Boolean -> getBoolean(name, def)
             is Float -> getFloat(name, def)
             is Long -> getLong(name, def)
-            else -> throw IllegalArgumentException("This type can not be saved into Preference")
+            else -> throw IllegalArgumentException("This type can not be find into Preference")
         }
         res as T
     }
@@ -94,7 +94,7 @@ private class Preference<T>(val context: Context, val name: String, val default:
             is Boolean -> putBoolean(name, value)
             is Float -> putFloat(name, value)
             is Long -> putLong(name, value)
-            else -> throw IllegalArgumentException("This type can be saved into Preference")
+            else -> throw IllegalArgumentException("This type can not be saved into Preference")
         }.apply()
     }
 }

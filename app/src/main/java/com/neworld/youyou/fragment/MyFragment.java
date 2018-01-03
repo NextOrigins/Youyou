@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.R;
 import com.neworld.youyou.activity.AddChildActivity;
@@ -37,6 +39,7 @@ import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.LogUtils;
+import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
@@ -69,6 +72,10 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private LinearLayout parent;
     private View dialogView;
 
+    private View msgHint;
+
+    private int newMsg;
+
     @Override
     public View createView() {
         view = View.inflate(context, R.layout.fragment_my, null);
@@ -92,7 +99,24 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         token = Sputil.getString(context, "token", "");
     }
 
-    @Override
+	@Override
+	public void onStart() {
+		super.onStart();
+		new Thread(() -> {
+			String response = NetBuild.getResponse("{\"userId\":\"" + userId + "\"}", 194);
+			NewStatusBody b = new Gson().fromJson(response, new TypeToken<NewStatusBody>(){}.getType());
+			if (b == null) {
+				LogUtils.E("b is null");
+				return;
+			}
+			if (b.status == 0) {
+				newMsg = b.newMeStatus;
+				toggleRound(b.newMeStatus == 1);
+			}
+		}).start();
+	}
+
+	@Override
     public void onResume() {
         super.onResume();
         String personName = Sputil.getString(context, "personName", "");
@@ -137,6 +161,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlFav = (RelativeLayout) view.findViewById(R.id.my_favorites);
         rlSetting = (RelativeLayout) view.findViewById(R.id.my_setting);
         circleImageView = (CircleImageView) view.findViewById(R.id.iv_my_cicle);
+        msgHint = view.findViewById(R.id._msg_hint);
         //mTv_name = (TextView) view.findViewById(R.id.tv_name);
         $(view, R.id.feed_back).setOnClickListener(this);
         ivTitle.setOnClickListener(this);
@@ -267,7 +292,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, MyCollectActivity.class));
                 break;
             case R.id.my_setting:
-                startActivity(new Intent(context, SettingActivity.class));
+	            startActivity(new Intent(context, SettingActivity.class));
                 break;
             case R.id.feed_back:
                 startActivity(new Intent(context, FeedbackActivity.class));
@@ -275,7 +300,16 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
+    public void toggleRound(boolean b) {
+	    msgHint.setVisibility(b ? View.VISIBLE : View.GONE);
+    }
+
     private <T extends View> T $(View v, int res) {
         return v.findViewById(res);
+    }
+
+    private static class NewStatusBody {
+    	int newMeStatus;
+    	int status;
     }
 }

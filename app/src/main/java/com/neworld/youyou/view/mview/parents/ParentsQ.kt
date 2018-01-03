@@ -18,10 +18,11 @@ class ParentsQ : Fragment() {
 	override fun getContentLayoutId() = R.layout.fragment_parents_q
 	
 	override fun initWidget(root: View) {
-		root.findViewById<RecyclerView>(R.id._recycler).also {
+		root.findViewById<RecyclerView>(R.id._recycler).let {
 			it.layoutManager = LinearLayoutManager(context,
 					LinearLayoutManager.VERTICAL, false)
 			it.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-		}.let { mRecycle = it }
+			mRecycle = it
+		}
 	}
 }

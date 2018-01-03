@@ -308,6 +308,7 @@
                     android:textSize="17sp" />
 
                 <ImageView
+                    android:id="@+id/_dian"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -316,6 +317,16 @@
                     android:layout_marginRight="15dp"
                     android:src="@mipmap/jiantou" />
 
+                <View
+                    android:id="@+id/_msg_hint"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp35"
+                    android:layout_marginRight="@dimen/dp35"
+                    android:layout_toLeftOf="@id/_dian"
+                    android:layout_toStartOf="@id/_dian"
+                    android:background="@drawable/round_red" />
             </RelativeLayout>
 
             <ImageView

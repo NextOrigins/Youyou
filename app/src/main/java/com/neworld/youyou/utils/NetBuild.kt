@@ -75,6 +75,8 @@ object NetBuild {
 	    }
     }
 
+	// 解析Json格式 <{"userId":"userID"}>
+    @JvmStatic
     fun getResponse(value: String, url: Int): String? {
         val base64 = Base64.encodeToString(value.toByteArray(), Base64.DEFAULT)
         val replace = base64.replace("\n", "")
