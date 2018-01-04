@@ -58,4 +58,6 @@
     <dimen name="dp75">75dp</dimen>
     <dimen name="dp20">20dp</dimen>
     <dimen name="dp35">35dp</dimen>
+    <dimen name="dp65">65dp</dimen>
+    <dimen name="dp17">17dp</dimen>
 </resources>

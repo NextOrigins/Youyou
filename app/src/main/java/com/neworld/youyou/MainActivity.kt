@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
         //默认显示首页
 //        changePage(parentFragment, null)
+        changePage(parentsQA, null)
 
         userId = SpUtil.getString(this, "userId")
         token = SpUtil.getString(this, "token")
