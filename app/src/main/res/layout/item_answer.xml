@@ -4,12 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/dp15"
+    android:paddingLeft="@dimen/dp15"
+    android:paddingRight="@dimen/dp15"
     android:paddingTop="@dimen/dp15">
 
     <com.neworld.youyou.view.nine.CircleImageView
         android:id="@+id/item_icon"
-        android:layout_width="@dimen/dp50"
-        android:layout_height="@dimen/dp50"
+        android:layout_width="@dimen/dp35"
+        android:layout_height="@dimen/dp35"
         tools:src="@mipmap/bigimage" />
 
     <TextView
@@ -19,7 +23,7 @@
         android:layout_marginLeft="@dimen/dp5"
         android:layout_marginStart="@dimen/dp5"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp14"
+        android:textSize="@dimen/sp12"
         app:layout_constraintBottom_toTopOf="@+id/item_about"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
         app:layout_constraintTop_toTopOf="@id/item_icon"
@@ -29,19 +33,19 @@
         android:id="@+id/item_about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#A7A7A7"
-        android:textSize="@dimen/sp12"
+        android:textColor="#999999"
+        android:textSize="@dimen/sp10"
         app:layout_constraintBottom_toBottomOf="@id/item_icon"
         app:layout_constraintLeft_toLeftOf="@id/item_name"
         app:layout_constraintTop_toBottomOf="@id/item_name"
         tools:text="xx大学哲学博士" />
 
     <CheckBox
-        android:button="@android:color/transparent"
         android:id="@+id/item_praise"
         android:layout_width="@dimen/dp15"
         android:layout_height="@dimen/dp15"
-        android:background="@mipmap/web_zan"
+        android:background="@drawable/praise_bg"
+        android:button="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@id/item_icon"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/item_icon" />
@@ -54,14 +58,39 @@
         android:ellipsize="end"
         android:maxLines="6"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp16"
+        android:textSize="@dimen/sp18"
         app:layout_constraintTop_toBottomOf="@id/item_icon"
         tools:text="天生丢爱USD求氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧我的就去玩的一器第几期丢弃的" />
 
-    <View
+    <ImageView
+        android:id="@+id/item_img"
+        android:layout_width="@dimen/dp135"
+        android:layout_height="@dimen/dp75"
         android:layout_marginTop="@dimen/dp5"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toBottomOf="@id/item_content"
-        android:background="#ECECEC"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp5" />
+        tools:src="@mipmap/bigimage" />
+
+    <TextView
+        android:id="@+id/item_praise_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp5"
+        android:textColor="#999999"
+        android:textSize="@dimen/sp10"
+        app:layout_constraintTop_toBottomOf="@id/item_img"
+        tools:text="12345赞" />
+
+    <TextView
+        android:id="@+id/item_read_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp5"
+        android:layout_marginStart="@dimen/dp5"
+        android:textColor="#999999"
+        android:textSize="@dimen/sp10"
+        app:layout_constraintLeft_toRightOf="@id/item_praise_count"
+        app:layout_constraintTop_toTopOf="@id/item_praise_count"
+        tools:text="300万阅读" />
 </android.support.constraint.ConstraintLayout>

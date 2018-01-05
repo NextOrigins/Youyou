@@ -213,7 +213,6 @@ class ResponseBean {
 			val collectStatus: Int //1
 	)
 	
-	
 	data class AnswerBody(
 			val result: Result,
 			val menuList: List<AnswerList>,
@@ -223,7 +222,7 @@ class ResponseBean {
 	
 	data class AnswerList(
 			val from_userId: Int, //27390
-			val commentImg: Any, //null
+			val commentImg: String?, //null
 			val clickSum: Int, //0
 			val faceImg: String, //http://106.14.251.200:8082/olopicture/icon/a222.jpg
 			val parent_cid: Int, //0
@@ -237,7 +236,7 @@ class ResponseBean {
 	)
 	
 	data class Result(
-			val comment_count: Int, //10
+			val comment_count: Int, //10  回答
 			val imgs: String, //10854201710231522131508743333410.jpeg
 			val like: Int, //1
 			val voideImg: Any, //null
@@ -247,7 +246,7 @@ class ResponseBean {
 			val title: String, //预算800万想在上海买套学区房
 			val from_uid: Int, //10854
 			val content: String, //这个预算要是放在上海？
-			val collect_count: Int, //2
+			val collect_count: Int, //2  收藏
 			val stickStatus: Int, //1
 			val id: Int, //1613
 			val createDate: String, //2017-10-23 15:22:12

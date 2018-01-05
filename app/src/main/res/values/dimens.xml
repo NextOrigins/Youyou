@@ -60,4 +60,7 @@
     <dimen name="dp35">35dp</dimen>
     <dimen name="dp65">65dp</dimen>
     <dimen name="dp17">17dp</dimen>
+    <dimen name="sp10">10sp</dimen>
+    <dimen name="dp40">40dp</dimen>
+    <dimen name="dp135">135dp</dimen>
 </resources>

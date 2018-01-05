@@ -6,5 +6,5 @@
         android:color="@android:color/transparent" />
 
     <size
-        android:height="10dp" />
+        android:height="5dp" />
 </shape>

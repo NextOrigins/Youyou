@@ -1,12 +1,16 @@
 package com.neworld.youyou.view.mview.parents
 
+import android.annotation.SuppressLint
+import android.graphics.Point
 import android.os.Build
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.system.Os.bind
 import android.view.Menu
 import android.view.View
 import android.view.WindowManager
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -41,10 +45,12 @@ class ParentsQA : Activity() {
 		}
 	}
 	
+	@SuppressLint("SetTextI18n")
 	override fun initWidget() {
 		_recycle.run {
 			layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 			adapter = AdapterK(this@ParentsQA::bind, R.layout.item_answer, list).also { mAdapter = it }
+			addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 		}
 		
 		_toolbar.title = ""
@@ -65,27 +71,70 @@ class ParentsQA : Activity() {
 		}
 	}
 	
+	@SuppressLint("SetTextI18n")
 	private fun bind(holder: Adapter.Holder,
 	                 mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
-		val content = holder.find<TextView>(R.id.item_content)
+		val name = holder.find<TextView>(R.id.item_name)
+		val about = holder.find<TextView>(R.id.item_about)
+		val praise = holder.find<CheckBox>(R.id.item_praise)
 		val icon = holder.find<ImageView>(R.id.item_icon)
-		
+		val content = holder.find<TextView>(R.id.item_content)
+		val praises = holder.find<TextView>(R.id.item_praise_count)
+		val read = holder.find<TextView>(R.id.item_read_count)
+		val img = holder.find<ImageView>(R.id.item_img)
 		
 		val data = mutableList[position]
 		
-		content.text = "天生丢爱USD求氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧我的就去玩的一器第几期丢弃的"
+		content.text = data.content
+		name.text = data.from_nickName
+		praises.text = "${data.commentId}赞"
+		read.text = "${data.taskId}万阅读"
 		
 		Glide.with(icon).load(data.faceImg).into(icon)
-		content.post {
-			LogUtils.E("lineCount = ${content.lineCount}, position = $position")
-			LogUtils.E("text = ${content.text}")
-		}
+		
+		praise.isChecked = data.likeCommentStatus == 0
+		
+		img.visibility = if (data.commentImg != null && data.commentImg.isNotEmpty()) {
+			Glide.with(img).load(data.commentImg).into(img)
+			View.VISIBLE
+			
+		} else View.GONE
+		
+//		content.post {
+//			LogUtils.E("lineCount = ${content.lineCount}, position = $position")
+//			LogUtils.E("text = ${content.text}")
+//			if (content.lineCount > 5) {
+//
+//			}
+//		}
 	}
 	
 	private fun success(t: ResponseBean.AnswerBody) {
 		list.addAll(t.stickNamicfoList)
 		list.addAll(t.menuList)
 		mAdapter.notifyDataSetChanged()
+		
+		val data = t.result
+		
+		_answer_count.text = "${data.comment_count}个回答"
+		_star.text = "${data.collect_count}人收藏"
+		
+		_star.post {
+			val point = Point()
+			val height = resources.getDimension(R.dimen.dp50)
+			val left = windowManager.defaultDisplay.getSize(point).let {
+				(point.x - (_star.measuredWidth + _answer_count.measuredWidth + _answer.measuredWidth)) / 6
+			}
+			val top = ((height - _star.measuredHeight) / 2).toInt()
+			
+			_answer_count.setPadding(left, top, left, top)
+			_star.setPadding(left, top, left, top)
+			
+			_answer.layoutParams = _answer.layoutParams.also {
+				it.width = left * 2 + _answer.measuredWidth
+				it.height = height.toInt()
+			}
+		}
 	}
 	
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
