@@ -195,7 +195,7 @@ class ResponseBean {
 	
 	data class QADetail(
 			val comment_count: Int, //5
-			val imgs: String, //http://www.uujz.me:8082/olopicture/contextImg/10854201712251233111514176391396_10.jpg
+			val imgs: String?, //http://www.uujz.me:8082/olopicture/contextImg/10854201712251233111514176391396_10.jpg
 			val like: Int, //2
 			val voideImg: String,
 			val ip_address: String,

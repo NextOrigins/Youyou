@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -55,35 +56,47 @@
             android:background="#F4F5F7" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView
-        android:id="@+id/_answer_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="50个回答"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sp14"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <CheckBox
-        android:id="@+id/_star"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:button="@android:color/transparent"
-        android:drawableLeft="@drawable/select_stars"
-        android:drawableStart="@drawable/select_stars"
-        tools:text="10人收藏"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:weightSum="3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/_answer_count" />
+        app:layout_constraintTop_toTopOf="@id/line_bottom">
 
-    <Button
-        android:id="@+id/_answer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_red_light"
-        android:gravity="center"
-        android:text="@string/answer"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/_star" />
+        <TextView
+            android:id="@+id/_answer_count"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            tools:text="50个回答" />
+
+        <CheckBox
+            android:id="@+id/_star"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@android:color/transparent"
+            android:drawableLeft="@drawable/select_stars"
+            android:drawableStart="@drawable/select_stars"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/_answer_count"
+            tools:text="10人收藏" />
+
+        <Button
+            android:id="@+id/_answer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/holo_red_light"
+            android:gravity="center"
+            android:text="@string/answer"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/_star" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
