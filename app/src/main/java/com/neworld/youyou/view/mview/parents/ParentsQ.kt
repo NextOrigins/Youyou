@@ -6,8 +6,13 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -30,19 +35,25 @@ import java.util.*
 class ParentsQ : Fragment() {
 	
 	private var mRecycle by notNullSingleValue<RecyclerView>()
-	private var swipe by notNullSingleValue<SwipeRefreshLayout>()
-	private var footText by notNullSingleValue<TextView>()
-	private var footPrg by notNullSingleValue<ProgressBar>()
+	private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
+	private var mFootText by notNullSingleValue<TextView>()
+	private var mFootPrg by notNullSingleValue<ProgressBar>()
+	private var mToolBar by notNullSingleValue<Toolbar>()
+	
+	private var admMenu: MenuItem? = null
 	
 	private var userId by preference("userId", "")
 	private var token by preference("token", "")
+	private var cacheJson by preference("cacheJson", "") // 缓存以Json格式存储本地 , 也可以存储到服务器
+	private val role by preference("role", 1) // role = 2 为管理员
 	
-	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue()
+	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue() // RecyclerView适配器 (HeaderView FooterView)
 	
-	private val map = hashMapOf<CharSequence, CharSequence>()
-	private val list = arrayListOf<ResponseBean.QADetail>()
+	private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
+	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
 	
 	private val imgWidth by lazy {
+		// 图片等宽
 		val point = Point()
 		activity.windowManager.defaultDisplay.getSize(point)
 		(point.x - resources.getDimension(R.dimen.dp17)) / 3
@@ -51,16 +62,21 @@ class ParentsQ : Fragment() {
 	private var endDate = ""
 	private var topDate = ""
 	
-	private var b = true
+	private var b = true // 加载完成提示 只显示一次
 	
-	private val cacheList = arrayListOf<String>()
-	private var cacheJson by preference("cacheJson", "")
+	private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
+	
+	private var cacheIndex = 0 // 读取缓存下标
+	private var over = false // 是否读取完缓存列表
+	
+	private var openCache = true // 是否开启缓存
 	
 	override fun getContentLayoutId() = R.layout.fragment_parents_q
 	
 	override fun initWidget(root: View) {
 		mRecycle = root.findViewById(R.id._recycler)
-		swipe = root.findViewById(R.id._swipe)
+		mSwipe = root.findViewById(R.id._swipe)
+		mToolBar = root.findViewById(R.id._toolbar)
 		
 		root.findViewById<ConstraintLayout>(R.id._parent)
 				.setOnClickListener { startActivity(Intent(context, ParentsQA::class.java)) }
@@ -72,14 +88,17 @@ class ParentsQ : Fragment() {
 		
 		setScrollChangedListener()
 		
-		swipe.setOnRefreshListener {
+		mSwipe.setOnRefreshListener {
 			downData()
-			swipe.isRefreshing = false
+			mSwipe.isRefreshing = false
 		}
 		
+		mToolBar.title = ""
+		if (role == 2) (activity as AppCompatActivity).setSupportActionBar(mToolBar)
+		
 		layoutInflater.inflate(R.layout.footview_parents_qa, mRecycle, false).run {
-			footText = findViewById(R.id.foot_loading)
-			footPrg = findViewById(R.id.foot_progress)
+			mFootText = findViewById(R.id.foot_loading)
+			mFootPrg = findViewById(R.id.foot_progress)
 			mAdapter.setFootView(this)
 		}
 	}
@@ -94,28 +113,22 @@ class ParentsQ : Fragment() {
 			
 			LogUtils.E("cacheList = $cacheList, topDate = $topDate, endDate = $endDate")
 		}
-		map.run {
-			put("userId", userId)
-			put("token", token)
-			put("createDate", topDate)
-			put("endDate", endDate)
-			NetBuild.response(this@ParentsQ::upSuccess,
-					ToastUtil::showToast, 199, ResponseBean.QABody::class.java, this)
-		}
 		
-		cacheJson = ""
-		LogUtils.E("cacheJson = $cacheJson")
+		map.put("userId", userId)
+		map.put("token", token)
+		
+		upData()
 	}
 	
 	private fun downData() {
-		request {
+		downRequest {
 			val bean = it.menuList
-			if (bean.isEmpty()) {
+			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate) {
 				showSnackBar(mRecycle, "没有更多数据了")
 				b = false
-				footText.text = "没有更多数据了"
-				footPrg.visibility = View.GONE
-				return@request
+				mFootText.text = "没有更多数据了"
+				mFootPrg.visibility = View.GONE
+				return@downRequest
 			}
 			mAdapter.addDataToTop(ArrayList(bean))
 			mAdapter.notifyDataSetChanged()
@@ -129,32 +142,31 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun upData() {
-		footPrg.visibility = View.VISIBLE
-		footText.text = "加载中"
-		initData()
-	}
-	
-	private fun upSuccess(t: ResponseBean.QABody) {
-		val bean = t.menuList
-		if (bean.isEmpty()) {
-			if (b) {
-				footText.text = "没有更多数据了"
-				footPrg.visibility = View.GONE
-				b = false
+		mFootPrg.visibility = View.VISIBLE
+		mFootText.text = "加载中"
+		upRequest {
+			val bean = it.menuList
+			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate) {
+				if (b) {
+					mFootText.text = "没有更多数据了"
+					mFootPrg.visibility = View.GONE
+					b = false
+				}
+				return@upRequest
 			}
-			return
+			mAdapter.addData(bean)
+			mAdapter.notifyDataSetChanged()
+			// 缓存
+			if (over)
+				cacheList.add(endDate)
+			// 改变FooterView状态
+			mFootText.text = "加载更多"
+			mFootPrg.visibility = View.GONE
+			
+			if (topDate.isEmpty())
+				topDate = bean[0].createDate
+			endDate = bean[bean.size - 1].createDate
 		}
-		mAdapter.addData(bean)
-		mAdapter.notifyDataSetChanged()
-		// 缓存
-		cacheList.add(endDate)
-		// 改变FooterView状态
-		footText.text = "加载更多"
-		footPrg.visibility = View.GONE
-		
-		if (topDate.isEmpty())
-			topDate = bean[0].createDate
-		endDate = bean[bean.size - 1].createDate
 	}
 	
 	@SuppressLint("SetTextI18n")
@@ -212,10 +224,30 @@ class ParentsQ : Fragment() {
 		}
 	}
 	
-	private fun request(success: (t: ResponseBean.QABody) -> Unit) {
+	private fun downRequest(success: (ResponseBean.QABody) -> Unit) {
+		LogUtils.E("downDate = $endDate")
 		map.run {
 			put("createDate", topDate)
 			put("endDate", endDate)
+			NetBuild.response(success, ToastUtil::showToast,
+					199, ResponseBean.QABody::class.java, this)
+		}
+	}
+	
+	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {
+		val listDate = when {
+			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> cacheList[cacheIndex++]
+			else -> {
+				over = true
+				endDate
+			}
+		}
+		
+		LogUtils.E("listDate = $listDate")
+		
+		map.run {
+			put("createDate", topDate)
+			put("endDate", listDate)
 			NetBuild.response(success, ToastUtil::showToast,
 					199, ResponseBean.QABody::class.java, this)
 		}
@@ -242,13 +274,14 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun saveCache() {
-		hashMapOf<String, Any>().run {
-			put("end", endDate)
-			put("top", topDate)
-			put("menu", cacheList)
-			
-			cacheJson = Gson().toJson(this)
-		}
+		if (openCache)
+			hashMapOf<String, Any>().run {
+				put("end", endDate)
+				put("top", topDate)
+				put("menu", cacheList)
+				
+				cacheJson = Gson().toJson(this)
+			}
 	}
 	
 	private data class ReadCache(val top: String = "",
@@ -273,5 +306,30 @@ class ParentsQ : Fragment() {
 			result = 31 * result + Arrays.hashCode(menu)
 			return result
 		}
+	}
+	
+	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+		if (role == 2) {
+			inflater?.inflate(R.menu.menu_role_item, menu)
+			admMenu = menu?.findItem(R.id.menu_clear)
+		}
+	}
+	
+	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+		if (role == 1) return false
+		
+		when (item?.itemId) {
+			R.id.menu_clear -> {
+				openCache = if (openCache) {
+					admMenu?.title = "打开缓存"
+					cacheJson = ""
+					false
+				} else {
+					admMenu?.title = "清除缓存并关闭"
+					true
+				}
+			}
+		}
+		return true
 	}
 }

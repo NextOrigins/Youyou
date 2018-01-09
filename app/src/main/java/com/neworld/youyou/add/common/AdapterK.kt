@@ -42,7 +42,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 	
 	fun setFootView(view: View) {
 		mFootView = view
-		notifyItemInserted(itemCount - 1)
+		notifyItemInserted(itemCount)
 	}
 
     fun getHeadView() = mHeadView

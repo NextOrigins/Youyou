@@ -1,25 +1,21 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
-import android.graphics.Point
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.system.Os.bind
 import android.view.Menu
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.neworld.youyou.R
-import com.neworld.youyou.R.id.*
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 
@@ -73,11 +69,9 @@ class ParentsQA : Activity() {
 		
 		_recycle.addOnScrollListener(object: RecyclerView.OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-					if (!_recycle.canScrollVertically(1)) {
+				if (newState == RecyclerView.SCROLL_STATE_IDLE)
+					if (!_recycle.canScrollVertically(1))
 						upData()
-					}
-				}
 			}
 		})
 		
@@ -92,7 +86,6 @@ class ParentsQA : Activity() {
 			headIcon = findViewById(R.id.head_img)
 			mAdapter.setHeadView(this)
 		}
-		
 	}
 	
 	override fun initData() {

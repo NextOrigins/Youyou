@@ -251,6 +251,7 @@ class ResponseBean {
 			val id: Int, //1613
 			val createDate: String, //2017-10-23 15:22:12
 			val status: Int, //0
-			val transmit_count: Int //0
+			val transmit_count: Int, //0
+			val collectStatus: Int // 0
 	)
 }
