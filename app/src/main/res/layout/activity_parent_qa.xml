@@ -56,47 +56,41 @@
             android:background="#F4F5F7" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp50"
-        android:weightSum="3"
+    <TextView
+        android:id="@+id/_answer_count"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/line_bottom"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp14"
+        tools:text="50个回答" />
+
+    <CheckBox
+        android:id="@+id/_star"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/line_bottom"
+        android:background="@android:color/transparent"
+        android:button="@android:color/transparent"
+        android:drawableLeft="@drawable/select_stars"
+        android:drawableStart="@drawable/select_stars"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/line_bottom">
+        app:layout_constraintLeft_toRightOf="@id/_answer_count"
+        tools:text="10人收藏" />
 
-        <TextView
-            android:id="@+id/_answer_count"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp14"
-            tools:text="50个回答" />
-
-        <CheckBox
-            android:id="@+id/_star"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:button="@android:color/transparent"
-            android:drawableLeft="@drawable/select_stars"
-            android:drawableStart="@drawable/select_stars"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/_answer_count"
-            tools:text="10人收藏" />
-
-        <Button
-            android:id="@+id/_answer"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/holo_red_light"
-            android:gravity="center"
-            android:text="@string/answer"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/_star" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/_answer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/line_bottom"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@android:color/holo_red_light"
+        android:text="@string/answer"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/_star" />
 </android.support.constraint.ConstraintLayout>

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -65,6 +66,7 @@ class ParentsQ : Fragment() {
 	private var b = true // 加载完成提示 只显示一次
 	
 	private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
+	private val savedList = arrayListOf<String>() // 避免cacheList读取冲突
 	
 	private var cacheIndex = 0 // 读取缓存下标
 	private var over = false // 是否读取完缓存列表
@@ -90,11 +92,9 @@ class ParentsQ : Fragment() {
 		
 		mSwipe.setOnRefreshListener {
 			downData()
-			mSwipe.isRefreshing = false
 		}
 		
 		mToolBar.title = ""
-		if (role == 2) (activity as AppCompatActivity).setSupportActionBar(mToolBar)
 		
 		layoutInflater.inflate(R.layout.footview_parents_qa, mRecycle, false).run {
 			mFootText = findViewById(R.id.foot_loading)
@@ -110,8 +110,7 @@ class ParentsQ : Fragment() {
 			topDate = readCache.top
 			endDate = readCache.end
 			cacheList.addAll(readCache.menu)
-			
-			LogUtils.E("cacheList = $cacheList, topDate = $topDate, endDate = $endDate")
+			savedList.addAll(cacheList)
 		}
 		
 		map.put("userId", userId)
@@ -121,6 +120,7 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun downData() {
+		if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
 		downRequest {
 			val bean = it.menuList
 			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate) {
@@ -133,7 +133,9 @@ class ParentsQ : Fragment() {
 			mAdapter.addDataToTop(ArrayList(bean))
 			mAdapter.notifyDataSetChanged()
 			
-			cacheList.add(0, endDate)
+			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+			
+			savedList.add(0, endDate)
 			
 			if (topDate.isEmpty())
 				topDate = bean[0].createDate
@@ -146,7 +148,7 @@ class ParentsQ : Fragment() {
 		mFootText.text = "加载中"
 		upRequest {
 			val bean = it.menuList
-			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate) {
+			if (bean.isEmpty()/* || bean[bean.size - 1].createDate == endDate*/) {
 				if (b) {
 					mFootText.text = "没有更多数据了"
 					mFootPrg.visibility = View.GONE
@@ -156,16 +158,19 @@ class ParentsQ : Fragment() {
 			}
 			mAdapter.addData(bean)
 			mAdapter.notifyDataSetChanged()
-			// 缓存
-			if (over)
-				cacheList.add(endDate)
+			
 			// 改变FooterView状态
 			mFootText.text = "加载更多"
 			mFootPrg.visibility = View.GONE
 			
-			if (topDate.isEmpty())
+			// 缓存
+			if (over) {
+				savedList.add(endDate)
+				endDate = bean[bean.size - 1].createDate
+			}
+			
+			if (TextUtils.isEmpty(topDate))
 				topDate = bean[0].createDate
-			endDate = bean[bean.size - 1].createDate
 		}
 	}
 	
@@ -225,7 +230,6 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun downRequest(success: (ResponseBean.QABody) -> Unit) {
-		LogUtils.E("downDate = $endDate")
 		map.run {
 			put("createDate", topDate)
 			put("endDate", endDate)
@@ -235,19 +239,19 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {
-		val listDate = when {
-			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> cacheList[cacheIndex++]
+		val date = when {
+			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> {
+				cacheList[cacheIndex++]
+			}
 			else -> {
 				over = true
 				endDate
 			}
 		}
 		
-		LogUtils.E("listDate = $listDate")
-		
 		map.run {
 			put("createDate", topDate)
-			put("endDate", listDate)
+			put("endDate", date)
 			NetBuild.response(success, ToastUtil::showToast,
 					199, ResponseBean.QABody::class.java, this)
 		}
@@ -278,7 +282,7 @@ class ParentsQ : Fragment() {
 			hashMapOf<String, Any>().run {
 				put("end", endDate)
 				put("top", topDate)
-				put("menu", cacheList)
+				put("menu", savedList)
 				
 				cacheJson = Gson().toJson(this)
 			}
@@ -305,6 +309,14 @@ class ParentsQ : Fragment() {
 			result = 31 * result + end.hashCode()
 			result = 31 * result + Arrays.hashCode(menu)
 			return result
+		}
+	}
+	
+	override fun onResume() {
+		super.onResume()
+		if (role == 2) {
+			setHasOptionsMenu(true)
+			(activity as AppCompatActivity).setSupportActionBar(mToolBar)
 		}
 	}
 	

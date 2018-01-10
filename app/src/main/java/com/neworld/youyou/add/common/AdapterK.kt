@@ -2,10 +2,12 @@ package com.neworld.youyou.add.common
 
 import android.view.View
 import android.view.ViewGroup
+import com.neworld.youyou.utils.LogUtils
 
 
 /**
  * @author by user on 2017/12/25.
+ * 带有HeaderView 和 FooterView的Adapter (Kotlin用)
  */
 class
 AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayList<T>)
@@ -42,7 +44,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 	
 	fun setFootView(view: View) {
 		mFootView = view
-		notifyItemInserted(itemCount)
+		notifyItemInserted(itemCount - 1)
 	}
 
     fun getHeadView() = mHeadView
@@ -76,7 +78,10 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         else super.onCreateViewHolder(parent, viewType)
     }
 
-    override fun getItemCount()
-            = if (mHeadView == null) super.getItemCount() else super.getItemCount() + 1
+    override fun getItemCount() = when {
+	    mHeadView != null && mFootView != null -> super.getItemCount() + 2
+	    mHeadView != null || mFootView != null -> super.getItemCount() + 1
+	    else -> super.getItemCount()
+    }
     
 }

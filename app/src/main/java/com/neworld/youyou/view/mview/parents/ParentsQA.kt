@@ -1,6 +1,7 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
+import android.graphics.Point
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -139,6 +140,8 @@ class ParentsQA : Activity() {
 		
 		val data = mutableList[position]
 		
+		LogUtils.E("content = ${data.content}")
+		
 		content.text = data.content
 		name.text = data.from_nickName
 		praises.text = "${data.commentLike}赞"
@@ -180,22 +183,17 @@ class ParentsQA : Activity() {
 		headTitle.text = data.title
 		Glide.with(headIcon).load(data.imgs).into(headIcon)
 		
-//		_star.post {
-//			val point = Point()
-//			val height = resources.getDimension(R.dimen.dp50)
-//			val left = windowManager.defaultDisplay.getSize(point).let {
-//				(point.x - (_star.measuredWidth + _answer_count.measuredWidth + _answer.measuredWidth)) / 6
-//			}
+		_star.post {
+			val point = Point()
+			val height = resources.getDimension(R.dimen.dp50)
+			val left = windowManager.defaultDisplay.getSize(point).let {
+				(point.x - (_star.measuredWidth * 3)) / 6
+			}
 //			val top = ((height - _star.measuredHeight) / 2).toInt()
-//
-//			_answer_count.setPadding(left, top, left, top)
-//			_star.setPadding(left, top, left, top)
-//
-//			_answer.layoutParams = _answer.layoutParams.also {
-//				it.width = left * 2 + _answer.measuredWidth
-//				it.height = height.toInt()
-//			}
-//		}
+
+			_answer_count.setPadding(left, 0, left, 0)
+			_star.setPadding(left, 0, left, 0)
+		}
 	}
 	
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
