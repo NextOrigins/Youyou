@@ -69,12 +69,13 @@ class ParentsQA : Activity() {
 		_star.setOnClickListener {
 			hashMapOf<CharSequence, CharSequence>().run {
 				put("userId", userId)
-				put("taskId", taskId)
+				put("taskId", "1613") // taskId 暂用1613 其他的没数据
 				put("type", "5")
 				put("status", if (_star.isChecked) "1" else "0")
 				
 				doAsync {
-					// TODO : 网络请求 -> 112 (收藏)
+					val response = NetBuild.getResponse(this@run, 112)
+					LogUtils.E("response : $response")
 				}
 			}
 		}
