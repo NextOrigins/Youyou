@@ -24,21 +24,10 @@
         android:layout_marginStart="@dimen/dp5"
         android:textColor="@color/black"
         android:textSize="@dimen/sp12"
-        app:layout_constraintBottom_toTopOf="@+id/item_about"
+        app:layout_constraintBottom_toBottomOf="@+id/item_icon"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
         app:layout_constraintTop_toTopOf="@id/item_icon"
         tools:text="名字" />
-
-    <TextView
-        android:id="@+id/item_about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#999999"
-        android:textSize="@dimen/sp10"
-        app:layout_constraintBottom_toBottomOf="@id/item_icon"
-        app:layout_constraintLeft_toLeftOf="@id/item_name"
-        app:layout_constraintTop_toBottomOf="@id/item_name"
-        tools:text="xx大学哲学博士" />
 
     <CheckBox
         android:id="@+id/item_praise"
