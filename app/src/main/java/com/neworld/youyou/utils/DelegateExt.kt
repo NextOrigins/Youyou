@@ -47,6 +47,20 @@ fun displayDialog(context: Context, content: String, enter: () -> Unit = { },
             })
 }
 
+/**
+ * toast
+ */
+fun showToast(text: String) {
+    ToastUtil.showToast(text)
+}
+
+/**
+ * Log.e
+ */
+fun E(text: String) {
+    LogUtils.E(text)
+}
+
 private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {
     private var value: T? = null
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {

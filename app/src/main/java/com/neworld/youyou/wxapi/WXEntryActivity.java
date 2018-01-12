@@ -61,7 +61,7 @@ public class WXEntryActivity extends WXCallbackActivity {
 						ToastUtil.showToast("支付取消");
 						finish();
 						break;
-					default:
+					deftimg:
 						ToastUtil.showToast("支付失败");
 						setResult(RESULT_OK);
 						finish();
@@ -86,7 +86,7 @@ public class WXEntryActivity extends WXCallbackActivity {
 					result = "分享失败";
 					Sputil.saveBoolean(this, "WXShare", false);
 					break;
-				default:
+				deftimg:
                     ToastUtil.showToast(result+"");
 					result = "未知原因";
 

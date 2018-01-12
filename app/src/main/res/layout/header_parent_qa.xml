@@ -20,12 +20,38 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="未婚同居有什么好处?" />
 
+    <TextView
+        android:id="@+id/head_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp15"
+        android:singleLine="true"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/head_toggle"
+        app:layout_constraintTop_toBottomOf="@id/head_title"
+        tools:text="哦啊无敌U阿是对去无毒无前期去外地偶觉得" />
+
+    <TextView
+        android:id="@+id/head_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/expand"
+        android:drawablePadding="@dimen/dp5"
+        android:drawableRight="@drawable/expand"
+        android:text="@string/expand"
+        android:textColor="#406599"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/head_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/head_content" />
+
     <ImageView
         android:id="@+id/head_img"
-        android:layout_width="@dimen/dp50"
-        android:layout_height="@dimen/dp50"
+        android:layout_width="@dimen/dp120"
+        android:layout_height="@dimen/dp120"
         android:layout_marginTop="@dimen/dp15"
         android:contentDescription="@null"
-        app:layout_constraintTop_toBottomOf="@id/head_title"
+        app:layout_constraintTop_toBottomOf="@id/head_content"
         tools:src="@mipmap/bigimage" />
 </android.support.constraint.ConstraintLayout>

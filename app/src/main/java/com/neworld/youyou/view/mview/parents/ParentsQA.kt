@@ -12,6 +12,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
@@ -38,13 +39,17 @@ class ParentsQA : Activity() {
 	private var b = true
 	private var measured = false
 	
+	// header
 	private var headTitle by notNullSingleValue<TextView>()
 	private var headIcon by notNullSingleValue<ImageView>()
+	private var headContent by notNullSingleValue<TextView>()
+	private var headToggle by notNullSingleValue<TextView>()
 	
+	// footer
 	private var footText by notNullSingleValue<TextView>()
 	private var footPrg by notNullSingleValue<ProgressBar>()
 	
-	private var taskId by Delegates.notNull<String>()
+	private var tskId by Delegates.notNull<Int>()
 	
 	override fun getContentLayoutId() = R.layout.activity_parent_qa
 	
@@ -56,6 +61,7 @@ class ParentsQA : Activity() {
 		}
 	}
 	
+	@SuppressLint("SetTextI18n")
 	override fun initWidget() {
 		_recycle.run {
 			layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -75,7 +81,12 @@ class ParentsQA : Activity() {
 				
 				doAsync {
 					val response = NetBuild.getResponse(this@run, 112)
-					LogUtils.E("response : $response")
+					runOnUiThread {
+						_star.text = if ("0" in response && _star.isChecked)
+							"已收藏"
+						 else
+							"${(_star.tag as Int)}人收藏"
+					}
 				}
 			}
 		}
@@ -104,12 +115,14 @@ class ParentsQA : Activity() {
 		layoutInflater.inflate(R.layout.header_parent_qa, _recycle, false).run {
 			headTitle = findViewById(R.id.head_title)
 			headIcon = findViewById(R.id.head_img)
+			headContent = findViewById(R.id.head_content)
+			headToggle = findViewById(R.id.head_toggle)
 			mAdapter.setHeadView(this)
 		}
 	}
 	
 	override fun initData() {
-		taskId = intent.getStringExtra("taskId")
+		tskId = intent.getIntExtra("taskId", 0)
 		val date = intent.getStringExtra("date")
 		map.run {
 			put("userId", userId)
@@ -157,9 +170,6 @@ class ParentsQA : Activity() {
 		val img = holder.find<ImageView>(R.id.item_img)
 		
 		val data = mutableList[position]
-
-//		val nicai = "<p><img src=\"http://106.14.251.200:8083/ueditor_server/ueditor/jsp/upload/image/20170811/1502431918388057979.jpg\" title=\"1502431918388057979.jpg\" alt=\"1.webp.jpg\"/></p><p><br/></p><p>学区房，一个特别的名词。教育资源分布不均，家长不愿让孩子输在起跑</p><p>线上，直接让北京上海等一线城市的学区房成为炙手可热的高价抢购品。</p><p>本文以上海为例，谈一谈学区房的现状和风险，以及学区房是否具有不可替代的重要意义。</p><p><br/></p><p>目录：</p><p>-上海优质高中/初中/小学有哪些</p><p>-好的升学规划路线有哪些</p><p>-什么是学区房</p><p>-上海学区房现状如何</p><p>-学区房的政策及风险</p><p><br/></p><p>城市分割线</p><p><br/></p><p>01、上海优质高中/初中/小学有哪些</p><p><br/></p><p>聊学区房为什么要聊高中？</p><p><br/></p><p>要知道学区房是体制内产物，而体制内绕不开高考，因此采取从“高中-初中-小学”倒推逻辑来聊学区房似乎也没毛病，即普遍观念会认为好的高中会影响初中，好的初中会影响小学。</p><p><br/></p><p>至于“为什么学历不一定值钱，但学区房却非常值钱”这种世纪难题不在本文讨论范畴，知乎上就有这个问题，有兴趣的盆友可以查查。</p><p><br/></p><p>以下根据2016年清华、北大、复旦、上交的录取人数罗列的上海高中名单。</p><p><br/></p><p><img src=\"http://106.14.251.200:8083/ueditor_server/ueditor/jsp/upload/image/20170811/1502431933000007362.jpg\" title=\"1502431933000007362.jpg\" alt=\"2.webp.jpg\"/></p><p><br/></p><p>其中包括赫赫有名的四大名校和八大金刚。上海中学，一本率接近100%，16年清北录取了55人，要知道清北在上海每年共录取200出头，一个学校占比达1/4，另外复旦和上交101人。前段时间特别火的《中国诗词大会》有位非常优秀的选手姜闻页同学就是上中的学生。当然还有一位更火的选手武亦姝，也是来自四大名校之一的复旦附中。</p><p><br/></p><p>紧随上中其后的是华二，华东师范大学第二附属中学，一本率97%，非常厉害，并且华二13年在闵行建立了一所分校，分校的师资是从本部调过来的，质量也很不错，一本率88%。</p><p><br/></p><p>复旦附中和交大附中的复旦、上交录取人数也很可观，占尽了先天优势，一本率在95%左右，交大附中最近有微跌。</p><p><br/></p><p>另外，必须要提一下闵行的七宝中学，近年来势头非常猛，单纯从清北复交的录取人数来看已冲击到四大，甩其他八大几条街，也有不少人断言七宝必将改变四大的格局。</p><p><br/></p><p>这里有两所不同体制的牛校。一所是浦东的上海实验学校，另一所是虹口的上外附中。</p><p><br/></p><p>我们常说四大名校、八大金刚，还有一个我们叫他“神仙学校”，就是上外附中。虽然他的清北复交录取人数比不上四大，但我们看看他的毕业生去向就知道他的神之处。</p><p><br/></p><p>有部分毕业生被耶鲁、哥伦比亚这样的常春藤录取，还有被斯坦福、牛津、早稻田、港大这样的世界名校录取，只有百分之十几的人会参加国内高考或保送，成绩也很突出。</p><p><br/></p><p>这就是“神仙学校”，如果家长想走出国这条路的话，上外附中是不错的选择。</p><p><br/></p><p>另一所不同体制的学校是上海实验学校，采取的是独一无二的十年制，小学4年，初中3年，高中3年，比同年级少2年，学生压力和教学能力可想而知。虽然是公办，但上实小学部是面向全市招生，录取比例极低。</p><p><br/></p><p>以上为上海顶尖高中的大体情况，关于数据较靠后的同等学校，列表中存在少许遗漏。</p><p><br/></p><p>那么这些牛校的生源是从哪里来的呢？来看看上海的初中。</p><p><br/>"
-//		XmlHelper.parse(StringReader(data.content))
 		
 		/*val getter = Html.ImageGetter {
 			img.visibility = if (!TextUtils.isEmpty(it)) {
@@ -171,7 +181,6 @@ class ParentsQA : Activity() {
 			if (img.visibility == View.VISIBLE) img.drawable else null
 		}*/
 		
-//		val fromHtml = Html.fromHtml(data.content, getter, null)
 		content.text = data.content
 		
 		name.text = data.from_nickName
@@ -183,6 +192,22 @@ class ParentsQA : Activity() {
 		praise.isChecked = data.likeCommentStatus == 0
 		
 		img.visibility = View.GONE
+		
+		praise.setOnClickListener {
+			hashMapOf<CharSequence, CharSequence>().run {
+				put("userId", userId)
+				put("commentId", data.commentId.toString())
+				put("type", "5")
+				put("status", if (praise.isChecked) "1" else "0")
+				
+				val response = NetBuild.getResponse(this@run, 193)
+				E("map : $this")
+				E("response : $response")
+				if ("0" !in response) {
+					showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
+				}
+			}
+		}
 
 //		content.post {
 //			LogUtils.E("lineCount = ${content.lineCount}, position = $position")
@@ -205,10 +230,23 @@ class ParentsQA : Activity() {
 		val data = t.result
 		
 		_answer_count.text = "${data.comment_count}个回答"
-		_star.text = "${data.collect_count}人收藏"
+		_star.run {
+			text = if (data.collectStatus == 0) {
+				isChecked = true
+				"已收藏"
+			} else {
+				isChecked = false
+				"${data.collect_count}人收藏"
+			}
+			tag = data.collect_count
+		}
 		
 		headTitle.text = data.title
-		Glide.with(headIcon).load(data.imgs).into(headIcon)
+		headContent.text = data.content
+		val options = RequestOptions()
+				.placeholder(R.drawable.deftimg)
+				.error(R.drawable.deftimg)
+		Glide.with(headIcon).load(data.imgs).apply(options).into(headIcon)
 		
 		if (!measured)
 			_star.post {
@@ -219,6 +257,10 @@ class ParentsQA : Activity() {
 				
 				_answer_count.setPadding(left, 0, left, 0)
 				_star.setPadding(left, 0, left, 0)
+				
+				_answer.layoutParams = _answer.layoutParams.also {
+					it.width = left * 2 + _star.measuredWidth
+				}
 				
 				measured = true
 			}
