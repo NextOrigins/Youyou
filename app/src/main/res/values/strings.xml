@@ -110,5 +110,6 @@
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_and_close">清除缓存并关闭</string>
     <string name="expand">展开</string>
+    <string name="share">分享</string>
 
 </resources>

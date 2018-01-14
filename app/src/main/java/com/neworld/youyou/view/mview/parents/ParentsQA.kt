@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Point
 import android.os.Build
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -27,32 +28,32 @@ import kotlin.properties.Delegates
  * @author by user on 2018/1/4.
  */
 class ParentsQA : Activity() {
-	
+
 	private val userId by preference("userId", "")
 	private val map = hashMapOf<CharSequence, CharSequence>()
-	
+
 	// 数据
 	private val list = arrayListOf<ResponseBean.AnswerList>()
 	// adapter
 	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
-	
+
 	private var b = true
 	private var measured = false
-	
+
 	// header
 	private var headTitle by notNullSingleValue<TextView>()
 	private var headIcon by notNullSingleValue<ImageView>()
 	private var headContent by notNullSingleValue<TextView>()
 	private var headToggle by notNullSingleValue<TextView>()
-	
+
 	// footer
 	private var footText by notNullSingleValue<TextView>()
 	private var footPrg by notNullSingleValue<ProgressBar>()
-	
+
 	private var tskId by Delegates.notNull<Int>()
-	
+
 	override fun getContentLayoutId() = R.layout.activity_parent_qa
-	
+
 	override fun initWindows() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -60,7 +61,7 @@ class ParentsQA : Activity() {
 			window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
 		}
 	}
-	
+
 	@SuppressLint("SetTextI18n")
 	override fun initWidget() {
 		_recycle.run {
@@ -68,36 +69,36 @@ class ParentsQA : Activity() {
 			adapter = AdapterK(this@ParentsQA::bind, R.layout.item_answer, list).also { mAdapter = it }
 			addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 		}
-		
+
 		_toolbar.title = ""
 		setSupportActionBar(_toolbar)
-		
+
 		_star.setOnClickListener {
 			hashMapOf<CharSequence, CharSequence>().run {
 				put("userId", userId)
 				put("taskId", "1613") // taskId 暂用1613 其他的没数据
 				put("type", "5")
 				put("status", if (_star.isChecked) "1" else "0")
-				
+
 				doAsync {
 					val response = NetBuild.getResponse(this@run, 112)
 					runOnUiThread {
 						_star.text = if ("0" in response && _star.isChecked)
 							"已收藏"
-						 else
+                        else
 							"${(_star.tag as Int)}人收藏"
 					}
 				}
 			}
 		}
-		
+
 		_close.setOnClickListener { finish() }
-		
+
 		_swipe.setOnRefreshListener {
 			initData()
 			_swipe.isRefreshing = false
 		}
-		
+
 		_recycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
 				if (newState == RecyclerView.SCROLL_STATE_IDLE)
@@ -105,13 +106,13 @@ class ParentsQA : Activity() {
 						upData()
 			}
 		})
-		
+
 		layoutInflater.inflate(R.layout.footview_parents_qa, _recycle, false).run {
 			footText = findViewById(R.id.foot_loading)
 			footPrg = findViewById(R.id.foot_progress)
 			mAdapter.setFootView(this)
 		}
-		
+
 		layoutInflater.inflate(R.layout.header_parent_qa, _recycle, false).run {
 			headTitle = findViewById(R.id.head_title)
 			headIcon = findViewById(R.id.head_img)
@@ -120,7 +121,7 @@ class ParentsQA : Activity() {
 			mAdapter.setHeadView(this)
 		}
 	}
-	
+
 	override fun initData() {
 		tskId = intent.getIntExtra("taskId", 0)
 		val date = intent.getStringExtra("date")
@@ -132,7 +133,7 @@ class ParentsQA : Activity() {
 					ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
 		}
 	}
-	
+
 	private fun upData() {
 		if (list.isEmpty()) return
 		if (b) {
@@ -157,7 +158,7 @@ class ParentsQA : Activity() {
 			}, ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
 		}
 	}
-	
+
 	@SuppressLint("SetTextI18n")
 	private fun bind(holder: Adapter.Holder,
 	                 mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
@@ -168,38 +169,38 @@ class ParentsQA : Activity() {
 		val praises = holder.find<TextView>(R.id.item_praise_count)
 		val read = holder.find<TextView>(R.id.item_read_count)
 		val img = holder.find<ImageView>(R.id.item_img)
-		
+
 		val data = mutableList[position]
-		
+
 		/*val getter = Html.ImageGetter {
 			img.visibility = if (!TextUtils.isEmpty(it)) {
 				Glide.with(img).load(it).into(img)
 				View.VISIBLE
 			} else
 				View.GONE
-			
+
 			if (img.visibility == View.VISIBLE) img.drawable else null
 		}*/
-		
+
 		content.text = data.content
-		
+
 		name.text = data.from_nickName
 		praises.text = "${data.commentLike}赞"
-		read.text = "${data.clickSum}万阅读"
-		
+		read.text = if (data.clickSum > 0) "${data.clickSum}万阅读" else "0阅读"
+
 		Glide.with(icon).load(data.faceImg).into(icon)
-		
+
 		praise.isChecked = data.likeCommentStatus == 0
-		
+
 		img.visibility = View.GONE
-		
+
 		praise.setOnClickListener {
 			hashMapOf<CharSequence, CharSequence>().run {
 				put("userId", userId)
 				put("commentId", data.commentId.toString())
 				put("type", "5")
 				put("status", if (praise.isChecked) "1" else "0")
-				
+
 				val response = NetBuild.getResponse(this@run, 193)
 				E("map : $this")
 				E("response : $response")
@@ -217,18 +218,18 @@ class ParentsQA : Activity() {
 //			}
 //		}
 	}
-	
+
 	@SuppressLint("SetTextI18n")
 	private fun success(t: ResponseBean.AnswerBody) {
 		mAdapter.addDataAndClear(t.stickNamicfoList)
 		mAdapter.addData(t.menuList)
 		mAdapter.notifyDataSetChanged()
-		
+
 		b = true
 		footText.text = "加载更多"
-		
+
 		val data = t.result
-		
+
 		_answer_count.text = "${data.comment_count}个回答"
 		_star.run {
 			text = if (data.collectStatus == 0) {
@@ -240,34 +241,39 @@ class ParentsQA : Activity() {
 			}
 			tag = data.collect_count
 		}
-		
+
 		headTitle.text = data.title
 		headContent.text = data.content
 		val options = RequestOptions()
 				.placeholder(R.drawable.deftimg)
 				.error(R.drawable.deftimg)
 		Glide.with(headIcon).load(data.imgs).apply(options).into(headIcon)
-		
+
 		if (!measured)
 			_star.post {
 				val point = Point()
 				val left = windowManager.defaultDisplay.getSize(point).let {
 					(point.x - (_star.measuredWidth * 3)) / 6
 				}
-				
+
 				_answer_count.setPadding(left, 0, left, 0)
 				_star.setPadding(left, 0, left, 0)
-				
+
 				_answer.layoutParams = _answer.layoutParams.also {
 					it.width = left * 2 + _star.measuredWidth
 				}
-				
+
 				measured = true
 			}
 	}
-	
+
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		menuInflater.inflate(R.menu.menu_item, menu)
+		val item = menu?.findItem(R.id.menu_item1)
+		item?.icon = item?.icon?.also {
+			val wrap = DrawableCompat.wrap(it)
+			DrawableCompat.setTint(wrap, ContextCompat.getColor(baseContext, R.color.white))
+		} // 不确定是否管用 (setTint)
 		return true
 	}
 }
