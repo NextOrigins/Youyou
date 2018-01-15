@@ -537,7 +537,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 		@Override
 		public void onResult(SHARE_MEDIA platform) {
 //            ToastUtil.showToast("onResult");
-//            LogUtils.E("onResult");
+//            LogUtils.logE("onResult");
 //            Map<CharSequence, CharSequence> map = new HashMap<>();
 //            map.put("taskId", String.valueOf(taskId));
 //            map.put("type", "1");

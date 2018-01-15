@@ -57,7 +57,7 @@ fun showToast(text: String) {
 /**
  * Log.e
  */
-fun E(text: String) {
+fun logE(text: String) {
     LogUtils.E(text)
 }
 
