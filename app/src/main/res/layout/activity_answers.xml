@@ -41,19 +41,50 @@
         </android.support.v7.widget.Toolbar>
     </android.support.v7.widget.CardView>
 
+    <View
+        android:id="@+id/_bottom"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp50"
+        android:background="#EEEEEE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/_img"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:padding="@dimen/dp15"
+        android:text="@string/img"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/_bottom"
+        app:layout_constraintRight_toRightOf="@id/_bottom"
+        app:layout_constraintTop_toTopOf="@id/_bottom" />
+
     <ScrollView
         android:id="@+id/_scroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/_bottom"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/_card" >
+        app:layout_constraintTop_toBottomOf="@id/_card">
 
-        <LinearLayout
-            android:id="@+id/_verticalParent"
+        <EditText
+            android:lineSpacingExtra="@dimen/dp10"
+            android:id="@+id/_edit"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/dp5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp16"
+            tools:text="哈哈哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的 回答回答回答的 哈哈" />
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

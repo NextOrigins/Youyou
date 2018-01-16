@@ -86,7 +86,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
 
     override fun getContentLayoutId(): Int = R.layout.activity_books_detail
 
-    override fun initArgs(bundle: Bundle?): Boolean {
+    override fun initWindows() {
         // 白底黑字状态栏 . api大于23 (Android6.0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -94,8 +94,6 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
             window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
         }
         presenter = DetailImpl(this@BooksDetailsViewImpl)
-
-        return super.initArgs(bundle)
     }
 
     override fun initWidget() {
