@@ -1,7 +1,12 @@
 package com.neworld.youyou.view.mview.parents
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Build
+import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
@@ -10,7 +15,13 @@ import android.view.View
 import android.view.WindowManager
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
+import com.neworld.youyou.utils.logE
+import com.neworld.youyou.view.icon.ClipViewLayout
 import kotlinx.android.synthetic.main.activity_answers.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStream
 
 /**
  * @author by user on 2018/1/15.
@@ -39,21 +50,68 @@ class Answers : Activity() {
 		_close.setOnClickListener { finish() }
 		
 		_img.setOnClickListener {
-			val options = BitmapFactory.Options()
+			if (ContextCompat
+					.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+					!= PackageManager.PERMISSION_GRANTED) {
+				ActivityCompat.requestPermissions(this,
+						arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+						2)
+			}
+			
+			val intent = Intent(Intent.ACTION_GET_CONTENT)
+			intent.addCategory(Intent.CATEGORY_OPENABLE)
+			intent.type = "image/*"
+			startActivityForResult(Intent.createChooser(intent, "选择图片"), 1)
+			
+//			val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//			startActivityForResult(Intent.createChooser(intent, "选择图片"), 1)
+			
+			/*val options = BitmapFactory.Options()
 			options.inJustDecodeBounds = true
-			val bitmap = BitmapFactory.decodeStream(assets.open("test.png")/*, Rect(), options*/)
+			BitmapFactory.decodeStream(assets.open("test.png"), Rect(), options)
+			
+			val ratio = options.outHeight.toFloat() / options.outWidth
+			val height = ratio * width
+			
+			options.inJustDecodeBounds = false
+			
+			val bitmap = BitmapFactory.decodeStream(assets.open("test.png"), Rect(), options)
 			
 			val sbs = SpannableString("icon")
-			val imageSpan = ImageSpan(this, zoomImg(bitmap, width, bitmap.height))
-			
+			val imageSpan = ImageSpan(this, zoomImg(bitmap, width, height.toInt()))
 			sbs.setSpan(imageSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 			
-			val text = _edit.text
-			val start = _edit.selectionStart
-			text.insert(start, sbs)
-			text.append("\r\n")
-			_edit.text = text
-			_edit.setSelection(start + sbs.length)
+			insertIntoEditText(sbs)*/
+		}
+	}
+	
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//		super.onActivityResult(requestCode, resultCode, data)
+		when {
+			requestCode == 1 && resultCode == RESULT_OK -> {
+				val uri = data?.data
+				/*val inputStream: InputStream?
+				try {
+//					val file = ClipViewLayout.getRealFilePathFromUri(baseContext, uri)
+
+//					logE("path : $file")
+					inputStream = contentResolver.openInputStream(uri)
+				} catch (e: FileNotFoundException) {
+					logE("Answer.kt -> FileNotFoundException : line 78")
+					return
+				}*/
+				
+				if (uri != null) {
+					val bitmap = convertBitmap(uri.path)
+					val ss = SpannableString(uri.path)
+					val imageSpan = ImageSpan(this, bitmap)
+					ss.setSpan(imageSpan, 0, uri.path.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+					insertIntoEditText(ss)
+
+//					bitmap?.recycle()
+				}
+			}
 		}
 	}
 	
@@ -68,5 +126,45 @@ class Answers : Activity() {
 		matrix.postScale(scaleWidth, scaleHeight)
 		
 		return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+	}
+	
+	private fun convertBitmap(path: String): Bitmap? {
+		var ips: InputStream? = null
+		val options = BitmapFactory.Options()
+		options.inJustDecodeBounds = true
+		
+		try {
+			ips = FileInputStream(File(path))
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+		
+		BitmapFactory.decodeStream(ips, Rect(), options)
+		
+		val height = options.outHeight.toFloat() / options.outWidth * width
+		
+		options.inJustDecodeBounds = false
+		
+		try {
+			ips = FileInputStream(File(path))
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+		
+		val bitmap = BitmapFactory.decodeStream(ips, Rect(), options)
+		
+		if (ips != null) ips.close()
+		
+		return zoomImg(bitmap, width, height.toInt())
+	}
+	
+	private fun insertIntoEditText(ss: SpannableString) = with(_edit) {
+		if (text.isNotEmpty()) append("\n")
+		val start = selectionStart
+		text = text.apply {
+			insert(start, ss)
+			append("\n")
+		}
+		setSelection(start + ss.length + 1)
 	}
 }

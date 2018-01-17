@@ -74,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/_card">
 
         <EditText
-            android:lineSpacingExtra="@dimen/dp10"
+            android:lineSpacingExtra="@dimen/dp5"
             android:id="@+id/_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
