@@ -40,6 +40,7 @@ class ParentsQA : Activity() {
 	
 	// 数据
 	private val list = arrayListOf<ResponseBean.AnswerList>()
+	private var result: ResponseBean.Result by Delegates.notNull()
 	// adapter
 	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
 	
@@ -104,7 +105,8 @@ class ParentsQA : Activity() {
 			_swipe.isRefreshing = false
 		}
 		_answer.setOnClickListener {
-			startActivity(Intent(this, Answers::class.java))
+			startActivity(Intent(this, Answers::class.java)
+					.putExtra("uid", result.from_uid))
 		}
 		
 		_recycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -239,26 +241,26 @@ class ParentsQA : Activity() {
 		b = true
 		footText.text = "加载更多"
 		
-		val data = t.result
+		result = t.result
 		
-		_answer_count.text = "${data.comment_count}个回答"
+		_answer_count.text = "${result.comment_count}个回答"
 		_star.run {
-			text = if (data.collectStatus == 0) {
+			text = if (result.collectStatus == 0) {
 				isChecked = true
 				"已收藏"
 			} else {
 				isChecked = false
-				"${data.collect_count}人收藏"
+				"${result.collect_count}人收藏"
 			}
-			tag = data.collect_count
+			tag = result.collect_count
 		}
 		
-		headTitle.text = data.title
-		headContent.text = data.content
+		headTitle.text = result.title
+		headContent.text = result.content
 		val options = RequestOptions()
 				.placeholder(R.drawable.deftimg)
 				.error(R.drawable.deftimg)
-		Glide.with(headIcon).load(data.imgs).apply(options).into(headIcon)
+		Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
 		
 		if (!measured)
 			_star.post {

@@ -66,7 +66,7 @@ class ParentsQ : Fragment() {
 	private var b = true // 加载完成提示 只显示一次
 	private var over = false // 是否读取完缓存列表
 	private var openCache = true // 是否开启缓存
-	private var isUpdata = false
+	private var isUpdate = false
 	
 	private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
 	
@@ -121,7 +121,7 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun downData() {
-		if (isUpdata) {
+		if (isUpdate) {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
 			return
 		}
@@ -151,7 +151,7 @@ class ParentsQ : Fragment() {
 	private fun upData() {
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
-		isUpdata = true
+		isUpdate = true
 		upRequest {
 			val bean = it.menuList
 			if (bean.isEmpty()/* || bean[bean.size - 1].createDate == endDate*/) {
@@ -168,7 +168,7 @@ class ParentsQ : Fragment() {
 			// 改变FooterView状态
 			mFootText.text = "加载更多"
 			mFootPrg.visibility = View.GONE
-			isUpdata = false
+			isUpdate = false
 			
 			// 缓存
 			if (over) {
