@@ -15,7 +15,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.widget.GridLayoutManager
@@ -42,7 +41,6 @@ import com.neworld.youyou.utils.LogUtils
 import com.neworld.youyou.utils.ToastUtil
 import com.neworld.youyou.utils.displayDialog
 import com.neworld.youyou.view.mview.PhotoView
-import kotlinx.android.synthetic.main.activity_posted.*
 
 import java.io.File
 import java.util.ArrayList
@@ -55,7 +53,7 @@ class PostedActivity : Activity(), PhotoView {
 
     var dialog: ProgressDialog? = null
 
-    var photoImpl: PhotoPresenterImpl? = null
+    private var photoImpl: PhotoPresenterImpl? = null
 
     override fun close() {
         finished(false)

@@ -47,7 +47,7 @@
         android:ellipsize="end"
         android:maxLines="6"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp18"
+        android:textSize="@dimen/sp16"
         app:layout_constraintTop_toBottomOf="@id/item_icon"
         tools:text="天生丢爱USD求氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧氨基酸大囧我的就去玩的一器第几期丢弃的" />
 

@@ -124,7 +124,7 @@ class ParentsQA : Activity() {
 		layoutInflater.inflate(R.layout.header_parent_qa, _recycle, false).run {
 			headTitle = findViewById(R.id.head_title)
 			headIcon = findViewById(R.id.head_img)
-			headContent = findViewById<TextView>(R.id.head_content)
+			headContent = findViewById(R.id.head_content)
 			findViewById<View>(R.id.head_toggle).setOnClickListener {
 				it.visibility = View.GONE
 				headContent.setSingleLine(false)
