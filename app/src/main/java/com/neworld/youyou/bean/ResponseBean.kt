@@ -232,7 +232,8 @@ class ResponseBean {
 			val content: String, //虹口杨浦是可以买到电梯房的，学区不必前面某些区差
 			val taskId: Int, //1613
 			val createDate: String, //2017-10-23 15:32:27
-			val from_nickName: String //游客947087
+			val from_nickName: String, //游客947087
+			val attachedContent: String
 	)
 	
 	data class Result(

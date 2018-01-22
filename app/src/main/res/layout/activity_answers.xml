@@ -74,7 +74,6 @@
         app:layout_constraintTop_toBottomOf="@id/_card">
 
         <EditText
-            android:lineSpacingExtra="@dimen/dp5"
             android:id="@+id/_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,9 +81,44 @@
             android:background="@android:color/transparent"
             android:gravity="top"
             android:inputType="textMultiLine"
+            android:lineSpacingExtra="@dimen/dp5"
             android:padding="@dimen/dp5"
             android:textColor="@color/black"
             android:textSize="@dimen/sp16"
             tools:text="哈哈哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的哈哈哈哈一就等会求我的九曲河我弟玩的 回答回答回答的 哈哈" />
     </ScrollView>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#CFFF"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.4"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginStart="@dimen/dp10"
+            android:text="@string/please_wait"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="@dimen/sp18"
+            app:layout_constraintBottom_toBottomOf="@id/_progress"
+            app:layout_constraintLeft_toRightOf="@id/_progress"
+            app:layout_constraintTop_toTopOf="@id/_progress" />
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

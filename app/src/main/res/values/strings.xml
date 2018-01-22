@@ -114,5 +114,6 @@
     <string name="publish">发布</string>
     <string name="close">关闭</string>
     <string name="img">图片</string>
+    <string name="please_wait">请稍等...</string>
 
 </resources>

@@ -123,6 +123,7 @@
         <activity android:name=".view.mview.books.BooksShopPay" />
         <activity android:name=".view.mview.my.BooksOrderActivity" />
         <activity android:name=".view.mview.parents.Answers" />
+        <activity android:name=".view.mview.parents.AnswerDetail" />
 
         <activity android:name=".view.mview.ebook.EBookDetail"
             android:launchMode="singleTop" />
