@@ -114,8 +114,8 @@ class ParentsQ : Fragment() {
 			savedList.addAll(cacheList)
 		}
 		
-		map.put("userId", userId)
-		map.put("token", token)
+		map["userId"] = userId
+		map["token"] = token
 		
 		upData()
 	}
@@ -133,6 +133,8 @@ class ParentsQ : Fragment() {
 				b = false
 				mFootText.text = "没有更多数据了"
 				mFootPrg.visibility = View.GONE
+
+				if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
 				return@downRequest
 			}
 			mAdapter.addDataToTop(ArrayList(bean))
@@ -149,17 +151,19 @@ class ParentsQ : Fragment() {
 	}
 	
 	private fun upData() {
+        if (!b) return
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
 		isUpdate = true
 		upRequest {
 			val bean = it.menuList
-			if (bean.isEmpty()/* || bean[bean.size - 1].createDate == endDate*/) {
+			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate && over) {
 				if (b) {
 					mFootText.text = "没有更多数据了"
 					mFootPrg.visibility = View.GONE
 					b = false
 				}
+                isUpdate = false
 				return@upRequest
 			}
 			mAdapter.addData(bean)
@@ -199,7 +203,8 @@ class ParentsQ : Fragment() {
 		parent.setOnClickListener {
 			startActivity(Intent(context, ParentsQA::class.java)
 					.putExtra("taskId", data.from_uid)
-					.putExtra("date", data.createDate))
+					.putExtra("date", data.createDate)
+					.putExtra("commentId", data.id))
 		}
 		
 		title.text = data.title

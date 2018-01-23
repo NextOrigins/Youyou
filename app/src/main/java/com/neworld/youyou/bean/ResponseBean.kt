@@ -233,7 +233,7 @@ class ResponseBean {
 			val taskId: Int, //1613
 			val createDate: String, //2017-10-23 15:32:27
 			val from_nickName: String, //游客947087
-			val attachedContent: String
+			val attachedContent: String? //content
 	)
 	
 	data class Result(
