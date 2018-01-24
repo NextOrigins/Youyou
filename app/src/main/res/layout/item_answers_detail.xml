@@ -3,30 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dp15">
 
-    <com.neworld.youyou.view.icon.ClipView
+    <com.neworld.youyou.view.nine.CircleImageView
         android:id="@+id/item_icon"
-        android:layout_width="@dimen/dp50"
-        android:layout_height="@dimen/dp50" />
+        android:layout_width="@dimen/dp35"
+        android:layout_height="@dimen/dp35" />
 
     <TextView
         android:id="@+id/item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp5"
-        android:layout_marginStart="@dimen/dp5"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginStart="@dimen/dp15"
         android:textColor="#ff0088AA"
         android:textSize="@dimen/sp14"
-        app:layout_constraintBottom_toBottomOf="@id/item_icon"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
         app:layout_constraintTop_toTopOf="@id/item_icon"
         tools:text="哈哈哈哈" />
 
     <CheckBox
-        android:id="@+id/item_price"
+        android:id="@+id/item_praise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:button="@android:color/transparent"
         android:drawableLeft="@drawable/praise_bg"
         android:drawablePadding="@dimen/dp5"
@@ -45,7 +46,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/sp16"
         app:layout_constraintLeft_toLeftOf="@id/item_name"
-        app:layout_constraintRight_toLeftOf="@id/item_price"
+        app:layout_constraintRight_toLeftOf="@id/item_praise"
         app:layout_constraintTop_toBottomOf="@id/item_icon"
         tools:text="哈哈哈哈哈哈哈哈哈哈" />
 

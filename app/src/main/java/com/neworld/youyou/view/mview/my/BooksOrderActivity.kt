@@ -33,7 +33,7 @@ class BooksOrderActivity : Activity() {
             val data = bean[position]
             val delete = holder.find<TextView>(R.id.item_delete)
             val date = holder.find<TextView>(R.id.item_date)
-            val price = holder.find<TextView>(R.id.item_price)
+            val price = holder.find<TextView>(R.id.item_praise)
             val name = holder.find<TextView>(R.id.item_books_name)
             val icon = holder.find<ImageView>(R.id.item_icon)
             val sum = holder.find<TextView>(R.id.item_num)

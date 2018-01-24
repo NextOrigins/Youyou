@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/item_delete" />
 
     <TextView
-        android:id="@+id/item_price"
+        android:id="@+id/item_praise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp10"
@@ -62,7 +62,7 @@
         android:contentDescription="@null"
         android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="@id/item_date"
-        app:layout_constraintTop_toTopOf="@id/item_price"
+        app:layout_constraintTop_toTopOf="@id/item_praise"
         tools:src="@mipmap/bigimage" />
 
     <TextView
@@ -71,7 +71,7 @@
         android:maxEms="11"
         android:textSize="@dimen/sp16"
         app:layout_constraintLeft_toRightOf="@id/item_icon"
-        app:layout_constraintTop_toTopOf="@id/item_price"
+        app:layout_constraintTop_toTopOf="@id/item_praise"
         tools:text="新概念英语青少年版(5A)" />
 
     <TextView

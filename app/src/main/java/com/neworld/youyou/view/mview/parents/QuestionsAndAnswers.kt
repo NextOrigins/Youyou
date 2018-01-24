@@ -36,8 +36,7 @@ class QuestionsAndAnswers : Fragment() {
 
 	// adapter
 	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
-	// Fields
-	private var taskId by Delegates.notNull<Int>()
+	// fields
 	private val userId by preference("userId", "")
 
 	// View
@@ -134,11 +133,11 @@ class QuestionsAndAnswers : Fragment() {
 	}
 
 	override fun initData() {
-		taskId = arguments.getInt("taskId", 0)
+		val taskId = arguments.getInt("taskId", 0)
 		val date = arguments.getString("date")
 		map.run {
 			put("userId", userId)
-			put("taskId", "1613") // 1613
+			put("taskId", /*taskId*/"1613") // 1613
 			put("createDate", date)
 			NetBuild.response(this@QuestionsAndAnswers::success,
 					ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
@@ -155,9 +154,6 @@ class QuestionsAndAnswers : Fragment() {
 		map.run {
 			put("createDate", createDate)
 			NetBuild.response({
-                if (it.menuList.isNotEmpty())
-                    logE("it is equal : ${it.menuList[it.menuList.size - 1].createDate == createDate}")
-                logE("empty : ${it.menuList.isEmpty()}")
 				if (it.menuList.isEmpty() || it.menuList[it.menuList.size - 1].createDate == createDate) {
 					if (b) {
 						footText.text = "没有更多数据了"
@@ -186,8 +182,6 @@ class QuestionsAndAnswers : Fragment() {
 		val img = holder.find<ImageView>(R.id.item_img)
 
 		val data = mutableList[position]
-
-		logE("from 200 data attachedContent = ${data.attachedContent}")
 
 		content.text = data.attachedContent ?: "null"
 

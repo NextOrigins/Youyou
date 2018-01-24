@@ -2,7 +2,6 @@ package com.neworld.youyou.add.common
 
 import android.view.View
 import android.view.ViewGroup
-import com.neworld.youyou.utils.LogUtils
 
 
 /**
@@ -17,9 +16,9 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 	private var mFootView: View? = null
 
     companion object {
-        private val TYPE_NORMAL = 0
-        private val TYPE_HEADER = 1
-	    private val TYPE_FOOTER = 2
+        private const val TYPE_NORMAL = 0
+        private const val TYPE_HEADER = 1
+	    private const val TYPE_FOOTER = 2
     }
 
 	init {
@@ -48,7 +47,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 	}
 
     fun getHeadView() = mHeadView
-	
+
 	fun getFootView() = mFootView
 
     fun addData(list: List<T>) {
@@ -57,13 +56,13 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 
     fun addDataAndClear(list: List<T>) {
         bean.clear()
-        bean.addAll(list)
+        addData(list)
     }
 	
 	fun addDataToTop(list: ArrayList<T>) {
 		list.addAll(bean)
 		bean.clear()
-		bean.addAll(list)
+        addData(list)
 	}
 
     override fun getItemViewType(position: Int): Int {

@@ -115,5 +115,6 @@
     <string name="close">关闭</string>
     <string name="img">图片</string>
     <string name="please_wait">请稍等...</string>
+    <string name="all_comment">全部评论</string>
 
 </resources>

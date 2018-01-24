@@ -112,7 +112,6 @@ class Answers : Activity() {
                             put("comment_id", intent.getStringExtra("commentId"))
                             put("attachedContent", sb.subSequence(0, sb.length - 1))
                             put("commentImg", cacheImgPath)
-                            logE("sb = $sb")
 
                             val response = NetBuild.getResponse(this@run, 205)
                             // response = {"comentId":2443,"status":0}
@@ -170,7 +169,8 @@ class Answers : Activity() {
                 data?.data?.let {
                     //					val source = "<切割>${it.path}</img><切割>"
                     val source = "<img>${it.path}</img>"
-                    val bitmap = convertBitmap(it.path)
+//                    val bitmap = convertBitmap(it.path)
+                    val bitmap = convertBitmap(ImageHelper.uriToPath(baseContext, it))
                     val sps = SpannableString(source)
                     val imgSpan = ImageSpan(this, bitmap)
 
