@@ -211,8 +211,6 @@ class QuestionsAndAnswers : Fragment() {
 				put("status", if (praise.isChecked) "1" else "0")
 
 				val response = NetBuild.getResponse(this@run, 193)
-				logE("map : $this")
-				logE("response : $response")
 				if ("0" !in response) {
 					showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
 				}

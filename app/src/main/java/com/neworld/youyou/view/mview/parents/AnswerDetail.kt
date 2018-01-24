@@ -40,7 +40,6 @@ class AnswerDetail : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun initWidget(root: View) {
-        logE("initWidget")
         loading = root.findViewById(R.id._loading)
 
         recycle = root.findViewById<RecyclerView>(R.id._recycle).apply {
@@ -57,7 +56,6 @@ class AnswerDetail : Fragment() {
     }
 
     override fun initData() {
-        logE("initData")
         val commentId = arguments.getInt("commentId", 0)
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         web.loadUrl(url)

@@ -1,10 +1,12 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Build
+import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.text.Spannable
@@ -13,11 +15,14 @@ import android.text.style.ImageSpan
 import android.util.Base64
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.icon.ClipViewLayout
 import kotlinx.android.synthetic.main.activity_answers.*
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -65,9 +70,7 @@ class Answers : Activity() {
                         2)
             }
 
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "image/*"
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(Intent.createChooser(intent, "选择图片"), 1)
         }
 
@@ -110,7 +113,7 @@ class Answers : Activity() {
                             put("from_uid", intent.getStringExtra("uid"))
                             put("content", it)
                             put("comment_id", intent.getStringExtra("commentId"))
-                            put("attachedContent", sb.subSequence(0, sb.length - 1))
+                            put("attachedContent", sb.subSequence(0, sb.length - 1).also { logE("sb = $it") })
                             put("commentImg", cacheImgPath)
 
                             val response = NetBuild.getResponse(this@run, 205)
@@ -119,11 +122,9 @@ class Answers : Activity() {
                                 _loading.visibility = View.GONE
                                 if ("0" in response) {
                                     showToast("上传成功")
-                                    logE("上传成功")
                                     finish()
                                 } else {
                                     showToast("上传失败")
-                                    logE("上传失败")
                                 }
                             }
 
@@ -131,35 +132,6 @@ class Answers : Activity() {
                         }
                     }
         }
-
-        /*val sb = StringBuilder()
-        _edit.text.split("<切割>".toRegex()).forEach {
-//			sb.append("<p>")
-            if ("</img>" in it) {
-                val take = it.take(it.length - 6)
-                hashMapOf<CharSequence, CharSequence>().run {
-                    put("userId", userId)
-                    put("iconString", it)
-                    put("imageType", ".jpg")
-                }
-                sb.append("<img src=\"$take\"/>")
-
-            } else {
-                if ('\n' in it) {
-                    it.split('\n')
-                            .filter { it.isNotEmpty() }
-                            .forEach {
-                                sb.append("<p>")
-                                sb.append(it)
-                                sb.append("</p>")
-                            }
-                } else
-                    sb.append(it.trim('\n'))
-            }
-//			sb.append("</p>")
-//			sb.append("<p><br/></p>")
-        }
-        logE("sb = $sb")*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -167,9 +139,7 @@ class Answers : Activity() {
         when {
             requestCode == 1 && resultCode == RESULT_OK -> {
                 data?.data?.let {
-                    //					val source = "<切割>${it.path}</img><切割>"
                     val source = "<img>${it.path}</img>"
-//                    val bitmap = convertBitmap(it.path)
                     val bitmap = convertBitmap(ImageHelper.uriToPath(baseContext, it))
                     val sps = SpannableString(source)
                     val imgSpan = ImageSpan(this, bitmap)
@@ -217,6 +187,10 @@ class Answers : Activity() {
             append("\n")
         }
         setSelection(start + ss.length + 1)
+        _edit.post {
+            _edit.toggleSoftInput(true)
+        }
+        Unit
     }
 
     override fun onBackPressed() {
@@ -231,7 +205,6 @@ class Answers : Activity() {
     private fun commitImg(map: HashMap<CharSequence, CharSequence>): String {
         val body = Base64.encodeToString(Gson().toJson(map).toByteArray(), Base64.DEFAULT)
                 .replace("\n", "")
-        logE("body : $body")
         val url = "http://106.14.251.200:8083/neworld/android/204"
 //		val url = "http://192.168.1.123:8080/neworld/android/204"
 
@@ -257,4 +230,13 @@ class Answers : Activity() {
             val imgUrl: String,
             val status: Int
     )
+
+    private fun EditText.toggleSoftInput(show: Boolean) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (show) {
+            imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+        } else {
+            imm.hideSoftInputFromWindow(this.windowToken, 0)
+        }
+    }
 }
