@@ -22,7 +22,6 @@ import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.utils.*
-import com.neworld.youyou.view.icon.ClipViewLayout
 import kotlinx.android.synthetic.main.activity_answers.*
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -113,7 +112,7 @@ class Answers : Activity() {
                             put("from_uid", intent.getStringExtra("uid"))
                             put("content", it)
                             put("comment_id", intent.getStringExtra("commentId"))
-                            put("attachedContent", sb.subSequence(0, sb.length - 1).also { logE("sb = $it") })
+                            put("attachedContent", sb.subSequence(0, sb.length - 1))
                             put("commentImg", cacheImgPath)
 
                             val response = NetBuild.getResponse(this@run, 205)
@@ -139,8 +138,10 @@ class Answers : Activity() {
         when {
             requestCode == 1 && resultCode == RESULT_OK -> {
                 data?.data?.let {
-                    val source = "<img>${it.path}</img>"
-                    val bitmap = convertBitmap(ImageHelper.uriToPath(baseContext, it))
+                    val path = ImageHelper.uriToPath(baseContext, it)
+                    logE("path = $path")
+                    val source = "<img>$path</img>"
+                    val bitmap = convertBitmap(path)
                     val sps = SpannableString(source)
                     val imgSpan = ImageSpan(this, bitmap)
 

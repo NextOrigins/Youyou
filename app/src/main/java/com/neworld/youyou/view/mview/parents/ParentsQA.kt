@@ -50,7 +50,7 @@ class ParentsQA : Activity() {
 
     private fun startAnswersDetail() = supportFragmentManager.beginTransaction().also {
         it.replace(answersDetail ?: AnswerDetail()
-                .also { answersDetail = it }, "fragment2")
+                .also { it.arguments = questionsAndAnswers?.arguments; answersDetail = it }, "fragment2")
         it.addToBackStack("fragment2")
     }.commit()
 

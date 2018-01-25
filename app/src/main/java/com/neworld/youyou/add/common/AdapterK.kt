@@ -12,8 +12,11 @@ class
 AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayList<T>)
 	: Adapter<T>(list) {
 
-    private var mHeadView: View? = null
-	private var mFootView: View? = null
+    var headView: View? = null
+        set(value) { field = value; notifyItemInserted(0) }
+
+    var footView: View? = null
+        set(value) { field = value; notifyItemInserted(itemCount - 1)}
 
     companion object {
         private const val TYPE_NORMAL = 0
@@ -27,7 +30,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
                 if (getItemViewType(position) == TYPE_HEADER
 		                || getItemViewType(position) == TYPE_FOOTER) return
 
-                val index = if (mHeadView != null) position - 1 else position
+                val index = if (headView != null) position - 1 else position
                 bind.invoke(holder, bean, index)
             }
 
@@ -35,20 +38,6 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 		}
 		super.setObs(obs)
 	}
-
-    fun setHeadView(view: View) { // HeadView .
-        mHeadView = view
-        notifyItemInserted(0)
-    }
-	
-	fun setFootView(view: View) {
-		mFootView = view
-		notifyItemInserted(itemCount - 1)
-	}
-
-    fun getHeadView() = mHeadView
-
-	fun getFootView() = mFootView
 
     fun addData(list: List<T>) {
         bean.addAll(list)
@@ -58,29 +47,28 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         bean.clear()
         addData(list)
     }
-	
+
 	fun addDataToTop(list: ArrayList<T>) {
 		list.addAll(bean)
 		bean.clear()
         addData(list)
 	}
 
-    override fun getItemViewType(position: Int): Int {
-        if (position == 0 && mHeadView != null) return TYPE_HEADER
-	    if (position == itemCount - 1 && mFootView != null) return TYPE_FOOTER
-        return TYPE_NORMAL
-    }
-	
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
-        return if (mHeadView != null && viewType == TYPE_HEADER ) Holder(mHeadView)
-        else if (mFootView != null && viewType == TYPE_FOOTER) Holder(mFootView)
-        else super.onCreateViewHolder(parent, viewType)
+    override fun getItemViewType(position: Int) = when {
+        position == 0 && headView != null -> TYPE_HEADER
+        position == itemCount - 1 && footView != null -> TYPE_FOOTER
+        else -> TYPE_NORMAL
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) = when {
+        headView != null && viewType == TYPE_HEADER -> Holder(headView)
+        footView != null && viewType == TYPE_FOOTER -> Holder(footView)
+        else -> super.onCreateViewHolder(parent, viewType)
+    }!!
+
     override fun getItemCount() = when {
-	    mHeadView != null && mFootView != null -> super.getItemCount() + 2
-	    mHeadView != null || mFootView != null -> super.getItemCount() + 1
+	    headView != null && footView != null -> super.getItemCount() + 2
+	    headView != null || footView != null -> super.getItemCount() + 1
 	    else -> super.getItemCount()
     }
-    
 }

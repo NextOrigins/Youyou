@@ -61,6 +61,18 @@ fun logE(text: String) {
     LogUtils.E(text)
 }
 
+/**
+ * Net
+ */
+inline fun <reified T> response(noinline s: (T) -> Unit, url: Any, map: Map<CharSequence, CharSequence>) {
+    val clazz = T::class.java
+    if (url is Int || url is String) {
+        NetBuild.response(s, ::showToast, url.toString(), clazz, map)
+    } else {
+        throw IllegalArgumentException("This type is not be request")
+    }
+}
+
 private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {
     private var value: T? = null
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {

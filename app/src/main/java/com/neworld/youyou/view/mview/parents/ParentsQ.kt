@@ -100,7 +100,7 @@ class ParentsQ : Fragment() {
 		layoutInflater.inflate(R.layout.footview_parents_qa, mRecycle, false).run {
 			mFootText = findViewById(R.id.foot_loading)
 			mFootPrg = findViewById(R.id.foot_progress)
-			mAdapter.setFootView(this)
+			mAdapter.footView = this
 		}
 	}
 	

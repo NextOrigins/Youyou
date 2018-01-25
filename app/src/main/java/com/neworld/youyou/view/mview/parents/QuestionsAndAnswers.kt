@@ -19,6 +19,7 @@ import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.properties.Delegates
 
 /**
@@ -84,12 +85,12 @@ class QuestionsAndAnswers : Fragment() {
 
 					doAsync {
 						val response = NetBuild.getResponse(this@run, 112)
-						Util.uiThread {
-							text = if ("0" in response && isChecked)
-								"已收藏"
-							else
-								if ("0" in response) "${(tag as Int) - 1}人收藏" else "${tag}人收藏"
-						}
+                        uiThread {
+                            text = if ("0" in response && isChecked)
+                                "已收藏"
+                            else
+                                if ("0" in response) "${(tag as Int) - 1}人收藏" else "${tag}人收藏"
+                        }
 					}
 
 					Unit
@@ -115,7 +116,7 @@ class QuestionsAndAnswers : Fragment() {
 		layoutInflater.inflate(R.layout.footview_parents_qa, recycle, false).run {
 			footText = findViewById(R.id.foot_loading)
 			footPrg = findViewById(R.id.foot_progress)
-			mAdapter.setFootView(this)
+			mAdapter.footView = this
 		}
 
 		layoutInflater.inflate(R.layout.header_parent_qa, recycle, false).run {
@@ -126,7 +127,7 @@ class QuestionsAndAnswers : Fragment() {
 				it.visibility = View.GONE
 				headContent.setSingleLine(false)
 			}
-			mAdapter.setHeadView(this)
+			mAdapter.headView = this
 		}
 
 		answerCount = root.findViewById(R.id._answer_count)
@@ -212,12 +213,14 @@ class QuestionsAndAnswers : Fragment() {
 
 				val response = NetBuild.getResponse(this@run, 193)
 				if ("0" !in response) {
+					logE("two response : $response")
 					showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
 				}
 			}
 		}
 
 		holder.find<View>(R.id._parent).setOnClickListener {
+            arguments.putInt("cId", data.commentId)
             obs.invoke(it)
 		}
 	}
