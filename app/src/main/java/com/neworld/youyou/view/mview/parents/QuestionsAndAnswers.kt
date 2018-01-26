@@ -211,11 +211,17 @@ class QuestionsAndAnswers : Fragment() {
 				put("type", "5")
 				put("status", if (praise.isChecked) "1" else "0")
 
-				val response = NetBuild.getResponse(this@run, "193")
-				if ("0" !in response) {
-					logE("two response : $response")
-					showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
-				}
+                doAsync {
+                    val response = NetBuild.getResponse(this@run, 193)
+                    uiThread {
+                        if ("0" !in response) {
+                            logE("two response : $response")
+                            showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
+                        }
+                    }
+                }
+
+				Unit
 			}
 		}
 
