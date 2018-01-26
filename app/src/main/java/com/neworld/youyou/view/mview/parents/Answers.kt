@@ -83,7 +83,7 @@ class Answers : Activity() {
         doAsync {
             val sb = StringBuilder()
             StringBuilder().apply {
-                _edit.text.split('\n').forEach {
+                _edit.text.split("<切割>".toRegex()).forEach {
                     when {
                         it.take(5) == "<img>" && it.takeLast(6) == "</img>" -> {
                             val path = it.substring(5, it.length - 6)
@@ -98,37 +98,49 @@ class Answers : Activity() {
                                 data.imgUrl
                             }.let { if (it.isNotEmpty()) append("<img src=\"$it\"/>"); cacheImgPath = it }
                         }
-                        else -> if (it.isNotEmpty()) {
-                            append("<p>$it</p>")
-                            sb.append("$it\n")
+                        it.isNotEmpty() -> {
+                            it.split('\n').forEach {
+                                val str = it.replace("+", "%2B")
+                                if (it.isNotEmpty()) {
+                                    "<p>$str</p>"
+                                } else {
+                                    "</br>"
+                                }.let(this::append)
+                                sb.append("$it\n")
+                            }
+                            if (endsWith("</br>")) {
+                                val s = substring(0, length - 5)
+                                setLength(0)
+                                append(s)
+                            }
                         }
                     }
-                    append("</br>")
                 }
             }.let {
-                        hashMapOf<CharSequence, CharSequence>().run {
+                        logE("convert content : $it")
+                        val map = hashMapOf<CharSequence, CharSequence>().apply {
+                            val bundle = intent.extras
                             put("userId", userId)
-                            put("taskId", intent.getStringExtra("taskId"))
-                            put("from_uid", intent.getStringExtra("uid"))
-                            put("content", it)
-                            put("comment_id", intent.getStringExtra("commentId"))
+                            put("taskId", bundle.getString("taskId"))
+                            put("from_uid", bundle.getString("uid"))
+                            put("comment_id", bundle.getString("commentId"))
                             put("attachedContent", sb.subSequence(0, sb.length - 1))
+                            put("content", it)
                             put("commentImg", cacheImgPath)
-
-                            val response = NetBuild.getResponse(this@run, 205)
-                            // response = {"comentId":2443,"status":0}
-                            uiThread {
-                                _loading.visibility = View.GONE
-                                if ("0" in response) {
-                                    showToast("上传成功")
-                                    finish()
-                                } else {
-                                    showToast("上传失败")
-                                }
-                            }
-
-                            Unit
                         }
+
+                        val response = NetBuild.getResponse(map, 205)
+                        uiThread {
+                            _loading.visibility = View.GONE
+                            _edit.toggleSoftInput(false)
+                            if ("0" in response) {
+                                finish()
+                                "上传成功"
+                            } else {
+                                "上传失败"
+                            }.let(ToastUtil::showToast)
+                        }
+                        Unit
                     }
         }
     }
@@ -139,8 +151,7 @@ class Answers : Activity() {
             requestCode == 1 && resultCode == RESULT_OK -> {
                 data?.data?.let {
                     val path = ImageHelper.uriToPath(baseContext, it)
-                    logE("path = $path")
-                    val source = "<img>$path</img>"
+                    val source = "<切割><img>$path</img><切割>"
                     val bitmap = convertBitmap(path)
                     val sps = SpannableString(source)
                     val imgSpan = ImageSpan(this, bitmap)
@@ -181,13 +192,12 @@ class Answers : Activity() {
     }
 
     private fun insertIntoEditText(ss: SpannableString) = with(_edit) {
-        if (text.isNotEmpty()) append("\n")
+        if (text.isNotEmpty() && !text.endsWith('\n')) append("\n")
         val start = selectionStart
         text = text.apply {
             insert(start, ss)
-            append("\n")
         }
-        setSelection(start + ss.length + 1)
+        setSelection(start + ss.length)
         _edit.post {
             _edit.toggleSoftInput(true)
         }
@@ -197,7 +207,7 @@ class Answers : Activity() {
     override fun onBackPressed() {
         if (_edit.text.isNotEmpty()) {
             displayDialog(this, "关闭将丢失数据, 确定关闭吗",
-                    { super.onBackPressed() })
+                    { _edit.toggleSoftInput(false); super.onBackPressed() })
             return
         }
         super.onBackPressed()
@@ -207,7 +217,6 @@ class Answers : Activity() {
         val body = Base64.encodeToString(Gson().toJson(map).toByteArray(), Base64.DEFAULT)
                 .replace("\n", "")
         val url = "http://106.14.251.200:8083/neworld/android/204"
-//		val url = "http://192.168.1.123:8080/neworld/android/204"
 
         val client = OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)

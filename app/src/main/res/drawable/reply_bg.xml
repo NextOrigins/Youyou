@@ -11,4 +11,7 @@
 
     <solid
         android:color="@color/light_gray" />
+
+    <padding
+        android:left="@dimen/dp15" />
 </shape>

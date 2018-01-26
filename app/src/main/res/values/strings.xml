@@ -118,5 +118,7 @@
     <string name="all_comment">全部评论</string>
     <string name="write_comment">写评论</string>
     <string name="load_more_on_click">点击加载更多</string>
+    <string name="comment">评论</string>
+    <string name="write_reply_more">写评论...</string>
 
 </resources>

@@ -16,17 +16,32 @@
             tools:ignore="WebViewLayout" />
 
         <TextView
-            android:id="@+id/head_all_comment"
-            android:layout_width="0dp"
+            android:id="@+id/head_comment_count"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingBottom="@dimen/dp15"
-            android:paddingTop="@dimen/dp15"
-            android:text="@string/all_comment"
+            android:padding="@dimen/dp15"
+            android:text="@string/comment"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp12"
+            android:textSize="15sp"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/head_web"
+            tools:text="评论 66" />
+
+        <TextView
+            android:id="@+id/head_praise_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp15"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/head_comment_count"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/head_web" />
+            app:layout_constraintTop_toTopOf="@id/head_comment_count"
+            tools:text="304 赞" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/head_comment_count" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

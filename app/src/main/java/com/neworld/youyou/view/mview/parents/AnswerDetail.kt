@@ -20,7 +20,7 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
-import kotlinx.android.synthetic.main.activity_answers_detail.*
+import kotlinx.android.synthetic.main.fragment_answers_detail.*
 
 /**
  * @author by user on 2018/1/22.
@@ -31,23 +31,25 @@ class AnswerDetail : Fragment() {
     private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswersDetailList>>()
 
     //View
-//    private var mLoading by notNullSingleValue<FrameLayout>()
     private var mRecycle by notNullSingleValue<RecyclerView>()
     private var mWeb by notNullSingleValue<WebView>()
     private var mComment by notNullSingleValue<EditText>()
     private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
+    private var mPreview by notNullSingleValue<LinearLayout>()
+    private var mReview by notNullSingleValue<ImageView>()
+    private var mLike by notNullSingleValue<ImageView>()
+    private var mNext by notNullSingleValue<ImageView>()
 
     //fields
     private val userId by preference("userId", "")
 
-    override fun getContentLayoutId() = R.layout.activity_answers_detail
+    override fun getContentLayoutId() = R.layout.fragment_answers_detail
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun initWidget(root: View) {
-//        mLoading = root.findViewById(R.id._loading)
         mComment = root.findViewById<EditText>(R.id._comment).apply {
             setOnTouchListener { v, _ ->
-                if (!v.isFocusableInTouchMode){
+                if (!v.isFocusableInTouchMode) {
                     mComment.isFocusable = true
                     v.isFocusableInTouchMode = true
                 }
@@ -76,12 +78,11 @@ class AnswerDetail : Fragment() {
             }
         }
 
-        mWeb = layoutInflater.inflate(R.layout.head_answers_detail, mRecycle, false)
-                .also { mAdapter.headView = it }
-                .findViewById<WebView>(R.id.head_web)
-                .apply(this@AnswerDetail::configWeb)
-
-        layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false)
+        mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
+            mReview = findViewById(R.id._review)
+            mLike = findViewById(R.id._like)
+            mNext = findViewById(R.id._next_comment)
+        }
 
         root.findViewById<Button>(R.id._publish).setOnClickListener {
             if (_comment.text.isEmpty()) {
@@ -90,6 +91,13 @@ class AnswerDetail : Fragment() {
             }
             showToast("reply pressed")
         }
+        mWeb = layoutInflater.inflate(R.layout.head_answers_detail, mRecycle, false)
+                .also { mAdapter.headView = it }
+                .findViewById<WebView>(R.id.head_web)
+                .apply(this@AnswerDetail::configWeb)
+
+
+        layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false)
     }
 
     override fun initData() {

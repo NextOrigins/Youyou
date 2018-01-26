@@ -135,13 +135,13 @@ class QuestionsAndAnswers : Fragment() {
 
 	override fun initData() {
 		val taskId = arguments.getInt("taskId", 0)
-		val date = arguments.getString("date")
 		map.run {
 			put("userId", userId)
 			put("taskId", /*taskId*/"1613") // 1613
-			put("createDate", date)
-			NetBuild.response(this@QuestionsAndAnswers::success,
-					ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
+			put("createDate", "")
+            response(this@QuestionsAndAnswers::success, 200, this)
+//			NetBuild.response(this@QuestionsAndAnswers::success,
+//					ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
 		}
 	}
 
@@ -211,7 +211,7 @@ class QuestionsAndAnswers : Fragment() {
 				put("type", "5")
 				put("status", if (praise.isChecked) "1" else "0")
 
-				val response = NetBuild.getResponse(this@run, 193)
+				val response = NetBuild.getResponse(this@run, "193")
 				if ("0" !in response) {
 					logE("two response : $response")
 					showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
