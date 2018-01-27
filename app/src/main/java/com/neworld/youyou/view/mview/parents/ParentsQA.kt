@@ -10,6 +10,7 @@ import android.view.WindowManager
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
+import com.neworld.youyou.utils.logE
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 
 /**
@@ -81,20 +82,20 @@ class ParentsQA : Activity() {
             if (entryCount > 1) {
                 fm.popBackStackImmediate()
                 val tag = fm.getBackStackEntryAt(fm.backStackEntryCount - 1).name
+                val bt = fm.beginTransaction()
+                logE("tag = $tag")
                 when (tag) {
-                    "fragment1" -> {
-                        fm.beginTransaction().also {
-                            it.replace(questionsAndAnswers ?: QuestionsAndAnswers()
-                                    .also { questionsAndAnswers = it }, "fragment1")
-                        }.commit()
+                    "fragment1" -> bt.also {
+                        it.replace(questionsAndAnswers ?:
+                        QuestionsAndAnswers().also { questionsAndAnswers = it }, "fragment1")
+                        questionsAndAnswers?.refreshData()
                     }
-                    "fragment2" -> {
-                        fm.beginTransaction().also {
-                            it.replace(answersDetail ?: AnswerDetail()
-                                    .also { answersDetail = it }, "fragment2")
-                        }.commit()
+                    "fragment2" -> bt.also {
+                        it.replace(answersDetail ?:
+                        AnswerDetail().also { answersDetail = it }, "fragment2")
                     }
                 }
+                bt.commit()
             } else {
                 finish()
             }

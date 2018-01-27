@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.neworld.youyou.R
 import kotlinx.android.synthetic.main.activity_big_pig.*
 
@@ -25,12 +27,15 @@ class BigPicActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_big_pig)
         val url = intent.getStringExtra(EXTRA_URL)
-//        Glide.with(this).load(url).into(big_pic)
-        group.setOnClickListener { onBackPressed() }
+        val opt = RequestOptions()
+                .placeholder(R.drawable.deftimg)
+                .error(R.drawable.deftimg)
+        Glide.with(this).load(url).apply(opt).into(big_pic)
+        big_pic.setOnClickListener { onBackPressed() }
     }
 
     companion object {
-        val EXTRA_URL = "extra_url"
+        const val EXTRA_URL = "extra_url"
         fun launch(activity: AppCompatActivity, srcView: View, url: String) {
             val intent = Intent(activity, BigPicActivity::class.java)
             intent.putExtra(EXTRA_URL, url)

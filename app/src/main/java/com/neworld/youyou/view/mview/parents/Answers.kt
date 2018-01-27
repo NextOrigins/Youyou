@@ -99,6 +99,11 @@ class Answers : Activity() {
                             }.let { if (it.isNotEmpty()) append("<img src=\"$it\"/>"); cacheImgPath = it }
                         }
                         it.isNotEmpty() -> {
+                            /*append("<p>")
+                            val str = it.replace('\n'.toString(), "</br>")
+                            append(str)
+                            append("</p>")*/
+
                             it.split('\n').forEach {
                                 val str = it.replace("+", "%2B")
                                 if (it.isNotEmpty()) {

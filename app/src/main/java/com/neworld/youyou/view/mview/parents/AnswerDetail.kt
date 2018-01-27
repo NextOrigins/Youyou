@@ -2,7 +2,9 @@ package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Handler
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -21,6 +23,7 @@ import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
 import kotlinx.android.synthetic.main.fragment_answers_detail.*
+import kotlin.properties.Delegates
 
 /**
  * @author by user on 2018/1/22.
@@ -39,30 +42,60 @@ class AnswerDetail : Fragment() {
     private var mReview by notNullSingleValue<ImageView>()
     private var mLike by notNullSingleValue<ImageView>()
     private var mNext by notNullSingleValue<ImageView>()
+    private var mPublish by notNullSingleValue<Button>()
+    private var mCommentCount by notNullSingleValue<TextView>()
+    private var mPraiseCount by notNullSingleValue<TextView>()
 
     //fields
     private val userId by preference("userId", "")
+
+    // by observer
+    private var isShowSoftInput by Delegates.observable(false) {
+        _, _, new ->
+        mComment.post {
+            if (new) {
+                mComment.run {
+                    isFocusable = true
+                    isFocusableInTouchMode = true
+                    visibility = View.VISIBLE
+                    mPublish.visibility = View.VISIBLE
+                }
+                mPreview.visibility = View.GONE
+            } else {
+                mComment.run {
+                    /*isFocusable = false
+                    isFocusableInTouchMode = false*/
+                    visibility = View.GONE
+                    mPublish.visibility = View.GONE
+                }
+                mPreview.visibility = View.VISIBLE
+            }
+            mComment.setSoftInput(new)
+        }
+    }
 
     override fun getContentLayoutId() = R.layout.fragment_answers_detail
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun initWidget(root: View) {
+        // 评论EditText
         mComment = root.findViewById<EditText>(R.id._comment).apply {
             setOnTouchListener { v, _ ->
                 if (!v.isFocusableInTouchMode) {
-                    mComment.isFocusable = true
-                    v.isFocusableInTouchMode = true
+                    isShowSoftInput = true
                 }
                 false
             }
         }
 
+        // SwipeRefreshLayout
         mSwipe = root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
             setOnRefreshListener {
                 initData()
             }
         }
 
+        // RecyclerView
         mRecycle = root.findViewById<RecyclerView>(R.id._recycle).apply {
             layoutManager = LinearLayoutManager(context, 1, false)
             addItemDecoration(DividerItemDecoration(context, 1))
@@ -70,32 +103,39 @@ class AnswerDetail : Fragment() {
                     R.layout.item_answers_detail, arrayListOf()).also { mAdapter = it }
             setOnTouchListener { _, _ ->
                 if (mComment.isFocusableInTouchMode) {
-                    mComment.isFocusable = false
-                    mComment.isFocusableInTouchMode = false
-                    mComment.post { mComment.isShowSoftInput(false) }
+                    isShowSoftInput = false
                 }
                 false
             }
         }
 
+        // Bottom
         mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
             mReview = findViewById(R.id._review)
             mLike = findViewById(R.id._like)
             mNext = findViewById(R.id._next_comment)
+            findViewById<Button>(R.id._ac_reply).setOnClickListener {
+                isShowSoftInput = true
+            }
         }
 
-        root.findViewById<Button>(R.id._publish).setOnClickListener {
-            if (_comment.text.isEmpty()) {
-                showToast("请输入内容")
-                return@setOnClickListener
+        mPublish = root.findViewById<Button>(R.id._publish).apply {
+            setOnClickListener {
+                if (_comment.text.isEmpty()) {
+                    showToast("请输入内容")
+                    return@setOnClickListener
+                }
+                showToast("reply pressed")
             }
-            showToast("reply pressed")
         }
+
         mWeb = layoutInflater.inflate(R.layout.head_answers_detail, mRecycle, false)
                 .also { mAdapter.headView = it }
-                .findViewById<WebView>(R.id.head_web)
-                .apply(this@AnswerDetail::configWeb)
-
+                .run {
+                    mCommentCount = findViewById(R.id.head_comment_count)
+                    mPraiseCount = findViewById(R.id.head_praise_count)
+                    findViewById<WebView>(R.id.head_web)
+                }.apply(this@AnswerDetail::configWeb)
 
         layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false)
     }
@@ -115,6 +155,7 @@ class AnswerDetail : Fragment() {
         response(this@AnswerDetail::onResponse, 202, map)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun onResponse(t: ResponseBean.AnswersDetailBody) {
         if (t.status == 1) {
             showToast("{数据错误, 请到用户反馈处反馈此问题: 错误代码[AD.KT]}")
@@ -122,6 +163,9 @@ class AnswerDetail : Fragment() {
         }
         mAdapter.addDataAndClear(t.menuList)
         mAdapter.notifyDataSetChanged()
+
+        mCommentCount.text = "评论 66"
+        mPraiseCount.text = "304 赞"
     }
 
     private fun itemBind(holder: Adapter.Holder,
@@ -169,6 +213,11 @@ class AnswerDetail : Fragment() {
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 logE("url = $url")
+                url?.let {
+                    if (" http://106.14.251.200/neworld/user/143" in it) {
+                        startActivity(Intent(context, Answers::class.java)) // TODO : Put Bundle
+                    }
+                }
                 view?.loadUrl(url)
                 return true
             }
@@ -182,7 +231,7 @@ class AnswerDetail : Fragment() {
         }
     }
 
-    private fun EditText.isShowSoftInput(show: Boolean) {
+    private fun EditText.setSoftInput(show: Boolean) {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (show) {
             imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)

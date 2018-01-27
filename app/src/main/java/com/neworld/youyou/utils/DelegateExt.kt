@@ -23,7 +23,7 @@ fun <T : Any> preference(name: String, default: T, context: Context = MyApplicat
         ReadWriteProperty<Any?, T> = Preference(context, name, default)
 
 /**
- * NotNull初始化 , 只能赋值1次
+ * NotNull初始化, 只能赋值1次
  */
 fun <T> notNullSingleValue():
         ReadWriteProperty<Any?, T> = NotNullInitialized()
@@ -33,7 +33,7 @@ fun <T> notNullSingleValue():
  */
 fun displayDialog(context: Context, content: String, enter: () -> Unit = { },
                   positive: String = "确定", cancel: () -> Unit = { }, negative: String = "取消") {
-    DialogUtils.showDialog(context, content, "确定", negative,
+    DialogUtils.showDialog(context, content, positive, negative,
             object : DialogUtils.onDiaLogBtnListener {
                 override fun onNegativeListener(dialog: DialogInterface?) {
                     cancel.invoke()
@@ -64,10 +64,12 @@ fun logE(text: String) {
 /**
  * Net
  */
-inline fun <reified T> response(noinline s: (T) -> Unit, url: Any, map: Map<CharSequence, CharSequence>) {
+inline fun <reified T> response
+        (noinline s: (T) -> Unit, url: Any, map: Map<CharSequence, CharSequence>,
+         noinline f: (String) -> Unit = ::showToast) {
     val clazz = T::class.java
     if (url is Int || url is String) {
-        NetBuild.response(s, ::showToast, url.toString(), clazz, map)
+        NetBuild.response(s, f, url.toString(), clazz, map)
     } else {
         throw IllegalArgumentException("This type is not be request")
     }

@@ -3,7 +3,9 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Point
+import android.os.Handler
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -17,9 +19,11 @@ import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.common.BigPicActivity
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.slf4j.MDC.put
 import kotlin.properties.Delegates
 
 /**
@@ -77,33 +81,31 @@ class QuestionsAndAnswers : Fragment() {
 
 		root.findViewById<CheckBox>(R.id._star).apply {
 			setOnClickListener {
-				hashMapOf<CharSequence, CharSequence>().run {
-					put("userId", userId)
-					put("taskId", "1613") // taskId 暂用1613 其他的没数据
-					put("type", "5")
-					put("status", if (isChecked) "1" else "0")
+				val map = hashMapOf<CharSequence, CharSequence>()
+                map["userId"] = userId
+                map["taskId"] = "1613"
+                map["type"] = "5"
+                map["status"] = if (isChecked) "1" else "0"
 
-					doAsync {
-						val response = NetBuild.getResponse(this@run, 112)
-                        uiThread {
-                            text = if ("0" in response && isChecked)
-                                "已收藏"
-                            else
-                                if ("0" in response) "${(tag as Int) - 1}人收藏" else "${tag}人收藏"
+                doAsync {
+                    val response = NetBuild.getResponse(map, 112)
+                    uiThread {
+                        text = if ("0" in response && isChecked) {
+                            "已收藏"
+                        } else {
+                            if ("0" in response) "${(tag as Int) - 1}人收藏" else "${tag}人收藏"
                         }
-					}
-
-					Unit
-				}
+                    }
+                }
 			}
 		}.let { star = it }
 
 		root.findViewById<Button>(R.id._answer).apply {
 			setOnClickListener {
-				startActivity(Intent(context, Answers::class.java)
+                // TODO : Put Bundle ↓
+				startActivityForResult(Intent(context, Answers::class.java)
 						.putExtra("uid", result.from_uid)
-						.putExtra("taskId", result.id.toString())
-						.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+						.putExtra("taskId", result.id.toString()), 5)
 			}
 		}.let { answer = it }
 
@@ -134,13 +136,15 @@ class QuestionsAndAnswers : Fragment() {
 	}
 
 	override fun initData() {
-		val taskId = arguments.getInt("taskId", 0)
-		map.run {
-			put("userId", userId)
-			put("taskId", /*taskId*/"1613") // 1613
-			put("createDate", "")
-            response(this@QuestionsAndAnswers::success, 200, this)
-		}
+        if (!swipe.isRefreshing) swipe.isRefreshing = true
+        // TODO : 暂用固定taskID
+        val taskId = arguments.getInt("taskId", 0)
+        map["userId"] = userId
+        map["taskId"] = "1613"
+        map["createDate"] = ""
+        response(this@QuestionsAndAnswers::success, 200, map)
+        Handler().postDelayed({ if (swipe.isRefreshing) swipe.isRefreshing = false },
+                2000)
 	}
 
 	private fun upData() {
@@ -168,6 +172,12 @@ class QuestionsAndAnswers : Fragment() {
 			}, ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
 		}
 	}
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 5) {
+            initData()
+        }
+    }
 
 	@SuppressLint("SetTextI18n")
 	private fun bind(holder: Adapter.Holder,
@@ -199,6 +209,8 @@ class QuestionsAndAnswers : Fragment() {
                     .placeholder(R.drawable.deftimg)
                     .error(R.drawable.deftimg)
             Glide.with(img).load(data.commentImg).apply(options).into(img)
+            img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
+                    img, data.commentImg) }
             View.VISIBLE
         }
 
@@ -278,6 +290,10 @@ class QuestionsAndAnswers : Fragment() {
 				measured = true
 			}
 	}
+
+    fun refreshData() {
+        initData()
+    }
 
     fun setObserver(listener: View.() -> Unit) {
         this@QuestionsAndAnswers.obs = listener

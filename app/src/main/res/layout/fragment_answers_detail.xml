@@ -11,14 +11,17 @@
         android:layout_height="1px"
         android:layout_marginBottom="@dimen/dp50"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@id/_comment" />
+        app:layout_constraintBottom_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/_bottom_preview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
+        android:paddingLeft="@dimen/dp15"
+        android:paddingRight="@dimen/dp15"
         android:weightSum="6"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -26,15 +29,16 @@
 
         <Button
             android:id="@+id/_ac_reply"
-            android:drawablePadding="@dimen/dp5"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/dp5"
             android:layout_weight="3"
             android:background="@drawable/reply_bg"
             android:drawableLeft="@drawable/write"
+            android:drawablePadding="@dimen/dp5"
             android:gravity="left|center_vertical"
             android:text="@string/write_reply_more"
+            android:textColor="@android:color/darker_gray"
             tools:ignore="RtlHardcoded" />
 
         <ImageView

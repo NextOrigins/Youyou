@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/group"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black">
 
-    <android.support.v4.view.ViewPager
-        android:layout_marginBottom="@dimen/dp30"
+    <ImageView
         android:id="@+id/big_pic"
+        android:transitionName="@string/transitionName_pic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@null"
-        android:scaleType="fitXY"
-        android:transitionName="@string/transitionName_pic"
-        tools:targetApi="lollipop" />
+        tools:targetApi="lollipop"
+        android:scaleType="centerInside" />
 </FrameLayout>
