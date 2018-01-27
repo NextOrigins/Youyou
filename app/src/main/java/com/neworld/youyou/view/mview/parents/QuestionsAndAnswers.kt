@@ -140,8 +140,6 @@ class QuestionsAndAnswers : Fragment() {
 			put("taskId", /*taskId*/"1613") // 1613
 			put("createDate", "")
             response(this@QuestionsAndAnswers::success, 200, this)
-//			NetBuild.response(this@QuestionsAndAnswers::success,
-//					ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
 		}
 	}
 
@@ -214,6 +212,7 @@ class QuestionsAndAnswers : Fragment() {
                 doAsync {
                     val response = NetBuild.getResponse(this@run, 193)
                     uiThread {
+						logE("response : $response")
                         if ("0" !in response) {
                             logE("two response : $response")
                             showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")

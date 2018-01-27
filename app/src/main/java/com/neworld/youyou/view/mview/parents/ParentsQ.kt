@@ -28,7 +28,6 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
-import org.slf4j.MDC.put
 import java.util.*
 
 /**
@@ -36,6 +35,7 @@ import java.util.*
  */
 class ParentsQ : Fragment() {
 
+    // view
 	private var mRecycle by notNullSingleValue<RecyclerView>()
 	private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
 	private var mFootText by notNullSingleValue<TextView>()
@@ -44,6 +44,7 @@ class ParentsQ : Fragment() {
 
 	private var admMenu: MenuItem? = null
 
+    // fields
 	private var userId by preference("userId", "")
 	private var token by preference("token", "")
 	private var cacheJson by preference("cacheJson", "") // 缓存以Json格式存储本地 , 也可以存储到服务器
@@ -51,28 +52,29 @@ class ParentsQ : Fragment() {
 
 	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue() // RecyclerView适配器 (HeaderView FooterView)
 
+    // property & cacheList
 	private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
 	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
+    private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
+    private val savedList = arrayListOf<String>() // 避免cacheList读取冲突
 
+    // 图片等宽
 	private val imgWidth by lazy {
-		// 图片等宽
 		val point = Point()
 		activity.windowManager.defaultDisplay.getSize(point)
-		(point.x - resources.getDimension(R.dimen.dp17)) / 3
+		(point.x - resources.getDimension(R.dimen.dp30)) / 3
 	}
 
+    // cache
 	private var endDate = ""
-	private var topDate = ""
+    private var topDate = ""
+    private var cacheIndex = 0 // 读取缓存下标
 
+    // status
 	private var b = true // 加载完成提示 只显示一次
 	private var over = false // 是否读取完缓存列表
 	private var openCache = true // 是否开启缓存
 	private var isUpdate = false
-
-	private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
-
-	private val savedList = arrayListOf<String>() // 避免cacheList读取冲突
-	private var cacheIndex = 0 // 读取缓存下标
 
 
 	override fun getContentLayoutId() = R.layout.fragment_parents_q
@@ -142,6 +144,7 @@ class ParentsQ : Fragment() {
 			mAdapter.notifyDataSetChanged()
 
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+            b = true
 
 			savedList.add(0, endDate)
 
@@ -174,6 +177,7 @@ class ParentsQ : Fragment() {
 			mFootText.text = "加载更多"
 			mFootPrg.visibility = View.GONE
 			isUpdate = false
+            b = true
 
 			// 缓存
 			if (over) {
