@@ -122,7 +122,6 @@ class Answers : Activity() {
                     }
                 }
             }.let {
-                        logE("convert content : $it")
                         val map = hashMapOf<CharSequence, CharSequence>().apply {
                             val bundle = intent.extras
                             put("userId", userId)
@@ -133,7 +132,7 @@ class Answers : Activity() {
                             put("content", it)
                             put("commentImg", cacheImgPath)
                         }
-
+                        logE("map = $map")
                         val response = NetBuild.getResponse(map, 205)
                         uiThread {
                             _loading.visibility = View.GONE

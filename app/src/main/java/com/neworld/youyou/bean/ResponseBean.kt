@@ -267,8 +267,8 @@ class ResponseBean {
             val clickSum: Int, //0
             val faceImg: String, //http://106.14.251.200:8082/olopicture/icon/a111.jpg
             val parent_cid: Int, //1853
-            val likeCommentStatus: Int, //1
-            val commentLike: Int, //0
+            var likeCommentStatus: Int, //1
+            var commentLike: Int, //0
             val content: String, //孩子成长过程中，父母的陪伴很重要
             val from_nickName: String, //游客421523
             val commentCount: Int, //8

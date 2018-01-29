@@ -50,8 +50,9 @@ class ParentsQA : Activity() {
     }
 
     private fun startAnswersDetail() = supportFragmentManager.beginTransaction().also {
-        it.replace(answersDetail ?: AnswerDetail()
-                .also { it.arguments = questionsAndAnswers?.arguments; answersDetail = it }, "fragment2")
+        it.replace(answersDetail?.also { it.arguments = questionsAndAnswers?.arguments } ?:
+        AnswerDetail().also { it.arguments = questionsAndAnswers?.arguments; answersDetail = it },
+                "fragment2")
         it.addToBackStack("fragment2")
     }.commit()
 
@@ -83,7 +84,6 @@ class ParentsQA : Activity() {
                 fm.popBackStackImmediate()
                 val tag = fm.getBackStackEntryAt(fm.backStackEntryCount - 1).name
                 val bt = fm.beginTransaction()
-                logE("tag = $tag")
                 when (tag) {
                     "fragment1" -> bt.also {
                         it.replace(questionsAndAnswers ?:

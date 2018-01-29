@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
@@ -102,10 +103,10 @@ class QuestionsAndAnswers : Fragment() {
 
 		root.findViewById<Button>(R.id._answer).apply {
 			setOnClickListener {
-                // TODO : Put Bundle ↓
+				arguments.putString("uid", result.from_uid.toString())
+                arguments.putString("taskId", result.id.toString())
 				startActivityForResult(Intent(context, Answers::class.java)
-						.putExtra("uid", result.from_uid)
-						.putExtra("taskId", result.id.toString()), 5)
+                        .putExtras(arguments), 5)
 			}
 		}.let { answer = it }
 
@@ -196,13 +197,13 @@ class QuestionsAndAnswers : Fragment() {
 
 		name.text = data.from_nickName
 		praises.text = "${data.commentLike}赞"
-		read.text = if (data.clickSum > 0) "${data.clickSum}万阅读" else "0阅读"
+		read.text = if (data.clickSum > 0) "${data.clickSum} 阅读" else "0 阅读"
 
 		Glide.with(icon).load(data.faceImg).into(icon)
 
 		praise.isChecked = data.likeCommentStatus == 0
 
-        img.visibility = if (data.commentImg == null) {
+        img.visibility = if (TextUtils.isEmpty(data.commentImg)) {
             View.GONE
         } else {
             val options = RequestOptions()
@@ -210,7 +211,7 @@ class QuestionsAndAnswers : Fragment() {
                     .error(R.drawable.deftimg)
             Glide.with(img).load(data.commentImg).apply(options).into(img)
             img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
-                    img, data.commentImg) }
+                    img, data.commentImg!!) }
             View.VISIBLE
         }
 
@@ -224,9 +225,7 @@ class QuestionsAndAnswers : Fragment() {
                 doAsync {
                     val response = NetBuild.getResponse(this@run, 193)
                     uiThread {
-						logE("response : $response")
                         if ("0" !in response) {
-                            logE("two response : $response")
                             showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
                         }
                     }
@@ -238,6 +237,8 @@ class QuestionsAndAnswers : Fragment() {
 
 		holder.find<View>(R.id._parent).setOnClickListener {
             arguments.putInt("cId", data.commentId)
+            arguments.putBoolean("likeStatus", praise.isChecked)
+            arguments.putString("taskId", data.taskId.toString())
             obs.invoke(it)
 		}
 	}

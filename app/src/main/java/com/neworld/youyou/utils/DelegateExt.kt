@@ -64,15 +64,21 @@ fun logE(text: String) {
 /**
  * Net
  */
-inline fun <reified T> response
-        (noinline s: (T) -> Unit, url: Any, map: Map<CharSequence, CharSequence>,
-         noinline f: (String) -> Unit = ::showToast) {
+inline fun <reified T> response(noinline s: (T) -> Unit, url: Any, map: Map<CharSequence, CharSequence>,
+                                noinline f: (String) -> Unit = ::showToast) {
     val clazz = T::class.java
     if (url is Int || url is String) {
         NetBuild.response(s, f, url.toString(), clazz, map)
     } else {
         throw IllegalArgumentException("This type is not be request")
     }
+}
+
+/**
+ * Thread
+ */
+fun uiThread(action: () -> Unit) {
+    Util.uiThread(action)
 }
 
 private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {

@@ -5,10 +5,6 @@
     <corners
         android:radius="20dp" />
 
-    <stroke
-        android:color="@android:color/darker_gray"
-        android:width="1px" />
-
     <solid
         android:color="@color/light_gray" />
 
