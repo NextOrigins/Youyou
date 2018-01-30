@@ -3,6 +3,7 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Point
+import android.os.Bundle
 import android.os.Handler
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -36,8 +37,14 @@ class QuestionsAndAnswers : Fragment() {
 	private val map = hashMapOf<CharSequence, CharSequence>()
 	private val list = arrayListOf<ResponseBean.AnswerList>()
 	private var result: ResponseBean.Result by Delegates.notNull()
+    private val options by lazy {
+        return@lazy RequestOptions()
+                .placeholder(R.drawable.deftimg)
+                .error(R.drawable.deftimg)
 
-    //observer
+    }
+
+    // observer
     private lateinit var obs: View.() -> Unit
 
 	// adapter
@@ -62,6 +69,7 @@ class QuestionsAndAnswers : Fragment() {
 	// state
 	private var b = true
 	private var measured = false
+    private var created = false
 
 	override fun getContentLayoutId()
 			= R.layout.fragment_questions_answers
@@ -136,6 +144,10 @@ class QuestionsAndAnswers : Fragment() {
 		answerCount = root.findViewById(R.id._answer_count)
 	}
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        logE("onViewCreated")
+    }
 	override fun initData() {
         if (!swipe.isRefreshing) swipe.isRefreshing = true
         // TODO : 暂用固定taskID
@@ -236,9 +248,10 @@ class QuestionsAndAnswers : Fragment() {
 		}
 
 		holder.find<View>(R.id._parent).setOnClickListener {
-            arguments.putInt("cId", data.commentId)
+            arguments.putString("cId", data.commentId.toString())
             arguments.putBoolean("likeStatus", praise.isChecked)
             arguments.putString("taskId", data.taskId.toString())
+            arguments.putString("fromUID", data.from_userId.toString())
             obs.invoke(it)
 		}
 	}
@@ -269,9 +282,6 @@ class QuestionsAndAnswers : Fragment() {
 
 		headTitle.text = result.title
 		headContent.text = result.content
-		val options = RequestOptions()
-				.placeholder(R.drawable.deftimg)
-				.error(R.drawable.deftimg)
 		Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
 
 		if (!measured)

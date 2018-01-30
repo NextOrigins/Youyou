@@ -3,23 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <View
         android:id="@+id/_line"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1px"
         android:layout_marginBottom="@dimen/dp50"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <LinearLayout
         android:id="@+id/_bottom_preview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/dp15"
-        android:paddingRight="@dimen/dp15"
+        android:paddingLeft="@dimen/dp20"
+        android:paddingRight="@dimen/dp20"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -66,8 +69,10 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/dp40"
         android:layout_marginBottom="@dimen/dp5"
-        android:layout_marginLeft="@dimen/dp15"
-        android:layout_marginRight="@dimen/dp15"
+        android:layout_marginEnd="@dimen/dp10"
+        android:layout_marginLeft="@dimen/dp20"
+        android:layout_marginRight="@dimen/dp10"
+        android:layout_marginStart="@dimen/dp20"
         android:background="@drawable/reply_bg"
         android:gravity="center_vertical"
         android:hint="@string/write_comment"
@@ -81,15 +86,18 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/_publish" />
 
-    <Button
+    <TextView
         android:id="@+id/_publish"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/dp15"
         android:layout_marginRight="@dimen/dp15"
-        android:background="@drawable/publish_btn_bg"
-        android:text="@string/publish"
-        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingLeft="@dimen/dp20"
+        android:paddingRight="@dimen/dp20"
+        android:text="@string/send"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/sp16"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/_comment"
         app:layout_constraintRight_toRightOf="parent"

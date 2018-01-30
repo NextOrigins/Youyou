@@ -120,5 +120,7 @@
     <string name="load_more_on_click">点击加载更多</string>
     <string name="comment">评论</string>
     <string name="write_reply_more">写评论...</string>
+    <string name="reply">回复</string>
+    <string name="send">发送</string>
 
 </resources>

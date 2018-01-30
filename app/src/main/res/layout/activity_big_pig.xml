@@ -12,5 +12,5 @@
         android:layout_height="match_parent"
         android:contentDescription="@null"
         tools:targetApi="lollipop"
-        android:scaleType="centerInside" />
+        android:scaleType="fitCenter" />
 </FrameLayout>

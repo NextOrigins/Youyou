@@ -54,6 +54,8 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         addData(list)
 	}
 
+    fun getSize(): Int = bean.size
+
     override fun getItemViewType(position: Int) = when {
         position == 0 && headView != null -> TYPE_HEADER
         position == itemCount - 1 && footView != null -> TYPE_FOOTER

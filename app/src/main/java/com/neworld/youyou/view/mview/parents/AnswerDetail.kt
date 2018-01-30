@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.support.v4.content.ContextCompat.startActivity
+import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -46,7 +49,13 @@ class AnswerDetail : Fragment() {
         map["type"] = "5"
         map
     }
+    private val options by lazy {
+        return@lazy RequestOptions()
+                .placeholder(R.drawable.deftimg)
+                .error(R.drawable.deftimg)
+    }
     private var fromUserId = ""
+    private var fromCommentId = ""
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -54,14 +63,14 @@ class AnswerDetail : Fragment() {
     private var mComment by notNullSingleValue<EditText>()
     private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
     private var mPreview by notNullSingleValue<LinearLayout>()
-    private var mPublish by notNullSingleValue<Button>()
+    private var mPublish by notNullSingleValue<TextView>()
     private var mCommentCount by notNullSingleValue<TextView>()
     private var mPraiseCount by notNullSingleValue<TextView>()
     private var mLike by notNullSingleValue<CheckBox>()
 
     //fields
     private val userId by preference("userId", "")
-    private val commentId by lazy { arguments.getInt("cId").toString() }
+    private var commentId by Delegates.notNull<String>()
     private var itsChecked: Boolean? = null
 
     // by observer
@@ -84,11 +93,24 @@ class AnswerDetail : Fragment() {
         // 评论EditText
         mComment = root.findViewById<EditText>(R.id._comment).apply {
             setOnTouchListener { v, _ ->
-                if (!v.isFocusableInTouchMode) {
-                    isShowSoftInput = true
-                }
+                isShowSoftInput = true
                 false
             }
+            addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count > 0) {
+                        ContextCompat.getColor(context, R.color.colorAccent)
+                    } else {
+                        ContextCompat.getColor(context, android.R.color.darker_gray)
+                    }.let(mPublish::setTextColor)
+                }
+            })
         }
 
         // SwipeRefreshLayout
@@ -142,12 +164,13 @@ class AnswerDetail : Fragment() {
                 setOnClickListener {
                     isShowSoftInput = true
                     fromUserId = ""
+                    fromCommentId = ""
                 }
                 layoutParams = layoutParams
                         .also { it.width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp30)) / 2 }
             }
             mNext.post {
-                val width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp30)) / 2
+                val width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp40)) / 2
                 val x = width / 3
                 mReview.layoutParamsWidth(x)
                 mLike.layoutParamsWidth(x)
@@ -165,18 +188,19 @@ class AnswerDetail : Fragment() {
 
             val map = hashMapOf<CharSequence, CharSequence>()
             map["userId"] = userId
-            map["taskId"] = arguments.getString("taskId")
-            map["commentId"] = commentId
+            map["taskId"] = commentId // 2级页面commentId
+            map["commentId"] = fromCommentId // 评论""  回复别人commentId
+            map["from_userId"] = fromUserId // 回复的from_userId else ""
             map["content"] = mComment.text.toString()
-            map["from_userId"] = fromUserId // TODO : 回复
 
-            logE("map = $map")
             doAsync {
                 val response = NetBuild.getResponse(map, 206)
                 LogUtils.LOG_JSON("response : $response")
                 uiThread {
                     if ("0" in response) {
-                        mAdapter.notifyDataSetChanged()
+                        isShowSoftInput = false
+                        initData()
+                        mComment.text.clear()
                     }
                 }
             }
@@ -195,6 +219,7 @@ class AnswerDetail : Fragment() {
 
     override fun initData() {
         if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
+        commentId = arguments.getString("cId")
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
 
@@ -245,18 +270,15 @@ class AnswerDetail : Fragment() {
         date.text = data.createDate
         reply.text = "回复"
 
-        val options = RequestOptions()
-                .placeholder(R.drawable.deftimg)
-                .error(R.drawable.deftimg)
-
         Glide.with(icon).load(data.faceImg).apply(options).into(icon)
 
         reply.setOnClickListener {
             showToast("回复 pressed")
             fromUserId = data.from_userId.toString()
+            fromCommentId = data.commentId.toString()
         }
         praise.setOnClickListener {
-            praises["commentId"] = commentId
+            praises["commentId"] = data.commentId.toString()
             praises["status"] = if (praise.isChecked) "1" else "0"
 
             doAsync {
@@ -286,6 +308,7 @@ class AnswerDetail : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun configWeb(it: WebView) = with(it) {
+        isFocusable = false
         setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 isShowSoftInput = false
@@ -315,9 +338,6 @@ class AnswerDetail : Fragment() {
                     }
                 }
                 return true
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             }
 
             override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
