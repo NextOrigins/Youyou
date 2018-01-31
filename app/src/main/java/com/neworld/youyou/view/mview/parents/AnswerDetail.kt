@@ -3,9 +3,8 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Point
-import android.os.Handler
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
@@ -56,6 +55,16 @@ class AnswerDetail : Fragment() {
     }
     private var fromUserId = ""
     private var fromCommentId = ""
+    private var cacheCreateDate = ""
+        set(value) {
+            hintText.text = if (value.isEmpty()) {
+                getString(R.string.no_more_data)
+            } else {
+                getString(R.string.load_more_on_click)
+            }
+            hintProgress.visibility = View.GONE
+            field = value
+        }
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -67,11 +76,15 @@ class AnswerDetail : Fragment() {
     private var mCommentCount by notNullSingleValue<TextView>()
     private var mPraiseCount by notNullSingleValue<TextView>()
     private var mLike by notNullSingleValue<CheckBox>()
+    private var hintText by notNullSingleValue<TextView>()
+    private var hintProgress by notNullSingleValue<ProgressBar>()
 
     //fields
     private val userId by preference("userId", "")
     private var commentId by Delegates.notNull<String>()
     private var itsChecked: Boolean? = null
+    private var nextArray: Array<String>? = null
+    private var index = 0
 
     // by observer
     private var isShowSoftInput by Delegates.observable(false) { _, old, new ->
@@ -86,13 +99,19 @@ class AnswerDetail : Fragment() {
         }
     }
 
+    override fun initArgs(bundle: Bundle?) {
+        bundle?.let {
+            nextArray = it.getStringArray("nextArray")
+        }
+    }
+
     override fun getContentLayoutId() = R.layout.fragment_answers_detail
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun initWidget(root: View) {
         // 评论EditText
         mComment = root.findViewById<EditText>(R.id._comment).apply {
-            setOnTouchListener { v, _ ->
+            setOnTouchListener { _, _ ->
                 isShowSoftInput = true
                 false
             }
@@ -116,7 +135,7 @@ class AnswerDetail : Fragment() {
         // SwipeRefreshLayout
         mSwipe = root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
             setOnRefreshListener {
-                initData()
+                initData(commentId)
             }
         }
 
@@ -158,7 +177,15 @@ class AnswerDetail : Fragment() {
                 }
             }
             val mNext = findViewById<ImageView>(R.id._next_comment).apply {
-                setOnClickListener { showToast("next page pressed") }
+                setOnClickListener {
+                    if (nextArray != null && nextArray!!.size > index) {
+                        val id = nextArray!![index++]
+                        commentId = id
+                        initData(id)
+                    } else {
+                        showToast("最后一页啦")
+                    }
+                }
             }
             findViewById<TextView>(R.id._ac_reply).apply {
                 setOnClickListener {
@@ -195,11 +222,10 @@ class AnswerDetail : Fragment() {
 
             doAsync {
                 val response = NetBuild.getResponse(map, 206)
-                LogUtils.LOG_JSON("response : $response")
                 uiThread {
                     if ("0" in response) {
                         isShowSoftInput = false
-                        initData()
+                        initData(commentId)
                         mComment.text.clear()
                     }
                 }
@@ -214,12 +240,37 @@ class AnswerDetail : Fragment() {
                     findViewById<WebView>(R.id.head_web)
                 }.apply(this@AnswerDetail::configWeb)
 
-        layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false)
+        layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false).apply {
+            hintText = findViewById(R.id._click_load_more)
+            hintProgress = findViewById(R.id._click_load_progress)
+            findViewById<View>(R.id._parent).setOnClickListener {
+                if (hintProgress.visibility == View.VISIBLE ||
+                        hintText.text.toString() == getString(R.string.no_more_data))
+                    return@setOnClickListener
+
+                hintProgress.visibility = View.VISIBLE
+                hintText.text = getString(R.string.please_wait)
+                val map = hashMapOf<CharSequence, CharSequence>()
+                map["userId"] = userId
+                map["commentId"] = commentId
+                map["createDate"] = cacheCreateDate
+
+                response(::addMore, 202, map, {
+                    hintText.text = getString(R.string.load_more_on_click)
+                    hintProgress.visibility = View.GONE
+                    showToast(it)
+                })
+            }
+        }.let { mAdapter.footView = it }
     }
 
     override fun initData() {
-        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         commentId = arguments.getString("cId")
+        initData(commentId)
+    }
+
+    private fun initData(commentId: String) {
+        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
 
@@ -241,14 +292,35 @@ class AnswerDetail : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun onResponse(t: ResponseBean.AnswersDetailBody) {
         if (t.status == 1) {
-            showToast("{数据错误, 请到用户反馈处反馈此问题: 错误代码[AD.KT]}")
+            showToast("{数据错误, 请到用户反馈处反馈此问题: 错误代码[202]}")
             return
         }
+
+        val lastCreateDate = if (t.menuList.isNotEmpty()) {
+            mCommentCount.text = "评论 ${t.commentBean.commentCount}"
+            mPraiseCount.text = "${t.commentBean.commentLike} 赞"
+            t.menuList.last().createDate
+        } else {
+            mCommentCount.text = "评论 0" // TODO : 测试
+            mPraiseCount.text = "0 赞"
+            ""
+        }
+
         mAdapter.addDataAndClear(t.menuList)
         mAdapter.notifyDataSetChanged()
 
-        mCommentCount.text = "评论 0" // TODO : 测试
-        mPraiseCount.text = "0 赞"
+        cacheCreateDate = lastCreateDate
+    }
+
+    private fun addMore(t: ResponseBean.AnswersDetailBody) {
+        if (t.status == 1) {
+            showToast("{数据异常, 请反馈此问题: 错误代码[202]}")
+            return
+        }
+        mAdapter.addData(t.menuList)
+        mAdapter.notifyDataSetChanged()
+
+        cacheCreateDate = if (t.menuList.isNotEmpty()) t.menuList.last().createDate else ""
     }
 
     private fun itemBind(holder: Adapter.Holder,
@@ -262,6 +334,10 @@ class AnswerDetail : Fragment() {
 
         val data = mutableList[position]
 
+        data.remarkContent?.let {
+            logE("remarkName = ${data.remarkName}; remarkContent = ${data.remarkContent}")
+        }
+
         name.text = data.from_nickName
         content.text = data.content
         praise.text = data.commentLike.toString()
@@ -273,10 +349,11 @@ class AnswerDetail : Fragment() {
         Glide.with(icon).load(data.faceImg).apply(options).into(icon)
 
         reply.setOnClickListener {
-            showToast("回复 pressed")
             fromUserId = data.from_userId.toString()
             fromCommentId = data.commentId.toString()
+            isShowSoftInput = true
         }
+
         praise.setOnClickListener {
             praises["commentId"] = data.commentId.toString()
             praises["status"] = if (praise.isChecked) "1" else "0"

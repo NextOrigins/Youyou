@@ -256,40 +256,46 @@ class ResponseBean {
             val collectStatus: Int // 0
     )
 
-
     data class AnswersDetailBody(
             val menuList: List<AnswersDetailList>,
+            val commentBean: CommentBean,
+            val status: Int //0
+    )
+
+    data class CommentBean(
+            val clickSum: Int, //776
+            val parent_cid: Int, //0
+            val dynamic_id: Int, //1613
+            val attachedContent: String, //呵呵就你那￼ii今年就看看有没有什么好看的话我就过去的人多吗
+            val likeCommentStatus: Int, //0
+            val commentLike: Int, //1
+            val type: Int, //5
+            val from_uid: Int, //10851
+            val content: String, //<p>呵呵就你那</p><img src="http://106.14.251.200:8082/olopicture/answers/10851201801281555221517126122677.jpg"><p>ii今年就看看有没有什么好看的话我就过去的人多吗</p>
+            val commentCount: Int, //75
+            val commentImg: String, //http://106.14.251.200:8082/olopicture/answers/10851201801281555221517126122677.jpg
+            val stickStatus: Int, //1
+            val to_uid: String, //10854
+            val id: Int, //2579
+            val createDate: String, //2018-01-28 15:55:52
             val status: Int //0
     )
 
     data class AnswersDetailList(
-            val from_userId: Int, //28677
+            val from_userId: Int, //33866
             val clickSum: Int, //0
-            val faceImg: String, //http://106.14.251.200:8082/olopicture/icon/a111.jpg
-            val parent_cid: Int, //1853
-            var likeCommentStatus: Int, //1
-            var commentLike: Int, //0
-            val content: String, //孩子成长过程中，父母的陪伴很重要
-            val from_nickName: String, //游客421523
-            val commentCount: Int, //8
-            val commentImg: Any, //null
-            val commmentTwo: List<CommmentTwo>,
-            val commentId: Int, //1468
-            val taskId: Int, //1624
-            val createDate: String //2017-10-27 08:50:21
-    )
-
-    data class CommmentTwo(
-            val from_userId: Int, //28677
-            val commentImg: Any, //null
-            val clickSum: Int, //0
-            val faceImg: String, //http://106.14.251.200:8082/olopicture/icon/a111.jpg
-            val parent_cid: Int, //1853
-            val commentId: Int, //1468
-            val commentLike: Int, //0
-            val content: String, //孩子成长过程中，父母的陪伴很重要
-            val taskId: Int, //1624
-            val createDate: String, //2017-10-27 08:50:21
-            val from_nickName: String //游客421523
+            val faceImg: String, //http://www.uujz.me:8082/olopicture/icon/33866201711301733481512034428443.jpg
+            val parent_cid: Int, //0
+            var likeCommentStatus: Int, //0
+            var commentLike: Int, //2
+            val content: String, //dqwdq123
+            val from_nickName: String, //Test
+            val commentImg: String,
+            val remarkName: String?, //null
+            val remarkContent: String?, //null
+            val to_uid: String,
+            val commentId: Int, //2663
+            val taskId: Int, //2579
+            val createDate: String //2018-01-30 12:00:40
     )
 }

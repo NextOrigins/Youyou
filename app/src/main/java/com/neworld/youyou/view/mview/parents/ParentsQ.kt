@@ -28,6 +28,7 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.common.BigPicActivity
 import java.util.*
 
 /**
@@ -226,11 +227,20 @@ class ParentsQ : Fragment() {
 			when (split.size) {
 				1 -> {
 					Glide.with(img1).load(split[0]).into(img1)
+					img1.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+                    }
 					img2.visibility = View.GONE
 				}
 				2 -> {
 					Glide.with(img1).load(split[0]).into(img1)
 					Glide.with(img2).load(split[1]).into(img2)
+                    img1.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+                    }
+                    img2.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+                    }
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.GONE
 				}
@@ -238,6 +248,15 @@ class ParentsQ : Fragment() {
 					Glide.with(img1).load(split[0]).into(img1)
 					Glide.with(img2).load(split[1]).into(img2)
 					Glide.with(img3).load(split[2]).into(img3)
+                    img1.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+                    }
+                    img2.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+                    }
+                    img3.setOnClickListener {
+                        BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
+                    }
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.VISIBLE
 				}

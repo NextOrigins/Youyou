@@ -248,10 +248,15 @@ class QuestionsAndAnswers : Fragment() {
 		}
 
 		holder.find<View>(R.id._parent).setOnClickListener {
+            val array = mutableList
+                    .takeLast(position)
+                    .flatMap { arrayListOf(it.commentId.toString()) }
+                    .toTypedArray()
             arguments.putString("cId", data.commentId.toString())
             arguments.putBoolean("likeStatus", praise.isChecked)
             arguments.putString("taskId", data.taskId.toString())
             arguments.putString("fromUID", data.from_userId.toString())
+			arguments.putStringArray("nextArray", array)
             obs.invoke(it)
 		}
 	}

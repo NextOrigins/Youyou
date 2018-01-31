@@ -114,13 +114,14 @@
     <string name="publish">发布</string>
     <string name="close">关闭</string>
     <string name="img">图片</string>
-    <string name="please_wait">请稍等...</string>
+    <string name="please_wait">请稍等…</string>
     <string name="all_comment">全部评论</string>
     <string name="write_comment">写评论</string>
     <string name="load_more_on_click">点击加载更多</string>
     <string name="comment">评论</string>
-    <string name="write_reply_more">写评论...</string>
+    <string name="write_reply_more">写评论…</string>
     <string name="reply">回复</string>
     <string name="send">发送</string>
+    <string name="no_more_data">没有更多数据了</string>
 
 </resources>
