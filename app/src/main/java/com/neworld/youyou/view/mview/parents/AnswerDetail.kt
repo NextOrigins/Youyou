@@ -3,6 +3,7 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -11,7 +12,10 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -28,6 +32,9 @@ import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.properties.Delegates
 
 /**
@@ -55,7 +62,7 @@ class AnswerDetail : Fragment() {
     }
     private var fromUserId = ""
     private var fromCommentId = ""
-    private var cacheCreateDate = ""
+    /*private var cacheCreateDate = ""
         set(value) {
             hintText.text = if (value.isEmpty()) {
                 getString(R.string.no_more_data)
@@ -64,7 +71,7 @@ class AnswerDetail : Fragment() {
             }
             hintProgress.visibility = View.GONE
             field = value
-        }
+        }*/
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -98,6 +105,32 @@ class AnswerDetail : Fragment() {
             mPreview.visibility = View.VISIBLE
         }
     }
+    private var lastCreateDate by Delegates.vetoable("") { _, old, new ->
+        hintProgress.visibility = View.GONE
+
+        if (new.isEmpty()) {
+            hintText.text = getString(R.string.no_more_data)
+
+            return@vetoable true
+        }
+        hintText.text = getString(R.string.load_more_on_click)
+
+        try {
+            val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+//            val format = SimpleDateFormat.getDateTimeInstance(DateFormat.YEAR_FIELD, DateFormat.ERA_FIELD, Locale.CHINA)
+            if (old.isNotEmpty()) {
+                val one = format.parse(new)
+                val two = format.parse(old)
+                val result = two.time - one.time
+                return@vetoable result > 0
+            }
+        } catch (e: ParseException) {
+            val content: CharSequence = "对比时间出了问题, 请到用户反馈处反馈此问题{错误代码[ad85%95]} 谢谢."
+            hintText.text = content
+            e.printStackTrace()
+        }
+        return@vetoable true
+    }
 
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
@@ -123,7 +156,7 @@ class AnswerDetail : Fragment() {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (count > 0) {
+                    if (s != null && s.isNotEmpty()) {
                         ContextCompat.getColor(context, R.color.colorAccent)
                     } else {
                         ContextCompat.getColor(context, android.R.color.darker_gray)
@@ -216,17 +249,35 @@ class AnswerDetail : Fragment() {
             val map = hashMapOf<CharSequence, CharSequence>()
             map["userId"] = userId
             map["taskId"] = commentId // 2级页面commentId
-            map["commentId"] = fromCommentId // 评论""  回复别人commentId
+            map["comment_id"] = fromCommentId // 评论""  回复别人commentId
             map["from_userId"] = fromUserId // 回复的from_userId else ""
             map["content"] = mComment.text.toString()
 
             doAsync {
                 val response = NetBuild.getResponse(map, 206)
-                uiThread {
-                    if ("0" in response) {
+                if ("0" in response) {
+                    val insert = ResponseBean.AnswersDetailList(
+                            userId.toInt(),
+                            0,
+                            "",
+                            0,
+                            0,
+                            0,
+                            mComment.text.toString(),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            commentId.toInt(),
+                            0,
+                            SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()).toString()
+                    )
+                    uiThread {
                         isShowSoftInput = false
-                        initData(commentId)
+                        /*initData(commentId)*/
                         mComment.text.clear()
+                        mAdapter.insertData(insert)
                     }
                 }
             }
@@ -253,7 +304,7 @@ class AnswerDetail : Fragment() {
                 val map = hashMapOf<CharSequence, CharSequence>()
                 map["userId"] = userId
                 map["commentId"] = commentId
-                map["createDate"] = cacheCreateDate
+                map["createDate"] = lastCreateDate
 
                 response(::addMore, 202, map, {
                     hintText.text = getString(R.string.load_more_on_click)
@@ -296,20 +347,20 @@ class AnswerDetail : Fragment() {
             return
         }
 
-        val lastCreateDate = if (t.menuList.isNotEmpty()) {
+        if (t.menuList.isNotEmpty()) {
             mCommentCount.text = "评论 ${t.commentBean.commentCount}"
             mPraiseCount.text = "${t.commentBean.commentLike} 赞"
-            t.menuList.last().createDate
+            t.menuList.forEach { lastCreateDate = it.createDate }
         } else {
             mCommentCount.text = "评论 0" // TODO : 测试
             mPraiseCount.text = "0 赞"
-            ""
+            lastCreateDate = ""
         }
 
         mAdapter.addDataAndClear(t.menuList)
         mAdapter.notifyDataSetChanged()
 
-        cacheCreateDate = lastCreateDate
+        logE("lastCreateDate = $lastCreateDate")
     }
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
@@ -320,7 +371,11 @@ class AnswerDetail : Fragment() {
         mAdapter.addData(t.menuList)
         mAdapter.notifyDataSetChanged()
 
-        cacheCreateDate = if (t.menuList.isNotEmpty()) t.menuList.last().createDate else ""
+        lastCreateDate = if (t.menuList.isNotEmpty()) t.menuList.last().createDate else ""
+        if (t.menuList.isNotEmpty())
+            t.menuList.forEach { lastCreateDate = it.createDate }
+        else
+            lastCreateDate = ""
     }
 
     private fun itemBind(holder: Adapter.Holder,
@@ -331,6 +386,7 @@ class AnswerDetail : Fragment() {
         val praise = holder.find<CheckBox>(R.id.item_praise)
         val date = holder.find<TextView>(R.id.item_date)
         val reply = holder.find<TextView>(R.id.item_reply)
+        val delete = holder.find<TextView>(R.id.item_delete)
 
         val data = mutableList[position]
 
@@ -338,8 +394,18 @@ class AnswerDetail : Fragment() {
             logE("remarkName = ${data.remarkName}; remarkContent = ${data.remarkContent}")
         }
 
+        content.text = if (data.remarkContent != null) {
+            SpannableString("${data.content}//@${data.remarkName}: ${data.remarkContent}").apply {
+                val start = data.content.length + 2
+                val end = start + if (data.remarkName != null) data.remarkName.length + 1 else 0
+                val colorSpan = ForegroundColorSpan(Color.parseColor("#0099EE"))
+                setSpan(colorSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+            }
+        } else {
+            data.content
+        }
+
         name.text = data.from_nickName
-        content.text = data.content
         praise.text = data.commentLike.toString()
         praise.isChecked = data.likeCommentStatus == 0
 
@@ -352,6 +418,26 @@ class AnswerDetail : Fragment() {
             fromUserId = data.from_userId.toString()
             fromCommentId = data.commentId.toString()
             isShowSoftInput = true
+        }
+
+        delete.visibility = if (data.from_userId.toString() == userId) {
+            delete.setOnClickListener {
+                val enter: () -> Unit = {
+                    val map = hashMapOf<CharSequence, CharSequence>()
+                    map["userId"] = userId
+                    map["taskId"] = data.taskId.toString()
+                    map["commentId"] = data.commentId.toString()
+
+                    doAsync {
+                        val response = NetBuild.getResponse(map, 207)
+                        uiThread { if ("0" in response) mAdapter.remove(position) }
+                    }
+                }
+                displayDialog(context, "确定删除吗", enter)
+            }
+            View.VISIBLE
+        } else {
+            View.GONE
         }
 
         praise.setOnClickListener {

@@ -72,4 +72,15 @@
         app:layout_constraintLeft_toRightOf="@id/item_date"
         app:layout_constraintTop_toTopOf="@id/item_date"
         tools:text="回复" />
+
+    <TextView
+        android:id="@+id/item_delete"
+        android:textColor="#0E78A0"
+        android:text="@string/delete"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/item_reply"
+        app:layout_constraintLeft_toLeftOf="@id/item_praise"
+        app:layout_constraintRight_toRightOf="@id/item_praise"
+        app:layout_constraintTop_toTopOf="@id/item_reply" />
 </android.support.constraint.ConstraintLayout>

@@ -54,7 +54,35 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         addData(list)
 	}
 
+    fun insertData(t: T) {
+        val index = if (headView == null) 0 else 1
+        val count = when {
+            headView != null && footView != null -> itemCount - 2
+            headView != null || footView != null -> itemCount - 1
+            else -> itemCount
+        }
+        bean.add(0, t)
+        notifyItemInserted(index)
+        if (index < count - 1)
+            notifyItemRangeInserted(index, count - 1) // TODO : why count size - 1 be correct ??
+    }
+
     fun getSize(): Int = bean.size
+
+    override fun remove(position: Int) {
+        when {
+            headView == null && footView == null -> super.remove(position)
+
+            headView != null -> {
+                val index = position + 1
+                val count = if (footView != null) itemCount - 2 else itemCount - 1
+                bean.removeAt(position)
+                notifyItemRemoved(index)
+                if (index < count)
+                    notifyItemRangeChanged(index, count)
+            }
+        }
+    }
 
     override fun getItemViewType(position: Int) = when {
         position == 0 && headView != null -> TYPE_HEADER
