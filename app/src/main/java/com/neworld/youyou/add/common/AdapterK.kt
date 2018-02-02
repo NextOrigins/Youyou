@@ -2,6 +2,8 @@ package com.neworld.youyou.add.common
 
 import android.view.View
 import android.view.ViewGroup
+import com.neworld.youyou.R.id.count
+import com.neworld.youyou.utils.logE
 
 
 /**
@@ -56,32 +58,29 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
 
     fun insertData(t: T) {
         val index = if (headView == null) 0 else 1
-        val count = when {
-            headView != null && footView != null -> itemCount - 2
-            headView != null || footView != null -> itemCount - 1
-            else -> itemCount
-        }
+
         bean.add(0, t)
         notifyItemInserted(index)
-        if (index < count - 1)
-            notifyItemRangeInserted(index, count - 1) // TODO : why count size - 1 be correct ??
+
+        val count = if (footView != null) itemCount - 1 else itemCount
+
+        if (index < count)
+            notifyItemRangeChanged(index, count)
     }
 
     fun getSize(): Int = bean.size
 
     override fun remove(position: Int) {
-        when {
-            headView == null && footView == null -> super.remove(position)
-
-            headView != null -> {
-                val index = position + 1
-                val count = if (footView != null) itemCount - 2 else itemCount - 1
-                bean.removeAt(position)
-                notifyItemRemoved(index)
-                if (index < count)
-                    notifyItemRangeChanged(index, count)
-            }
+        if (headView == null) {
+            super.remove(position)
+            return
         }
+
+        bean.removeAt(position)
+        notifyItemRemoved(position + 1)
+
+        if (position < bean.size)
+            notifyItemRangeChanged(1, bean.size)
     }
 
     override fun getItemViewType(position: Int) = when {

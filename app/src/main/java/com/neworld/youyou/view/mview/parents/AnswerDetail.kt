@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -23,6 +25,8 @@ import android.webkit.*
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
@@ -30,11 +34,13 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
+import com.umeng.socialize.utils.DeviceConfig.context
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 /**
@@ -60,18 +66,8 @@ class AnswerDetail : Fragment() {
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
     }
-    private var fromUserId = ""
-    private var fromCommentId = ""
-    /*private var cacheCreateDate = ""
-        set(value) {
-            hintText.text = if (value.isEmpty()) {
-                getString(R.string.no_more_data)
-            } else {
-                getString(R.string.load_more_on_click)
-            }
-            hintProgress.visibility = View.GONE
-            field = value
-        }*/
+    private lateinit var user: ResponseBean.Userbean
+    private lateinit var taskId: String
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -92,6 +88,10 @@ class AnswerDetail : Fragment() {
     private var itsChecked: Boolean? = null
     private var nextArray: Array<String>? = null
     private var index = 0
+    private var fromUserId = ""
+    private var fromCommentId = ""
+    private var replyUserName: String? = null
+    private var replyContent: String? = null
 
     // by observer
     private var isShowSoftInput by Delegates.observable(false) { _, old, new ->
@@ -135,6 +135,7 @@ class AnswerDetail : Fragment() {
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
             nextArray = it.getStringArray("nextArray")
+            taskId = it.getString("taskId")
         }
     }
 
@@ -188,9 +189,11 @@ class AnswerDetail : Fragment() {
 
         // Bottom
         mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
+            // 滚动到第一条
             val mReview = findViewById<ImageView>(R.id._review).apply {
                 setOnClickListener { mRecycle.toPosition(1) }
             }
+            // 点赞
             mLike = findViewById<CheckBox>(R.id._like).apply {
                 setOnClickListener {
                     praises["commentId"] = commentId
@@ -209,6 +212,7 @@ class AnswerDetail : Fragment() {
                     }
                 }
             }
+            // Next Page
             val mNext = findViewById<ImageView>(R.id._next_comment).apply {
                 setOnClickListener {
                     if (nextArray != null && nextArray!!.size > index) {
@@ -220,11 +224,14 @@ class AnswerDetail : Fragment() {
                     }
                 }
             }
+            // 点击清理缓存数据 & 弹出键盘
             findViewById<TextView>(R.id._ac_reply).apply {
                 setOnClickListener {
                     isShowSoftInput = true
                     fromUserId = ""
                     fromCommentId = ""
+                    replyContent = null
+                    replyUserName = null
                 }
                 layoutParams = layoutParams
                         .also { it.width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp30)) / 2 }
@@ -238,7 +245,7 @@ class AnswerDetail : Fragment() {
             }
         }
 
-        mPublish = root.findViewById(R.id._publish)
+        mPublish = root.findViewById(R.id._publish) // 回复按钮
 
         mPublish.setOnClickListener {
             if (mComment.text.isEmpty()) {
@@ -257,21 +264,21 @@ class AnswerDetail : Fragment() {
                 val response = NetBuild.getResponse(map, 206)
                 if ("0" in response) {
                     val insert = ResponseBean.AnswersDetailList(
-                            userId.toInt(),
+                            user.id,
                             0,
-                            "",
+                            user.faceImg,
                             0,
-                            0,
+                            1,
                             0,
                             mComment.text.toString(),
+                            user.nickName,
+                            replyContent,
+                            replyUserName,
                             "",
                             "",
-                            "",
-                            "",
-                            "",
-                            commentId.toInt(),
+                            user.id,
                             0,
-                            SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date()).toString()
+                            SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date())
                     )
                     uiThread {
                         isShowSoftInput = false
@@ -318,6 +325,23 @@ class AnswerDetail : Fragment() {
     override fun initData() {
         commentId = arguments.getString("cId")
         initData(commentId)
+
+        val map = hashMapOf<CharSequence, CharSequence>()
+        map["userId"] = userId
+        map["taskId"] = taskId
+        map["createDate"] = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date())
+
+        logE("initData invoke")
+        doAsync {
+            val response = NetBuild.getResponse(map, 208)
+            logE("response = $response")
+            Gson().fromJson<CommentIdCollection>(response,
+                    object : TypeToken<CommentIdCollection>() {}.type)
+                    .menuList
+                    .flatMap { arrayListOf(it["commentId"]!!) }
+                    .toTypedArray()
+                    .let { nextArray = it; logE("nextArray = ${Arrays.toString(it)}") }
+        }
     }
 
     private fun initData(commentId: String) {
@@ -360,6 +384,7 @@ class AnswerDetail : Fragment() {
         mAdapter.addDataAndClear(t.menuList)
         mAdapter.notifyDataSetChanged()
 
+        user = t.userbean
         logE("lastCreateDate = $lastCreateDate")
     }
 
@@ -390,10 +415,6 @@ class AnswerDetail : Fragment() {
 
         val data = mutableList[position]
 
-        data.remarkContent?.let {
-            logE("remarkName = ${data.remarkName}; remarkContent = ${data.remarkContent}")
-        }
-
         content.text = if (data.remarkContent != null) {
             SpannableString("${data.content}//@${data.remarkName}: ${data.remarkContent}").apply {
                 val start = data.content.length + 2
@@ -417,6 +438,8 @@ class AnswerDetail : Fragment() {
         reply.setOnClickListener {
             fromUserId = data.from_userId.toString()
             fromCommentId = data.commentId.toString()
+            replyContent = data.content
+            replyUserName = data.from_nickName
             isShowSoftInput = true
         }
 
@@ -469,6 +492,10 @@ class AnswerDetail : Fragment() {
         }
     }
 
+    private data class CommentIdCollection(
+            val menuList: MutableList<HashMap<String, String>>
+    )
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun configWeb(it: WebView) = with(it) {
         isFocusable = false
@@ -491,13 +518,11 @@ class AnswerDetail : Fragment() {
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 url?.let {
-                    when {
-                        "http://106.14.251.200/neworld/user/143" in it -> {
-                            startActivity(Intent(context, Answers::class.java).putExtras(arguments))
-                        }
-                        "http://106.14.251.200/neworld/user/153" in it -> {
-                            mRecycle.toPosition(1)
-                        }
+                    if ("http://106.14.251.200/neworld/user/143" in it) {
+                        startActivity(Intent(context, Answers::class.java).putExtras(arguments))
+                    } else if ("http://106.14.251.200/neworld/user/153" in it) {
+//                            mRecycle.toPosition(1)
+                        activity.onKeyDown(KeyEvent.KEYCODE_BACK, null)
                     }
                 }
                 return true

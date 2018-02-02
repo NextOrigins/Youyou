@@ -259,43 +259,71 @@ class ResponseBean {
     data class AnswersDetailBody(
             val menuList: List<AnswersDetailList>,
             val commentBean: CommentBean,
+            val userbean: Userbean,
             val status: Int //0
     )
 
     data class CommentBean(
-            val clickSum: Int, //776
+            val clickSum: Int, //333
             val parent_cid: Int, //0
             val dynamic_id: Int, //1613
-            val attachedContent: String, //呵呵就你那￼ii今年就看看有没有什么好看的话我就过去的人多吗
+            val attachedContent: String, //The new version
             val likeCommentStatus: Int, //0
             val commentLike: Int, //1
             val type: Int, //5
             val from_uid: Int, //10851
-            val content: String, //<p>呵呵就你那</p><img src="http://106.14.251.200:8082/olopicture/answers/10851201801281555221517126122677.jpg"><p>ii今年就看看有没有什么好看的话我就过去的人多吗</p>
-            val commentCount: Int, //75
-            val commentImg: String, //http://106.14.251.200:8082/olopicture/answers/10851201801281555221517126122677.jpg
+            val content: String, //<p>The new version </br>The game has </br></br></p><img src="http://106.14.251.200:8082/olopicture/answers/10851201801271802431517047363693.jpg"><p>iiii</br>Ghk</p>
+            val commentCount: Int, //22
+            val commentImg: String, //http://106.14.251.200:8082/olopicture/answers/10851201801271802431517047363693.jpg
             val stickStatus: Int, //1
             val to_uid: String, //10854
-            val id: Int, //2579
-            val createDate: String, //2018-01-28 15:55:52
+            val id: Int, //2575
+            val createDate: String, //2018-01-27 18:03:04
+            val status: Int //0
+    )
+
+    data class Userbean(
+            val birthday: String, //1982-03-20
+            val updateDate: String, //2018-01-24 15:14:26
+            val sdasd: Any, //null
+            val address: Any, //null
+            val role: Int, //2
+            val dynamic_status: Int, //1
+            val faceImg: String, //http://www.uujz.me:8082/olopicture/icon/33866201711301733481512034428443.jpg
+            val nickName: String, //Test
+            val openId: Any, //null
+            val mobileCheck: Any, //null
+            val sex: Int, //0
+            val userPwd: Any, //null
+            val remarkName: Any, //null
+            val userName: String, //null
+            val cardNo: Any, //null
+            val token: String, //d344ea45-1f2f-4426-8170-c406178c8feb
+            val active_time: String, //2018-01-24 15:14:25
+            val realName: Any, //null
+            val phone: Any, //null
+            val userAccount: String, //jy7xau6f
+            val model: Int, //2
+            val id: Int, //33866
+            val createDate: String, //2017-11-15 09:58:32
             val status: Int //0
     )
 
     data class AnswersDetailList(
-            val from_userId: Int, //33866
+            val from_userId: Int, //10851
             val clickSum: Int, //0
-            val faceImg: String, //http://www.uujz.me:8082/olopicture/icon/33866201711301733481512034428443.jpg
+            val faceImg: String, //http://www.uujz.me:8082/olopicture/icon/10851201711241404241511503464915.jpg
             val parent_cid: Int, //0
             var likeCommentStatus: Int, //0
             var commentLike: Int, //2
-            val content: String, //dqwdq123
-            val from_nickName: String, //Test
-            val commentImg: String,
-            val remarkName: String?, //null
+            val content: String, //0000000
+            val from_nickName: String, //彩虹
             val remarkContent: String?, //null
-            val to_uid: String,
-            val commentId: Int, //2663
-            val taskId: Int, //2579
-            val createDate: String //2018-01-30 12:00:40
+            val remarkName: String?, //晴天
+            val commentImg: String,
+            val to_uid: String, //10854
+            val commentId: Int, //2717
+            val taskId: Int, //2575
+            val createDate: String //2018-01-31 11:04:08
     )
 }

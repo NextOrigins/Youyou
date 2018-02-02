@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
@@ -58,6 +59,11 @@ class ParentsQ : Fragment() {
 	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
     private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
     private val savedList = arrayListOf<String>() // 避免cacheList读取冲突
+	private val options by lazy {
+        return@lazy RequestOptions()
+                .placeholder(R.drawable.deftimg)
+                .error(R.drawable.deftimg)
+    }
 
     // 图片等宽
 	private val imgWidth by lazy {
@@ -226,15 +232,15 @@ class ParentsQ : Fragment() {
 			val split = data.imgs.split("\\|".toRegex())
 			when (split.size) {
 				1 -> {
-					Glide.with(img1).load(split[0]).into(img1)
+					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					img1.setOnClickListener {
                         BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
                     }
 					img2.visibility = View.GONE
 				}
 				2 -> {
-					Glide.with(img1).load(split[0]).into(img1)
-					Glide.with(img2).load(split[1]).into(img2)
+					Glide.with(img1).load(split[0]).apply(options).into(img1)
+					Glide.with(img2).load(split[1]).apply(options).into(img2)
                     img1.setOnClickListener {
                         BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
                     }
@@ -245,9 +251,9 @@ class ParentsQ : Fragment() {
 					img3.visibility = View.GONE
 				}
 				3 -> {
-					Glide.with(img1).load(split[0]).into(img1)
-					Glide.with(img2).load(split[1]).into(img2)
-					Glide.with(img3).load(split[2]).into(img3)
+					Glide.with(img1).load(split[0]).apply(options).into(img1)
+					Glide.with(img2).load(split[1]).apply(options).into(img2)
+					Glide.with(img3).load(split[2]).apply(options).into(img3)
                     img1.setOnClickListener {
                         BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
                     }
