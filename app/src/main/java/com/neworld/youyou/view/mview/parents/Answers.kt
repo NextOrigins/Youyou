@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -13,7 +14,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
 import android.util.Base64
-import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -41,6 +41,8 @@ class Answers : Activity() {
 
     private var cacheImgPath: String = ""
 
+    private var title: String? = null
+
     private val width by lazy {
         val point = Point()
         windowManager.defaultDisplay.getSize(point)
@@ -58,7 +60,19 @@ class Answers : Activity() {
         }
     }
 
+    override fun initArgs(bundle: Bundle?): Boolean {
+        title = bundle?.getString("answerTitle")
+        return super.initArgs(bundle)
+    }
+
     override fun initWidget() {
+        if (title == null) { // QUESTION TITLE
+            _title.visibility = View.GONE
+            _top.visibility = View.GONE
+        } else {
+            _title.text = title
+        }
+
         _close.setOnClickListener { onBackPressed() }
 
         _img.setOnClickListener {
@@ -100,11 +114,6 @@ class Answers : Activity() {
                             }.let { if (it.isNotEmpty()) append("<img src=\"$it\"/>"); cacheImgPath = it }
                         }
                         it.isNotEmpty() -> {
-                            /*append("<p>")
-                            val str = it.replace('\n'.toString(), "</br>")
-                            append(str)
-                            append("</p>")*/
-
                             it.split('\n').forEach {
                                 val str = it.replace("+", "%2B")
                                 if (it.isNotEmpty()) {

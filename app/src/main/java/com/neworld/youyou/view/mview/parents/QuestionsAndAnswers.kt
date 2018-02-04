@@ -25,7 +25,6 @@ import com.neworld.youyou.view.mview.common.BigPicActivity
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import org.slf4j.MDC.put
 import kotlin.properties.Delegates
 
 /**
@@ -69,7 +68,6 @@ class QuestionsAndAnswers : Fragment() {
 	// state
 	private var b = true
 	private var measured = false
-    private var created = false
 
 	override fun getContentLayoutId()
 			= R.layout.fragment_questions_answers
@@ -113,6 +111,7 @@ class QuestionsAndAnswers : Fragment() {
 			setOnClickListener {
 				arguments.putString("uid", result.from_uid.toString())
                 arguments.putString("taskId", result.id.toString())
+				arguments.putString("answerTitle", result.title)
 				startActivityForResult(Intent(context, Answers::class.java)
                         .putExtras(arguments), 5)
 			}
