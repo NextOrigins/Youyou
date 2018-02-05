@@ -83,7 +83,6 @@ class ParentsQ : Fragment() {
 	private var openCache = true // 是否开启缓存
 	private var isUpdate = false
 
-
 	override fun getContentLayoutId() = R.layout.fragment_parents_q
 
 	override fun initWidget(root: View) {
@@ -162,7 +161,7 @@ class ParentsQ : Fragment() {
 	}
 
 	private fun upData() {
-        if (!b) return
+        if (!b && cacheIndex >= cacheList.size) return
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
 		isUpdate = true
@@ -214,7 +213,7 @@ class ParentsQ : Fragment() {
 
 		parent.setOnClickListener {
 			startActivity(Intent(context, ParentsQA::class.java)
-					.putExtra("taskId", data.from_uid)
+					.putExtra("taskId", data.id.toString())
 					.putExtra("commentId", data.id.toString()))
 		}
 

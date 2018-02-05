@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -34,7 +33,6 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
-import com.umeng.socialize.utils.DeviceConfig.context
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.text.ParseException
@@ -109,20 +107,17 @@ class AnswerDetail : Fragment() {
         hintProgress.visibility = View.GONE
 
         if (new.isEmpty()) {
-            hintText.text = getString(R.string.no_more_data)
-
+            hintText.text = "没有更多数据了"
             return@vetoable true
         }
-        hintText.text = getString(R.string.load_more_on_click)
+        hintText.text = "点击加载更多"
 
         try {
             val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-//            val format = SimpleDateFormat.getDateTimeInstance(DateFormat.YEAR_FIELD, DateFormat.ERA_FIELD, Locale.CHINA)
             if (old.isNotEmpty()) {
                 val one = format.parse(new)
                 val two = format.parse(old)
-                val result = two.time - one.time
-                return@vetoable result > 0
+                return@vetoable two.time > one.time
             }
         } catch (e: ParseException) {
             val content: CharSequence = "对比时间出了问题, 请到用户反馈处反馈此问题{错误代码[ad85%95]} 谢谢."
@@ -325,36 +320,12 @@ class AnswerDetail : Fragment() {
     override fun initData() {
         commentId = arguments.getString("cId")
         initData(commentId)
-
-        val map = hashMapOf<CharSequence, CharSequence>()
-        map["userId"] = userId
-        map["taskId"] = taskId
-        map["createDate"] = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date())
-
-        logE("initData invoke")
-        doAsync {
-            val response = NetBuild.getResponse(map, 208)
-            logE("response = $response")
-            Gson().fromJson<CommentIdCollection>(response,
-                    object : TypeToken<CommentIdCollection>() {}.type)
-                    .menuList
-                    .flatMap { arrayListOf(it["commentId"]!!) }
-                    .toTypedArray()
-                    .let { nextArray = it; logE("nextArray = ${Arrays.toString(it)}") }
-        }
     }
 
     private fun initData(commentId: String) {
         if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
-
-        val checked = if (itsChecked != null) {
-            itsChecked!!
-        } else {
-            arguments.getBoolean("likeStatus", false)
-        }
-        mLike.post { mLike.isChecked = checked }
 
         val map = hashMapOf<CharSequence, CharSequence>()
         map["userId"] = userId
@@ -376,7 +347,7 @@ class AnswerDetail : Fragment() {
             mPraiseCount.text = "${t.commentBean.commentLike} 赞"
             t.menuList.forEach { lastCreateDate = it.createDate }
         } else {
-            mCommentCount.text = "评论 0" // TODO : 测试
+            mCommentCount.text = "评论 0"
             mPraiseCount.text = "0 赞"
             lastCreateDate = ""
         }
@@ -385,7 +356,23 @@ class AnswerDetail : Fragment() {
         mAdapter.notifyDataSetChanged()
 
         user = t.userbean
-        logE("lastCreateDate = $lastCreateDate")
+        mLike.post { mLike.isChecked = t.commentBean.likeCommentStatus == 0 }
+
+        /*val map = hashMapOf<CharSequence, CharSequence>() // TODO : 208 item createDate不管用
+        map["userId"] = userId
+        map["taskId"] = taskId
+        map["createDate"] = t.commentBean.createDate
+
+        logE("map = $map")
+        doAsync {
+            val response = NetBuild.getResponse(map, 208)
+            Gson().fromJson<CommentIdCollection>(response,
+                    object : TypeToken<CommentIdCollection>() {}.type)
+                    .menuList
+                    .flatMap { arrayListOf(it["commentId"]!!) }
+                    .toTypedArray()
+                    .let { nextArray = it }
+        }*/
     }
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
@@ -396,7 +383,6 @@ class AnswerDetail : Fragment() {
         mAdapter.addData(t.menuList)
         mAdapter.notifyDataSetChanged()
 
-        lastCreateDate = if (t.menuList.isNotEmpty()) t.menuList.last().createDate else ""
         if (t.menuList.isNotEmpty())
             t.menuList.forEach { lastCreateDate = it.createDate }
         else

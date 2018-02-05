@@ -88,6 +88,10 @@ class Answers : Activity() {
             startActivityForResult(Intent.createChooser(intent, "选择图片"), 1)
         }
 
+        _soft_input.setOnClickListener {
+            _edit.toggleSoftInput(false)
+        }
+
         _publish.setOnClickListener {
             _loading.visibility = View.VISIBLE
             postContent()
@@ -137,12 +141,11 @@ class Answers : Activity() {
                             put("userId", userId)
                             put("taskId", bundle.getString("taskId"))
                             put("from_uid", bundle.getString("uid"))
-                            put("comment_id", bundle.getString("commentId"))
+                            put("comment_id", "")
                             put("attachedContent", sb.subSequence(0, sb.length - 1))
                             put("content", it)
                             put("commentImg", cacheImgPath)
                         }
-                        logE("map = $map")
                         val response = NetBuild.getResponse(map, 205)
                         uiThread {
                             _loading.visibility = View.GONE

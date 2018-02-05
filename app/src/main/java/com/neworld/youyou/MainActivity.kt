@@ -23,7 +23,6 @@ import android.widget.RadioGroup
 
 import com.neworld.youyou.fragment.HotFragment
 import com.neworld.youyou.fragment.MyFragment
-import com.neworld.youyou.fragment.ParentPageFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.NetworkObs
@@ -158,7 +157,6 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     }
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
-        //clearBackStack();
         var b = false
         when (checkedId) {
             R.id.rb_parent -> {
@@ -178,10 +176,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 b = false
                 changePage(myFragment, null)
             }
-            R.id.rb_books -> {
+            /*R.id.rb_books -> { // TODO : 图书页面 hide
 //                b = true
                 changePage(booksFragment, null)
-            }
+            }*/
         }
         statusBar(b)
     }

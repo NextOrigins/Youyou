@@ -214,9 +214,9 @@ class ResponseBean {
     )
 
     data class AnswerBody(
-            val result: Result,
-            val menuList: List<AnswerList>,
-            val stickNamicfoList: List<AnswerList>,
+            val result: Result?,
+            val menuList: List<AnswerList>?,
+            val stickNamicfoList: List<AnswerList>?,
             val status: Int //0
     )
 

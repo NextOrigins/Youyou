@@ -2,8 +2,6 @@ package com.neworld.youyou.add.common
 
 import android.view.View
 import android.view.ViewGroup
-import com.neworld.youyou.R.id.count
-import com.neworld.youyou.utils.logE
 
 
 /**

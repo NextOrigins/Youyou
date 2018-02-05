@@ -50,6 +50,7 @@ class QuestionsAndAnswers : Fragment() {
 	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
 	// fields
 	private val userId by preference("userId", "")
+    private lateinit var taskId: String
 
 	// View
 	private var recycle by notNullSingleValue<RecyclerView>()
@@ -61,6 +62,7 @@ class QuestionsAndAnswers : Fragment() {
 	private var headTitle by notNullSingleValue<TextView>()
 	private var headIcon by notNullSingleValue<ImageView>()
 	private var headContent by notNullSingleValue<TextView>()
+    private var headShowAll by notNullSingleValue<View>()
 	// footer
 	private var footText by notNullSingleValue<TextView>()
 	private var footPrg by notNullSingleValue<ProgressBar>()
@@ -71,6 +73,12 @@ class QuestionsAndAnswers : Fragment() {
 
 	override fun getContentLayoutId()
 			= R.layout.fragment_questions_answers
+
+    override fun initArgs(bundle: Bundle?) {
+        bundle?.let {
+            taskId = bundle.getString("taskId", "")
+        }
+    }
 
 	override fun initWidget(root: View) {
 		root.findViewById<RecyclerView>(R.id._recycle).apply {
@@ -90,7 +98,7 @@ class QuestionsAndAnswers : Fragment() {
 			setOnClickListener {
 				val map = hashMapOf<CharSequence, CharSequence>()
                 map["userId"] = userId
-                map["taskId"] = "1613"
+                map["taskId"] = taskId
                 map["type"] = "5"
                 map["status"] = if (isChecked) "1" else "0"
 
@@ -109,9 +117,6 @@ class QuestionsAndAnswers : Fragment() {
 
 		root.findViewById<Button>(R.id._answer).apply {
 			setOnClickListener {
-				arguments.putString("uid", result.from_uid.toString())
-                arguments.putString("taskId", result.id.toString())
-				arguments.putString("answerTitle", result.title)
 				startActivityForResult(Intent(context, Answers::class.java)
                         .putExtras(arguments), 5)
 			}
@@ -133,30 +138,24 @@ class QuestionsAndAnswers : Fragment() {
 			headTitle = findViewById(R.id.head_title)
 			headIcon = findViewById(R.id.head_img)
 			headContent = findViewById(R.id.head_content)
-			findViewById<View>(R.id.head_toggle).setOnClickListener {
-				it.visibility = View.GONE
-				headContent.setSingleLine(false)
-			}
+			headShowAll = findViewById<View>(R.id.head_toggle).apply {
+                setOnClickListener {
+                    it.visibility = View.GONE
+                    headContent.setSingleLine(false)
+                }
+            }
 			mAdapter.headView = this
 		}
 
 		answerCount = root.findViewById(R.id._answer_count)
 	}
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        logE("onViewCreated")
-    }
 	override fun initData() {
         if (!swipe.isRefreshing) swipe.isRefreshing = true
-        // TODO : 暂用固定taskID
-        val taskId = arguments.getInt("taskId", 0)
         map["userId"] = userId
-        map["taskId"] = "1613"
+        map["taskId"] = taskId
         map["createDate"] = ""
         response(this@QuestionsAndAnswers::success, 200, map)
-        Handler().postDelayed({ if (swipe.isRefreshing) swipe.isRefreshing = false },
-                2000)
 	}
 
 	private fun upData() {
@@ -166,23 +165,24 @@ class QuestionsAndAnswers : Fragment() {
 			footText.text = "加载中"
 			footPrg.visibility = View.VISIBLE
 		}
-		map.run {
-			put("createDate", createDate)
-			NetBuild.response({
-				if (it.menuList.isEmpty() || it.menuList[it.menuList.size - 1].createDate == createDate) {
-					if (b) {
-						footText.text = "没有更多数据了"
-						footPrg.visibility = View.GONE
-						b = false
-					}
-					return@response
-				}
-				mAdapter.addData(it.menuList)
-				mAdapter.notifyDataSetChanged()
-				footText.text = "加载更多"
-				footPrg.visibility = View.GONE
-			}, ToastUtil::showToast, 200, ResponseBean.AnswerBody::class.java, this)
-		}
+
+        val map = hashMapOf<CharSequence, CharSequence>()
+        map["createDate"] = createDate
+
+        response<ResponseBean.AnswerBody>({
+            if (it.menuList == null || it.menuList.isEmpty() || it.menuList.last().createDate == createDate){
+                if (b) {
+                    footText.text = "没有更多数据了"
+                    footPrg.visibility = View.GONE
+                    b = false
+                }
+                return@response
+            }
+            mAdapter.addData(it.menuList)
+            mAdapter.notifyDataSetChanged()
+            footText.text = "加载更多"
+            footPrg.visibility = View.GONE
+        }, 200, map)
 	}
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -246,13 +246,12 @@ class QuestionsAndAnswers : Fragment() {
 			}
 		}
 
-		holder.find<View>(R.id._parent).setOnClickListener {
+		holder.find<View>(R.id._parent).setOnClickListener { // TODO : 莫名其妙的bug (array)
             val array = mutableList
                     .takeLast(position)
                     .flatMap { arrayListOf(it.commentId.toString()) }
                     .toTypedArray()
             arguments.putString("cId", data.commentId.toString())
-            arguments.putBoolean("likeStatus", praise.isChecked)
             arguments.putString("taskId", data.taskId.toString())
             arguments.putString("fromUID", data.from_userId.toString())
 			arguments.putStringArray("nextArray", array)
@@ -263,14 +262,25 @@ class QuestionsAndAnswers : Fragment() {
 	@SuppressLint("SetTextI18n")
 	private fun success(t: ResponseBean.AnswerBody) {
         swipe.isRefreshing = false
-		mAdapter.addDataAndClear(t.stickNamicfoList)
-		mAdapter.addData(t.menuList)
+        if (t.result == null || t.stickNamicfoList == null || t.menuList == null) {
+            showToast("服务器无数据, 请到用户反馈处反馈此问题")
+            Handler().postDelayed({ activity.finish() }, 500)
+            return
+        }
+
+        mAdapter.addDataAndClear(t.stickNamicfoList)
+        mAdapter.addData(t.menuList)
 		mAdapter.notifyDataSetChanged()
 
 		b = true
-		footText.text = "加载更多"
+		footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) "没有更多数据了"
+        else  "加载更多"
 
-		result = t.result
+		result = t.result.also {
+            arguments.putString("uid", it.from_uid.toString())
+            arguments.putString("taskId", it.id.toString())
+            arguments.putString("answerTitle", it.title)
+        }
 
 		answerCount.text = "${result.comment_count}个回答"
 		star.run {
@@ -285,8 +295,15 @@ class QuestionsAndAnswers : Fragment() {
 		}
 
 		headTitle.text = result.title
-		headContent.text = result.content
-		Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
+        headContent.text = result.content
+        if (TextUtils.isEmpty(result.content)) {
+            headShowAll.visibility = View.GONE
+        }
+        if (TextUtils.isEmpty(result.imgs) || result.imgs.split("\\|".toRegex()).first().isEmpty()) {
+            headIcon.visibility = View.GONE
+        } else {
+            Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
+        }
 
 		if (!measured)
 			star.post {
@@ -305,6 +322,10 @@ class QuestionsAndAnswers : Fragment() {
 				measured = true
 			}
 	}
+
+    private fun <T> List<T>.custom(): Boolean {
+        return isEmpty() || size < 10
+    }
 
     fun refreshData() {
         initData()
