@@ -276,7 +276,6 @@ class ParentsQ : Fragment() {
 			NetBuild.response(success, { showToast(it); mSwipe.isRefreshing = false },
 					199, ResponseBean.QABody::class.java, this)
 		}
-        logE("map : $map")
 	}
 
 	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {

@@ -408,7 +408,7 @@ class AnswerDetail : Fragment() {
         }
 
         name.text = data.from_nickName
-        praise.text = data.commentLike.toString()
+        praise.text = if (data.commentLike < 1) "赞" else data.commentLike.toString()
         praise.isChecked = data.likeCommentStatus == 0
 
         date.text = data.createDate
@@ -455,7 +455,7 @@ class AnswerDetail : Fragment() {
                         praise.text = when {
                             data.likeCommentStatus == 0 && !praise.isChecked -> {
                                 data.likeCommentStatus = 1
-                                (--data.commentLike).toString()
+                                if (--data.commentLike < 1) "赞" else data.commentLike.toString()
                             }
 
                             data.likeCommentStatus == 1 && praise.isChecked -> {
