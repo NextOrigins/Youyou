@@ -25,6 +25,7 @@ import com.neworld.youyou.view.mview.common.BigPicActivity
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.*
 import kotlin.properties.Delegates
 
 /**
@@ -227,30 +228,28 @@ class QuestionsAndAnswers : Fragment() {
         }
 
 		praise.setOnClickListener {
-			hashMapOf<CharSequence, CharSequence>().run {
-				put("userId", userId)
-				put("commentId", data.commentId.toString())
-				put("type", "5")
-				put("status", if (praise.isChecked) "1" else "0")
+            val map = hashMapOf<CharSequence, CharSequence>()
+            map["userId"] = userId
+            map["commentId"] = data.commentId.toString()
+            map["type"] = "5"
+            map["status"] = if (praise.isChecked) "1" else "0"
 
-                doAsync {
-                    val response = NetBuild.getResponse(this@run, 193)
+            doAsync {
+                val response = NetBuild.getResponse(map, 193)
+                if ("0" !in response) {
                     uiThread {
-                        if ("0" !in response) {
-                            showToast("数据错误, 错误代码 {PtsQA}, 请到用户反馈处反馈此问题. 谢谢")
-                        }
+                        praise.isChecked = !praise.isChecked
+                        showToast("未知错误, 请到用户反馈处反馈此问题: 错误代码[193]")
                     }
                 }
-
-				Unit
-			}
+            }
 		}
 
-		holder.find<View>(R.id._parent).setOnClickListener { // TODO : 莫名其妙的bug (array)
+		holder.find<View>(R.id._parent).setOnClickListener {
             val array = mutableList
-                    .takeLast(position)
+                    .drop(position + 1)
                     .flatMap { arrayListOf(it.commentId.toString()) }
-                    .toTypedArray()
+                    .toTypedArray().also { logE("array : ${Arrays.toString(it)}") }
             arguments.putString("cId", data.commentId.toString())
             arguments.putString("taskId", data.taskId.toString())
             arguments.putString("fromUID", data.from_userId.toString())

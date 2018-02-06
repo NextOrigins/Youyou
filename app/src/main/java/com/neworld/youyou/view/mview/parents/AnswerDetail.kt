@@ -129,8 +129,10 @@ class AnswerDetail : Fragment() {
 
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
+            index = 0
             nextArray = it.getStringArray("nextArray")
             taskId = it.getString("taskId")
+            commentId = arguments.getString("cId")
         }
     }
 
@@ -164,7 +166,7 @@ class AnswerDetail : Fragment() {
         // SwipeRefreshLayout
         mSwipe = root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
             setOnRefreshListener {
-                initData(commentId)
+                initData()
             }
         }
 
@@ -213,7 +215,7 @@ class AnswerDetail : Fragment() {
                     if (nextArray != null && nextArray!!.size > index) {
                         val id = nextArray!![index++]
                         commentId = id
-                        initData(id)
+                        initData()
                     } else {
                         showToast("最后一页啦")
                     }
@@ -318,11 +320,6 @@ class AnswerDetail : Fragment() {
     }
 
     override fun initData() {
-        commentId = arguments.getString("cId")
-        initData(commentId)
-    }
-
-    private fun initData(commentId: String) {
         if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
@@ -363,15 +360,13 @@ class AnswerDetail : Fragment() {
         map["taskId"] = taskId
         map["createDate"] = t.commentBean.createDate
 
-        logE("map = $map")
         doAsync {
             val response = NetBuild.getResponse(map, 208)
-            Gson().fromJson<CommentIdCollection>(response,
+            nextArray = Gson().fromJson<CommentIdCollection>(response,
                     object : TypeToken<CommentIdCollection>() {}.type)
                     .menuList
                     .flatMap { arrayListOf(it["commentId"]!!) }
-                    .toTypedArray()
-                    .let { nextArray = it }
+                    .toTypedArray().also { logE("array : ${Arrays.toString(it)}") }
         }*/
     }
 
@@ -485,6 +480,8 @@ class AnswerDetail : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun configWeb(it: WebView) = with(it) {
         isFocusable = false
+        isVerticalScrollBarEnabled = false
+        isHorizontalScrollBarEnabled = false
         setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 isShowSoftInput = false
@@ -492,7 +489,9 @@ class AnswerDetail : Fragment() {
             false
         }
         settings.javaScriptEnabled = true
-        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
+        settings.useWideViewPort = true
+        settings.loadWithOverviewMode = true
+        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
 
         webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {

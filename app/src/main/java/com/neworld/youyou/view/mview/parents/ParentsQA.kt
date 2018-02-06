@@ -4,9 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
-import android.view.KeyEvent
-import android.view.View
-import android.view.WindowManager
+import android.support.v4.view.ViewCompat
+import android.view.*
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
@@ -23,6 +22,7 @@ class ParentsQA : Activity() {
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
+    @SuppressLint("PrivateApi")
     override fun initWindows() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
