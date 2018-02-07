@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
-import android.preference.Preference
 import com.neworld.youyou.dialog.DialogUtils
 import com.neworld.youyou.manager.MyApplication
-import com.umeng.socialize.utils.DeviceConfig.context
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -79,6 +77,20 @@ inline fun <reified T> response(noinline s: (T) -> Unit, url: Any, map: Map<Char
  */
 fun uiThread(action: () -> Unit) {
     Util.uiThread(action)
+}
+
+/**
+ * format date string
+ */
+fun toDateString(date: String): String? {
+    return Util.toDateString(date)
+}
+
+/**
+ * format date long
+ */
+fun toDateLong(date: String): Long {
+    return Util.toDateLong(date)
 }
 
 private class NotNullInitialized<T> : ReadWriteProperty<Any?, T> {

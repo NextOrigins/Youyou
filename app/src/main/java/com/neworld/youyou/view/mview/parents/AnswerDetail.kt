@@ -11,10 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.Editable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextWatcher
+import android.text.*
 import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -24,8 +21,6 @@ import android.webkit.*
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
@@ -35,10 +30,7 @@ import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 /**
@@ -112,25 +104,31 @@ class AnswerDetail : Fragment() {
         }
         hintText.text = "点击加载更多"
 
-        try {
-            val format = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-            if (old.isNotEmpty()) {
-                val one = format.parse(new)
-                val two = format.parse(old)
-                return@vetoable two.time > one.time
-            }
-        } catch (e: ParseException) {
-            val content: CharSequence = "对比时间出了问题, 请到用户反馈处反馈此问题{错误代码[ad85%95]} 谢谢."
-            hintText.text = content
-            e.printStackTrace()
+        if (old.isNotEmpty()) {
+            val one = toDateLong(new)
+            val two = toDateLong(old)
+
+            return@vetoable one < two
         }
+
         return@vetoable true
     }
+    /*private var filterCreateDate by Delegates.vetoable("") { _, old, new ->
+        if (new.isEmpty()) return@vetoable false
+
+        if (old.isNotEmpty()) {
+            val one = toDateLong(new)
+            val two = toDateLong(old)
+
+            return@vetoable one < two
+        }
+
+        return@vetoable true
+    }*/
 
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
             index = 0
-            nextArray = it.getStringArray("nextArray")
             taskId = it.getString("taskId")
             commentId = arguments.getString("cId")
         }
@@ -275,7 +273,7 @@ class AnswerDetail : Fragment() {
                             "",
                             user.id,
                             0,
-                            SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(Date())
+                            Util.getDateFormatInstance().format(Date())
                     )
                     uiThread {
                         isShowSoftInput = false
@@ -355,19 +353,7 @@ class AnswerDetail : Fragment() {
         user = t.userbean
         mLike.post { mLike.isChecked = t.commentBean.likeCommentStatus == 0 }
 
-        /*val map = hashMapOf<CharSequence, CharSequence>() // TODO : 208 item createDate不管用
-        map["userId"] = userId
-        map["taskId"] = taskId
-        map["createDate"] = t.commentBean.createDate
-
-        doAsync {
-            val response = NetBuild.getResponse(map, 208)
-            nextArray = Gson().fromJson<CommentIdCollection>(response,
-                    object : TypeToken<CommentIdCollection>() {}.type)
-                    .menuList
-                    .flatMap { arrayListOf(it["commentId"]!!) }
-                    .toTypedArray().also { logE("array : ${Arrays.toString(it)}") }
-        }*/
+        nextArray = arguments.getStringArray("nextArray")
     }
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
@@ -473,9 +459,36 @@ class AnswerDetail : Fragment() {
         }
     }
 
-    private data class CommentIdCollection(
-            val menuList: MutableList<HashMap<String, String>>
-    )
+    /*private fun requestPageArray() {
+        val array1 = arguments.getStringArray("nextArray")
+        val minCreateDate = arguments.getString("minCreateDate")
+
+        val map = hashMapOf<CharSequence, CharSequence>()
+        map["userId"] = userId
+        map["taskId"] = taskId
+        map["createDate"] = minCreateDate ?: "" // 回答最小的时间(过滤
+
+        doAsync {
+            val response = NetBuild.getResponse(map, 208)
+            val menu = Gson().fromJson<CommentIdCollection>(response,
+                    object : TypeToken<CommentIdCollection>() {}.type).menuList
+
+            if (menu.isNotEmpty()) {
+                menu.flatMap { filterCreateDate = it["commentId"]!!; arrayListOf(it["commentId"]!!) }
+                        .toTypedArray()
+                        .let { it ->
+                            val strLen1 = array1?.size ?: 0
+                            val strLen2 = it.size
+                            val newLength = strLen1 + strLen2
+                            logE("itArray = ${Arrays.toString(it)}; newLength = $newLength; strLen1 = $strLen1; strLen2 = $strLen2")
+                            nextArray = Arrays.copyOf(array1, newLength)
+                            System.arraycopy(it, 0, nextArray, strLen1, strLen2)
+                            logE("array = ${Arrays.toString(nextArray)}")
+//                            requestPageArray()
+                        }
+            }
+        }
+    }*/
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun configWeb(it: WebView) = with(it) {

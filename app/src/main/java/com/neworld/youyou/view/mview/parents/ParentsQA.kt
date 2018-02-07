@@ -4,13 +4,19 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
 import android.view.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
+import com.neworld.youyou.utils.NetBuild
 import com.neworld.youyou.utils.logE
+import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_parent_qa.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import java.util.*
 
 /**
  * @author by user on 2018/1/4.
@@ -19,6 +25,8 @@ class ParentsQA : Activity() {
 
     private var questionsAndAnswers: QuestionsAndAnswers? = null
     private var answersDetail: AnswerDetail? = null
+
+    private var userId by preference("userId", "")
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
@@ -49,12 +57,52 @@ class ParentsQA : Activity() {
         _close.setOnClickListener { onKeyDown(KeyEvent.KEYCODE_BACK, null) }
     }
 
-    private fun startAnswersDetail() = supportFragmentManager.beginTransaction().also {
-        it.replace(answersDetail?.also { it.arguments = questionsAndAnswers?.arguments } ?:
-        AnswerDetail().also { it.arguments = questionsAndAnswers?.arguments; answersDetail = it },
-                "fragment2")
-        it.addToBackStack("fragment2")
-    }.commit()
+    private fun startAnswersDetail() {
+        questionsAndAnswers?.arguments?.let { args ->
+            val taskId = args.getString("taskId")
+            val minDate = args.getString("minCreateDate")
+            val array1 = args.getStringArray("nextArray")
+            logE("array1 = ${Arrays.toString(array1)}")
+
+            val map = hashMapOf<String, String>()
+            map["userId"] = userId
+            map["taskId"] = taskId
+            map["createDate"] = minDate ?: ""
+            doAsync {
+                val response = NetBuild.getResponse(map, 208)
+                val menu = Gson().fromJson<CommentIdCollection>(response,
+                        object : TypeToken<CommentIdCollection>() {}.type).menuList
+
+                logE("menu is empty ? ${menu.isEmpty()}")
+                if (menu.isNotEmpty()) {
+                    menu.flatMap { arrayListOf(it["commentId"]!!) }.toTypedArray().let { array2 ->
+                        val strLen1 = array1?.size ?: 0
+                        val strLen2 = array2.size
+                        val newLength = strLen1 + strLen2
+                        logE("itArray = ${Arrays.toString(array2)}; newLength = $newLength; strLen1 = $strLen1; strLen2 = $strLen2")
+                        val nextArray = Arrays.copyOf(array1, newLength)
+                        System.arraycopy(array2, 0, nextArray, strLen1, strLen2)
+                        args.putStringArray("nextArray", nextArray)
+                        logE("array = ${Arrays.toString(nextArray)}")
+                    }
+                }
+
+                uiThread {
+                    val begin = supportFragmentManager.beginTransaction()
+                    begin.replace(answersDetail?.also { it.arguments = args }
+                            ?: AnswerDetail().also {
+                                it.arguments = args
+                                answersDetail = it
+                            }, "fragment2")
+                    begin.addToBackStack("fragment2")
+
+                    begin.commit()
+                }
+            }
+
+            Unit
+        }
+    }
 
     private fun FragmentTransaction.replace(fm: Fragment, tag: String) {
         if (fm.arguments == null) fm.arguments = intent.extras
@@ -86,13 +134,13 @@ class ParentsQA : Activity() {
                 val bt = fm.beginTransaction()
                 when (tag) {
                     "fragment1" -> bt.also {
-                        it.replace(questionsAndAnswers ?:
-                        QuestionsAndAnswers().also { questionsAndAnswers = it }, "fragment1")
+                        it.replace(questionsAndAnswers
+                                ?: QuestionsAndAnswers().also { questionsAndAnswers = it }, "fragment1")
                         questionsAndAnswers?.refreshData()
                     }
                     "fragment2" -> bt.also {
-                        it.replace(answersDetail ?:
-                        AnswerDetail().also { answersDetail = it }, "fragment2")
+                        it.replace(answersDetail
+                                ?: AnswerDetail().also { answersDetail = it }, "fragment2")
                     }
                 }
                 bt.commit()
@@ -104,6 +152,9 @@ class ParentsQA : Activity() {
         return true
     }
 
+    private data class CommentIdCollection(
+            val menuList: MutableList<HashMap<String, String>>
+    )
 //	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //		menuInflater.inflate(R.menu.menu_item, menu)
 //		val item = menu?.findItem(R.id.menu_item1)

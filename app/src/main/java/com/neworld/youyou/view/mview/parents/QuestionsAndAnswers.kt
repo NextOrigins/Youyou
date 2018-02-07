@@ -25,7 +25,6 @@ import com.neworld.youyou.view.mview.common.BigPicActivity
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.*
 import kotlin.properties.Delegates
 
 /**
@@ -34,14 +33,22 @@ import kotlin.properties.Delegates
 class QuestionsAndAnswers : Fragment() {
 
 	// property
-	private val map = hashMapOf<CharSequence, CharSequence>()
 	private val list = arrayListOf<ResponseBean.AnswerList>()
 	private var result: ResponseBean.Result by Delegates.notNull()
     private val options by lazy {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
+    }
+    private var dateFilter by Delegates.vetoable("") {
+        _, old, new ->
+        if (old.isNotEmpty()) {
+            val one = toDateLong(new)
+            val two = toDateLong(old)
+            return@vetoable one < two
+        }
 
+        return@vetoable true
     }
 
     // observer
@@ -125,7 +132,7 @@ class QuestionsAndAnswers : Fragment() {
 
 		root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
 			setOnRefreshListener {
-				initData()
+				requestData()
 			}
 		}.let { swipe = it }
 
@@ -152,26 +159,39 @@ class QuestionsAndAnswers : Fragment() {
 	}
 
 	override fun initData() {
+        if (list.isNotEmpty()) return
+        requestData()
+	}
+
+    private fun requestData() {
         if (!swipe.isRefreshing) swipe.isRefreshing = true
+
+        val map = hashMapOf<CharSequence, CharSequence>()
         map["userId"] = userId
         map["taskId"] = taskId
         map["createDate"] = ""
+
         response(this@QuestionsAndAnswers::success, 200, map)
-	}
+    }
 
 	private fun upData() {
 		if (list.isEmpty()) return
-        val createDate = list[list.size - 1].createDate
+
+        list.forEach { dateFilter = it.createDate }
+
 		if (b) {
 			footText.text = "加载中"
 			footPrg.visibility = View.VISIBLE
 		}
 
         val map = hashMapOf<CharSequence, CharSequence>()
-        map["createDate"] = createDate
+
+        map["userId"] = userId
+        map["taskId"] = taskId
+        map["createDate"] = dateFilter
 
         response<ResponseBean.AnswerBody>({
-            if (it.menuList == null || it.menuList.isEmpty() || it.menuList.last().createDate == createDate){
+            if (it.menuList == null || it.menuList.isEmpty()){
                 if (b) {
                     footText.text = "没有更多数据了"
                     footPrg.visibility = View.GONE
@@ -186,10 +206,70 @@ class QuestionsAndAnswers : Fragment() {
         }, 200, map)
 	}
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 5) {
-            initData()
+    @SuppressLint("SetTextI18n")
+    private fun success(t: ResponseBean.AnswerBody) {
+        swipe.isRefreshing = false
+        if (t.result == null || t.stickNamicfoList == null || t.menuList == null) {
+            showToast("服务器无数据, 请到用户反馈处反馈此问题")
+            Handler().postDelayed({ activity.finish() }, 500)
+            return
         }
+
+        dateFilter = ""
+
+        mAdapter.addDataAndClear(t.stickNamicfoList)
+        mAdapter.addData(t.menuList)
+        mAdapter.notifyDataSetChanged()
+
+        b = true
+        footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) "没有更多数据了"
+        else  "加载更多"
+
+        result = t.result.also {
+            arguments.putString("uid", it.from_uid.toString())
+            arguments.putString("taskId", it.id.toString())
+            arguments.putString("answerTitle", it.title)
+        }
+
+        answerCount.text = "${result.comment_count}个回答"
+        star.run {
+            text = if (result.collectStatus == 0) {
+                isChecked = true
+                "已收藏"
+            } else {
+                isChecked = false
+                "${result.collect_count}人收藏"
+            }
+            tag = result.collect_count
+        }
+
+        headTitle.text = result.title
+        headContent.text = result.content
+        if (TextUtils.isEmpty(result.content)) {
+            headShowAll.visibility = View.GONE
+        }
+        if (TextUtils.isEmpty(result.imgs) || result.imgs.split("\\|".toRegex()).first().isEmpty()) {
+            headIcon.visibility = View.GONE
+        } else {
+            Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
+        }
+
+        if (!measured)
+            star.post {
+                val point = Point()
+                val left = activity.windowManager.defaultDisplay.getSize(point).let {
+                    (point.x - (star.measuredWidth * 3)) / 6
+                }
+
+                answerCount.setPadding(left, 0, left, 0)
+                star.setPadding(left, 0, left, 0)
+
+                answer.layoutParams = answer.layoutParams.also {
+                    it.width = left * 2 + star.measuredWidth
+                }
+
+                measured = true
+            }
     }
 
 	@SuppressLint("SetTextI18n")
@@ -249,85 +329,32 @@ class QuestionsAndAnswers : Fragment() {
             val array = mutableList
                     .drop(position + 1)
                     .flatMap { arrayListOf(it.commentId.toString()) }
-                    .toTypedArray().also { logE("array : ${Arrays.toString(it)}") }
+                    .toTypedArray()
+            val minDate = mutableList
+                    .forEach { dateFilter = it.createDate }
+                    .let { dateFilter }
+
             arguments.putString("cId", data.commentId.toString())
             arguments.putString("taskId", data.taskId.toString())
             arguments.putString("fromUID", data.from_userId.toString())
+            arguments.putString("minCreateDate", minDate)
 			arguments.putStringArray("nextArray", array)
             obs.invoke(it)
 		}
 	}
 
-	@SuppressLint("SetTextI18n")
-	private fun success(t: ResponseBean.AnswerBody) {
-        swipe.isRefreshing = false
-        if (t.result == null || t.stickNamicfoList == null || t.menuList == null) {
-            showToast("服务器无数据, 请到用户反馈处反馈此问题")
-            Handler().postDelayed({ activity.finish() }, 500)
-            return
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 5) {
+            requestData()
         }
-
-        mAdapter.addDataAndClear(t.stickNamicfoList)
-        mAdapter.addData(t.menuList)
-		mAdapter.notifyDataSetChanged()
-
-		b = true
-		footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) "没有更多数据了"
-        else  "加载更多"
-
-		result = t.result.also {
-            arguments.putString("uid", it.from_uid.toString())
-            arguments.putString("taskId", it.id.toString())
-            arguments.putString("answerTitle", it.title)
-        }
-
-		answerCount.text = "${result.comment_count}个回答"
-		star.run {
-			text = if (result.collectStatus == 0) {
-				isChecked = true
-				"已收藏"
-			} else {
-				isChecked = false
-				"${result.collect_count}人收藏"
-			}
-			tag = result.collect_count
-		}
-
-		headTitle.text = result.title
-        headContent.text = result.content
-        if (TextUtils.isEmpty(result.content)) {
-            headShowAll.visibility = View.GONE
-        }
-        if (TextUtils.isEmpty(result.imgs) || result.imgs.split("\\|".toRegex()).first().isEmpty()) {
-            headIcon.visibility = View.GONE
-        } else {
-            Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
-        }
-
-		if (!measured)
-			star.post {
-				val point = Point()
-				val left = activity.windowManager.defaultDisplay.getSize(point).let {
-					(point.x - (star.measuredWidth * 3)) / 6
-				}
-
-				answerCount.setPadding(left, 0, left, 0)
-				star.setPadding(left, 0, left, 0)
-
-				answer.layoutParams = answer.layoutParams.also {
-					it.width = left * 2 + star.measuredWidth
-				}
-
-				measured = true
-			}
-	}
+    }
 
     private fun <T> List<T>.custom(): Boolean {
         return isEmpty() || size < 10
     }
 
     fun refreshData() {
-        initData()
+        requestData()
     }
 
     fun setObserver(listener: View.() -> Unit) {

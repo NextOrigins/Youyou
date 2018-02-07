@@ -13,6 +13,9 @@ import android.view.WindowManager;
 import com.neworld.youyou.manager.MyApplication;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -223,5 +226,29 @@ public class Util {
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static String toDateString(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static long toDateLong(String date) {
+        long i = 0;
+        try {
+            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+            i = parse.getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return i;
+    }
+
+    public static SimpleDateFormat getDateFormatInstance() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 }
