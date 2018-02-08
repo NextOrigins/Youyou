@@ -11,7 +11,6 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.utils.NetBuild
-import com.neworld.youyou.utils.logE
 import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 import org.jetbrains.anko.doAsync
@@ -62,7 +61,6 @@ class ParentsQA : Activity() {
             val taskId = args.getString("taskId")
             val minDate = args.getString("minCreateDate")
             val array1 = args.getStringArray("nextArray")
-            logE("array1 = ${Arrays.toString(array1)}")
 
             val map = hashMapOf<String, String>()
             map["userId"] = userId
@@ -73,17 +71,14 @@ class ParentsQA : Activity() {
                 val menu = Gson().fromJson<CommentIdCollection>(response,
                         object : TypeToken<CommentIdCollection>() {}.type).menuList
 
-                logE("menu is empty ? ${menu.isEmpty()}")
                 if (menu.isNotEmpty()) {
                     menu.flatMap { arrayListOf(it["commentId"]!!) }.toTypedArray().let { array2 ->
                         val strLen1 = array1?.size ?: 0
                         val strLen2 = array2.size
                         val newLength = strLen1 + strLen2
-                        logE("itArray = ${Arrays.toString(array2)}; newLength = $newLength; strLen1 = $strLen1; strLen2 = $strLen2")
                         val nextArray = Arrays.copyOf(array1, newLength)
                         System.arraycopy(array2, 0, nextArray, strLen1, strLen2)
                         args.putStringArray("nextArray", nextArray)
-                        logE("array = ${Arrays.toString(nextArray)}")
                     }
                 }
 

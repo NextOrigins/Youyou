@@ -1,10 +1,12 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -28,6 +30,7 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
+import org.jetbrains.anko.Android
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
@@ -113,18 +116,6 @@ class AnswerDetail : Fragment() {
 
         return@vetoable true
     }
-    /*private var filterCreateDate by Delegates.vetoable("") { _, old, new ->
-        if (new.isEmpty()) return@vetoable false
-
-        if (old.isNotEmpty()) {
-            val one = toDateLong(new)
-            val two = toDateLong(old)
-
-            return@vetoable one < two
-        }
-
-        return@vetoable true
-    }*/
 
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
@@ -459,38 +450,7 @@ class AnswerDetail : Fragment() {
         }
     }
 
-    /*private fun requestPageArray() {
-        val array1 = arguments.getStringArray("nextArray")
-        val minCreateDate = arguments.getString("minCreateDate")
-
-        val map = hashMapOf<CharSequence, CharSequence>()
-        map["userId"] = userId
-        map["taskId"] = taskId
-        map["createDate"] = minCreateDate ?: "" // 回答最小的时间(过滤
-
-        doAsync {
-            val response = NetBuild.getResponse(map, 208)
-            val menu = Gson().fromJson<CommentIdCollection>(response,
-                    object : TypeToken<CommentIdCollection>() {}.type).menuList
-
-            if (menu.isNotEmpty()) {
-                menu.flatMap { filterCreateDate = it["commentId"]!!; arrayListOf(it["commentId"]!!) }
-                        .toTypedArray()
-                        .let { it ->
-                            val strLen1 = array1?.size ?: 0
-                            val strLen2 = it.size
-                            val newLength = strLen1 + strLen2
-                            logE("itArray = ${Arrays.toString(it)}; newLength = $newLength; strLen1 = $strLen1; strLen2 = $strLen2")
-                            nextArray = Arrays.copyOf(array1, newLength)
-                            System.arraycopy(it, 0, nextArray, strLen1, strLen2)
-                            logE("array = ${Arrays.toString(nextArray)}")
-//                            requestPageArray()
-                        }
-            }
-        }
-    }*/
-
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint(value = ["SetJavaScriptEnabled"])
     private fun configWeb(it: WebView) = with(it) {
         isFocusable = false
         isVerticalScrollBarEnabled = false

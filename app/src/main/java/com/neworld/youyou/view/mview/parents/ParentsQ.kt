@@ -31,6 +31,7 @@ import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
 import java.util.*
+import kotlin.properties.Delegates
 
 /**
  * @author by user on 2018/1/2.
@@ -63,6 +64,30 @@ class ParentsQ : Fragment() {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
+    }
+    private var filterMaxDate by Delegates.vetoable("") { _, old, new ->
+        if (new.isEmpty()) return@vetoable true
+
+        if (old.isNotEmpty()) {
+            val one = toDateLong(new)
+            val two = toDateLong(old)
+
+            return@vetoable one > two
+        }
+
+        return@vetoable true
+    }
+    private var filterMinDate by Delegates.vetoable("") { _, old, new ->
+        if (new.isEmpty()) return@vetoable true
+
+        if (old.isNotEmpty()) {
+            val one = toDateLong(new)
+            val two = toDateLong(old)
+
+            return@vetoable one < two
+        }
+
+        return@vetoable true
     }
 
     // 图片等宽
@@ -135,9 +160,19 @@ class ParentsQ : Fragment() {
 			return
 		}
 		if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
+        logE("topDate = $topDate; endDate = $endDate")
 		downRequest {
 			val bean = it.menuList
-			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate) {
+
+            /* top取最大的createDate 也就是最新评论的时间
+                如果已存在那么已存在的也需加入过滤比对中.  */
+            if (!TextUtils.isEmpty(topDate)) filterMaxDate = topDate
+            bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
+                filterMaxDate = it.createDate
+                filterMinDate = it.createDate
+            }
+
+			if (bean.isEmpty()) {
 				showSnackBar(mRecycle, "没有更多数据了")
 				b = false
 				mFootText.text = "没有更多数据了"
@@ -154,9 +189,14 @@ class ParentsQ : Fragment() {
 
 			savedList.add(0, endDate)
 
-			if (topDate.isEmpty())
+            topDate = filterMaxDate
+            endDate = filterMinDate
+
+            filterMinDate = ""
+            filterMaxDate = ""
+			/*if (topDate.isEmpty())
 				topDate = bean[0].createDate
-			endDate = bean[bean.size - 1].createDate
+			endDate = bean[bean.size - 1].createDate*/
 		}
 	}
 
@@ -165,9 +205,20 @@ class ParentsQ : Fragment() {
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
 		isUpdate = true
+        logE("topDate = $topDate; endDate = $endDate")
 		upRequest {
-			val bean = it.menuList
-			if (bean.isEmpty() || bean[bean.size - 1].createDate == endDate && over) {
+			val bean = it.menuList.also { logE("empty ? ${it.isEmpty()}") }
+
+            /* top取最大的createDate 也就是最新评论的时间
+                如果已存在那么已存在的也需加入过滤比对中.  */
+            if (!TextUtils.isEmpty(topDate)) filterMaxDate = topDate
+            bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
+                filterMaxDate = it.createDate
+                filterMinDate = it.createDate
+            }
+
+            logE("xinStatus = ${it.xinStatus}")
+			if (bean.isEmpty() && /*bean[bean.size - 1].createDate == endDate &&*/ over) {
 				if (b) {
 					mFootText.text = "没有更多数据了"
 					mFootPrg.visibility = View.GONE
@@ -188,11 +239,16 @@ class ParentsQ : Fragment() {
 			// 缓存
 			if (over) {
 				savedList.add(endDate)
-				endDate = bean[bean.size - 1].createDate
+				endDate = filterMinDate
 			}
 
-			if (TextUtils.isEmpty(topDate))
-				topDate = bean[0].createDate
+            topDate = filterMaxDate
+
+            filterMaxDate = ""
+            filterMinDate = ""
+
+			/*if (TextUtils.isEmpty(topDate))
+				topDate = bean[0].createDate*/
 		}
 	}
 
