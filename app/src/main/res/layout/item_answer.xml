@@ -47,6 +47,7 @@
         android:layout_marginTop="@dimen/dp15"
         android:ellipsize="end"
         android:maxLines="6"
+        android:lineSpacingExtra="@dimen/dp5"
         android:textColor="@color/black"
         android:textSize="@dimen/sp16"
         app:layout_constraintTop_toBottomOf="@id/item_icon"
@@ -68,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp5"
         android:textColor="#999999"
-        android:textSize="@dimen/sp10"
+        android:textSize="@dimen/sp12"
         app:layout_constraintTop_toBottomOf="@id/item_img"
         tools:text="12345赞" />
 
@@ -79,7 +80,7 @@
         android:layout_marginLeft="@dimen/dp5"
         android:layout_marginStart="@dimen/dp5"
         android:textColor="#999999"
-        android:textSize="@dimen/sp10"
+        android:textSize="@dimen/sp12"
         app:layout_constraintLeft_toRightOf="@id/item_praise_count"
         app:layout_constraintTop_toTopOf="@id/item_praise_count"
         tools:text="300万阅读" />

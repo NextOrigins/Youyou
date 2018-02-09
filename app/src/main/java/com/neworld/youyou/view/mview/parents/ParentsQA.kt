@@ -131,7 +131,7 @@ class ParentsQA : Activity() {
                     "fragment1" -> bt.also {
                         it.replace(questionsAndAnswers
                                 ?: QuestionsAndAnswers().also { questionsAndAnswers = it }, "fragment1")
-                        questionsAndAnswers?.refreshData()
+//                        questionsAndAnswers?.refreshData()
                     }
                     "fragment2" -> bt.also {
                         it.replace(answersDetail

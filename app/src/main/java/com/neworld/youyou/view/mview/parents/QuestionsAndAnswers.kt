@@ -113,10 +113,19 @@ class QuestionsAndAnswers : Fragment() {
                 doAsync {
                     val response = NetBuild.getResponse(map, 112)
                     uiThread {
-                        text = if ("0" in response && isChecked) {
-                            "已收藏"
+                        text = if ("0" in response) {
+                            if (isChecked)
+                                "已收藏"
+                            else
+                                "${tag}人收藏"
                         } else {
-                            if ("0" in response) "${(tag as Int) - 1}人收藏" else "${tag}人收藏"
+                            if (!isChecked) {
+                                isChecked = !isChecked
+                                "已收藏"
+                            } else {
+                                isChecked = !isChecked
+                                "${tag}人收藏"
+                            }
                         }
                     }
                 }
@@ -235,12 +244,13 @@ class QuestionsAndAnswers : Fragment() {
         star.run {
             text = if (result.collectStatus == 0) {
                 isChecked = true
+                tag = result.collect_count - 1
                 "已收藏"
             } else {
                 isChecked = false
+                tag = result.collect_count
                 "${result.collect_count}人收藏"
             }
-            tag = result.collect_count
         }
 
         headTitle.text = result.title
@@ -353,9 +363,9 @@ class QuestionsAndAnswers : Fragment() {
         return isEmpty() || size < 10
     }
 
-    fun refreshData() {
+    /*fun refreshData() {
         requestData()
-    }
+    }*/
 
     fun setObserver(listener: View.() -> Unit) {
         this@QuestionsAndAnswers.obs = listener

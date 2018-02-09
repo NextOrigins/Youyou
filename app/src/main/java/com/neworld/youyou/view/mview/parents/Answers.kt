@@ -68,7 +68,6 @@ class Answers : Activity() {
     override fun initWidget() {
         if (title == null) { // QUESTION TITLE
             _title.visibility = View.GONE
-            _top.visibility = View.GONE
         } else {
             _title.text = title
         }

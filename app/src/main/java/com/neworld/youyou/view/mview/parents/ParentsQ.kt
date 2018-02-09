@@ -160,8 +160,7 @@ class ParentsQ : Fragment() {
 			return
 		}
 		if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
-        logE("topDate = $topDate; endDate = $endDate")
-		downRequest {
+		inRequest({
 			val bean = it.menuList
 
             /* top取最大的createDate 也就是最新评论的时间
@@ -170,6 +169,7 @@ class ParentsQ : Fragment() {
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
                 filterMaxDate = it.createDate
                 filterMinDate = it.createDate
+                logE("forEach -> createDate : ${it.createDate}")
             }
 
 			if (bean.isEmpty()) {
@@ -179,7 +179,7 @@ class ParentsQ : Fragment() {
 				mFootPrg.visibility = View.GONE
 
 				if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
-				return@downRequest
+				return@inRequest
 			}
 			mAdapter.addDataToTop(ArrayList(bean))
 			mAdapter.notifyDataSetChanged()
@@ -187,17 +187,20 @@ class ParentsQ : Fragment() {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
             b = true
 
-			savedList.add(0, endDate)
+            /*val date = if (endDate.isNotEmpty())
+                endDate
+            else
+                Util.getDateFormatInstance().format(Date(System.currentTimeMillis() + 1000))*/
+
+            if (it.xinStatus == 1)
+			    savedList.add(0, endDate)
 
             topDate = filterMaxDate
             endDate = filterMinDate
 
             filterMinDate = ""
             filterMaxDate = ""
-			/*if (topDate.isEmpty())
-				topDate = bean[0].createDate
-			endDate = bean[bean.size - 1].createDate*/
-		}
+		}, 0)
 	}
 
 	private fun upData() {
@@ -205,9 +208,8 @@ class ParentsQ : Fragment() {
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
 		isUpdate = true
-        logE("topDate = $topDate; endDate = $endDate")
-		upRequest {
-			val bean = it.menuList.also { logE("empty ? ${it.isEmpty()}") }
+		inRequest({
+			val bean = it.menuList
 
             /* top取最大的createDate 也就是最新评论的时间
                 如果已存在那么已存在的也需加入过滤比对中.  */
@@ -225,7 +227,7 @@ class ParentsQ : Fragment() {
 					b = false
 				}
                 isUpdate = false
-				return@upRequest
+				return@inRequest
 			}
 			mAdapter.addData(bean)
 			mAdapter.notifyDataSetChanged()
@@ -238,7 +240,13 @@ class ParentsQ : Fragment() {
 
 			// 缓存
 			if (over) {
-				savedList.add(endDate)
+                /*val date = if (endDate.isNotEmpty())
+                    endDate
+                else
+                    Util.getDateFormatInstance().format(Date(System.currentTimeMillis() + 1000))*/
+
+                if (it.xinStatus == 1)
+				    savedList.add(endDate)
 				endDate = filterMinDate
 			}
 
@@ -246,24 +254,71 @@ class ParentsQ : Fragment() {
 
             filterMaxDate = ""
             filterMinDate = ""
-
-			/*if (TextUtils.isEmpty(topDate))
-				topDate = bean[0].createDate*/
-		}
+		}, 1)
 	}
+
+    private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
+        var answerStatus = 3
+        val date = if (type == 0) {
+            endDate
+        } else {
+            if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
+                val cache = cacheList[cacheIndex++]
+                if (cache.isEmpty()) answerStatus = 2
+                cache
+            } else if (cacheList.isEmpty()) {
+                answerStatus = 1
+                over = true
+                endDate
+            } else {
+                over = true
+                endDate
+            }
+        }
+
+        map["createDate"] = topDate
+        map["endDate"] = date
+        map["answerStatus"] = answerStatus.toString()
+
+        logE("map = $map")
+        response(s, 199, map)
+        if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+    }
+
+	/*private fun downRequest(success: (ResponseBean.QABody) -> Unit) {
+        map["createDate"] = topDate
+        map["endDate"] = endDate
+        response(success, 199, map, { showToast(it); mSwipe.isRefreshing = false })
+	}
+
+	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {
+		val date = when {
+			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> {
+				cacheList[cacheIndex++]
+			}
+			else -> {
+				over = true
+				endDate
+			}
+		}
+
+        map["createDate"] = topDate
+        map["endDate"] = date
+        response(success, 199, map)
+	}*/
 
 	@SuppressLint("SetTextI18n")
 	private fun itemBind(holder: Adapter.Holder,
-	                     mutableList: MutableList<ResponseBean.QADetail>, position: Int) {
+						 mutableList: MutableList<ResponseBean.QADetail>, position: Int) {
 		val parent = holder.find<ConstraintLayout>(R.id.item_parent)
 		val title = holder.find<TextView>(R.id.item_title)
 		val reply = holder.find<TextView>(R.id.item_reply)
 		val img1 = holder.find<ImageView>(R.id.item_img1)
-				.also { it.layoutParams = it.layoutParams.also { it.width = imgWidth.toInt() } }
+				.also { it.setWidth() }
 		val img2 = holder.find<ImageView>(R.id.item_img2)
-				.also { it.layoutParams = it.layoutParams.also { it.width = imgWidth.toInt() } }
+				.also { it.setWidth() }
 		val img3 = holder.find<ImageView>(R.id.item_img3)
-				.also { it.layoutParams = it.layoutParams.also { it.width = imgWidth.toInt() } }
+				.also { it.setWidth() }
 
 		val data = mutableList[position]
 
@@ -289,19 +344,19 @@ class ParentsQ : Fragment() {
 				1 -> {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					img1.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-                    }
+						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+					}
 					img2.visibility = View.GONE
 				}
 				2 -> {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					Glide.with(img2).load(split[1]).apply(options).into(img2)
-                    img1.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-                    }
-                    img2.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-                    }
+					img1.setOnClickListener {
+						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+					}
+					img2.setOnClickListener {
+						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+					}
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.GONE
 				}
@@ -309,47 +364,19 @@ class ParentsQ : Fragment() {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					Glide.with(img2).load(split[1]).apply(options).into(img2)
 					Glide.with(img3).load(split[2]).apply(options).into(img3)
-                    img1.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-                    }
-                    img2.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-                    }
-                    img3.setOnClickListener {
-                        BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
-                    }
+					img1.setOnClickListener {
+						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+					}
+					img2.setOnClickListener {
+						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+					}
+					img3.setOnClickListener {
+						BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
+					}
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.VISIBLE
 				}
 			}
-		}
-	}
-
-	private fun downRequest(success: (ResponseBean.QABody) -> Unit) {
-		map.run {
-			put("createDate", topDate)
-			put("endDate", endDate)
-			NetBuild.response(success, { showToast(it); mSwipe.isRefreshing = false },
-					199, ResponseBean.QABody::class.java, this)
-		}
-	}
-
-	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {
-		val date = when {
-			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> {
-				cacheList[cacheIndex++]
-			}
-			else -> {
-				over = true
-				endDate
-			}
-		}
-
-		map.run {
-			put("createDate", topDate)
-			put("endDate", date)
-			NetBuild.response(success, ToastUtil::showToast,
-					199, ResponseBean.QABody::class.java, this)
 		}
 	}
 
@@ -383,6 +410,10 @@ class ParentsQ : Fragment() {
 				cacheJson = Gson().toJson(this)
 			}
 	}
+
+	private fun View.setWidth() {
+        layoutParams = layoutParams.also { it.width = imgWidth.toInt() }
+    }
 
 	private data class ReadCache(val top: String = "",
 	                             val end: String = "",
