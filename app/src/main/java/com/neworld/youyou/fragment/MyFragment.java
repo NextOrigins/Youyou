@@ -41,6 +41,7 @@ import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.LogUtils;
 import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
 import com.neworld.youyou.view.nine.CircleImageView;
@@ -103,10 +104,15 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 	public void onStart() {
 		super.onStart();
 		new Thread(() -> {
-			String response = NetBuild.getResponse("{\"userId\":\"" + userId + "\"}", 194);
-			NewStatusBody b = new Gson().fromJson(response, new TypeToken<NewStatusBody>(){}.getType());
+			String response = NetBuild.getResponse("{\"userId\":\"" + userId + "\"}", 194); // 194 是否收到消息
+            NewStatusBody b;
+			try {
+			    b = new Gson().fromJson(response, new TypeToken<NewStatusBody>(){}.getType());
+            } catch (Exception e) {
+			    b = null;
+            }
 			if (b == null) {
-				LogUtils.E("b is null");
+                ToastUtil.showToast("数据错误, 请到用户反馈处反馈此问题[MF116]");
 				return;
 			}
 			if (b.status == 0) {

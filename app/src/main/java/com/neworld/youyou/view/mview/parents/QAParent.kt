@@ -20,7 +20,7 @@ import java.util.*
 /**
  * @author by user on 2018/1/4.
  */
-class ParentsQA : Activity() {
+class QAParent : Activity() {
 
     private var questionsAndAnswers: QuestionsAndAnswers? = null
     private var answersDetail: AnswerDetail? = null
@@ -167,7 +167,7 @@ class ParentsQA : Activity() {
 //			UMWeb(url).run {
 //				title = headTitle.text.toString()
 //				description = headContent.text.toString()
-//				ShareAction(this@ParentsQA)
+//				ShareAction(this@QAParent)
 //						.withMedia(this)
 //						.setDisplayList(SHARE_MEDIA.QZONE, SHARE_MEDIA.QQ,
 //								SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)

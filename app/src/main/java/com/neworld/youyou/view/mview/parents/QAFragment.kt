@@ -36,7 +36,7 @@ import kotlin.properties.Delegates
 /**
  * @author by user on 2018/1/2.
  */
-class ParentsQ : Fragment() {
+class QAFragment : Fragment() {
 
     // view
 	private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -116,7 +116,7 @@ class ParentsQ : Fragment() {
 		mToolBar = root.findViewById(R.id._toolbar)
 
 		root.findViewById<ConstraintLayout>(R.id._parent)
-				.setOnClickListener { startActivity(Intent(context, ParentsQA::class.java)) }
+				.setOnClickListener { startActivity(Intent(context, QAParent::class.java)) }
 
 		mRecycle.layoutManager = LinearLayoutManager(context,
 				LinearLayoutManager.VERTICAL, false)
@@ -323,7 +323,7 @@ class ParentsQ : Fragment() {
 		val data = mutableList[position]
 
 		parent.setOnClickListener {
-			startActivity(Intent(context, ParentsQA::class.java)
+			startActivity(Intent(context, QAParent::class.java)
 					.putExtra("taskId", data.id.toString())
 					.putExtra("commentId", data.id.toString()))
 		}

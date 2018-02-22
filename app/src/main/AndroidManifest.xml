@@ -127,7 +127,7 @@
         <activity android:name=".view.mview.ebook.EBookDetail"
             android:launchMode="singleTop" />
 
-        <activity android:name=".view.mview.parents.ParentsQA" />
+        <activity android:name=".view.mview.parents.QAParent" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

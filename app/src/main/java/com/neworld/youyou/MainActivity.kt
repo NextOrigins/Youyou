@@ -30,7 +30,7 @@ import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.ebook.EBooks
-import com.neworld.youyou.view.mview.parents.ParentsQ
+import com.neworld.youyou.view.mview.parents.QAFragment
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var rbHot: RadioButton? = null
     private var rbMy: RadioButton? = null
 //    private var parentFragment: ParentPageFragment? = null
-	private var parentsQA: ParentsQ by Delegates.notNull()
+	private var parentsQA: QAFragment by Delegates.notNull()
     private var subjectFragment: SubjectFragment? = null
     private var hotFragment: HotFragment? = null
     private var myFragment: MyFragment? = null
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         //设置当前布局
         setContentView(R.layout.activity_main)
 //        parentFragment = ParentPageFragment() // 原 家长圈
-	    parentsQA = ParentsQ()
+	    parentsQA = QAFragment()
         
         subjectFragment = SubjectFragment()
         hotFragment = HotFragment()
