@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
 
-    protected List<T> bean = new ArrayList<>();
+    public List<T> bean = new ArrayList<>();
     protected AdapterObs<T> obs;
 
     public Adapter(AdapterObs<T> obs, List<T> bean) {

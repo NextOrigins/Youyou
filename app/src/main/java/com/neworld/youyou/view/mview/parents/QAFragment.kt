@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -65,9 +64,9 @@ class QAFragment : Fragment() {
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
     }
-    private var filterMaxDate by Delegates.vetoable("") { _, old, new ->
-        if (new.isEmpty()) return@vetoable true
-
+    private var maxDate by
+    Delegates.vetoable(Util.getDateFormatInstance()
+            .format(Date(System.currentTimeMillis() + 1000))) { _, old, new ->
         if (old.isNotEmpty()) {
             val one = toDateLong(new)
             val two = toDateLong(old)
@@ -77,9 +76,7 @@ class QAFragment : Fragment() {
 
         return@vetoable true
     }
-    private var filterMinDate by Delegates.vetoable("") { _, old, new ->
-        if (new.isEmpty()) return@vetoable true
-
+    private var minDate by Delegates.vetoable("") { _, old, new ->
         if (old.isNotEmpty()) {
             val one = toDateLong(new)
             val two = toDateLong(old)
@@ -98,8 +95,6 @@ class QAFragment : Fragment() {
 	}
 
     // cache
-	private var endDate = ""
-    private var topDate = ""
     private var cacheIndex = 0 // 读取缓存下标
 
     // status
@@ -142,11 +137,13 @@ class QAFragment : Fragment() {
 		if (cacheJson.isNotEmpty()) {
 			val readCache = Gson()
 					.fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
-			topDate = readCache.top
-			endDate = readCache.end
+			maxDate = readCache.top
+			minDate = readCache.end
 			cacheList.addAll(readCache.menu)
 			savedList.addAll(cacheList)
 		}
+
+        logE("cacheList = $cacheList")
 
 		map["userId"] = userId
 		map["token"] = token
@@ -163,19 +160,15 @@ class QAFragment : Fragment() {
 		inRequest({
 			val bean = it.menuList
 
-            /* top取最大的createDate 也就是最新评论的时间
-                如果已存在那么已存在的也需加入过滤比对中.  */
-            if (!TextUtils.isEmpty(topDate)) filterMaxDate = topDate
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
-                filterMaxDate = it.createDate
-                filterMinDate = it.createDate
-                logE("forEach -> createDate : ${it.createDate}")
+                maxDate = it.createDate
+                minDate = it.createDate
             }
 
 			if (bean.isEmpty()) {
-				showSnackBar(mRecycle, "没有更多数据了")
+				showSnackBar(mRecycle, "暂时没有新的话题_(:з」∠)_")
 				b = false
-				mFootText.text = "没有更多数据了"
+				mFootText.text = "—我是有底线的—"
 				mFootPrg.visibility = View.GONE
 
 				if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
@@ -187,42 +180,32 @@ class QAFragment : Fragment() {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
             b = true
 
-            /*val date = if (endDate.isNotEmpty())
-                endDate
-            else
-                Util.getDateFormatInstance().format(Date(System.currentTimeMillis() + 1000))*/
-
-            if (it.xinStatus == 1)
-			    savedList.add(0, endDate)
-
-            topDate = filterMaxDate
-            endDate = filterMinDate
-
-            filterMinDate = ""
-            filterMaxDate = ""
-		}, 0)
+            var k = ""
+            bean.forEach { k = "$k|${it.id}" }
+            savedList.add(0, k.trim('|'))
+		}, 1)
 	}
 
 	private fun upData() {
         if (!b && cacheIndex >= cacheList.size) return
+
 		mFootPrg.visibility = View.VISIBLE
 		mFootText.text = "加载中"
 		isUpdate = true
+
 		inRequest({
 			val bean = it.menuList
 
             /* top取最大的createDate 也就是最新评论的时间
                 如果已存在那么已存在的也需加入过滤比对中.  */
-            if (!TextUtils.isEmpty(topDate)) filterMaxDate = topDate
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
-                filterMaxDate = it.createDate
-                filterMinDate = it.createDate
+                maxDate = it.createDate
+                minDate = it.createDate
             }
 
-            logE("xinStatus = ${it.xinStatus}")
 			if (bean.isEmpty() && /*bean[bean.size - 1].createDate == endDate &&*/ over) {
 				if (b) {
-					mFootText.text = "没有更多数据了"
+					mFootText.text = "—我是有底线的—"
 					mFootPrg.visibility = View.GONE
 					b = false
 				}
@@ -240,72 +223,51 @@ class QAFragment : Fragment() {
 
 			// 缓存
 			if (over) {
-                /*val date = if (endDate.isNotEmpty())
-                    endDate
-                else
-                    Util.getDateFormatInstance().format(Date(System.currentTimeMillis() + 1000))*/
-
-                if (it.xinStatus == 1)
-				    savedList.add(endDate)
-				endDate = filterMinDate
+                var k = ""
+                bean.forEach { k = "$k|${it.id}" }
+                savedList.add(k.trim('|'))
 			}
 
-            topDate = filterMaxDate
-
-            filterMaxDate = ""
-            filterMinDate = ""
-		}, 1)
+		}, 2)
 	}
 
     private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
-        var answerStatus = 3
-        val date = if (type == 0) {
-            endDate
-        } else {
-            if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
-                val cache = cacheList[cacheIndex++]
-                if (cache.isEmpty()) answerStatus = 2
-                cache
-            } else if (cacheList.isEmpty()) {
-                answerStatus = 1
-                over = true
-                endDate
-            } else {
-                over = true
-                endDate
+        when (type) {
+            1 -> {
+                map["createDate"] = maxDate ?: ""
+                map["endDate"] = minDate
+                map["type"] = type.toString()
+
+                logE("request pull down : createDate = $maxDate, endDate = $minDate")
+                response(s, 199, map)
+            }
+            2 -> {
+                if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
+                    val id = if (cacheList[cacheIndex].split("\\|".toRegex()).size < 3
+                            && cacheIndex + 1 < cacheList.size) {
+                        "${cacheList[cacheIndex++]}|${cacheList[cacheIndex++]}"
+                    } else {
+                        cacheList[cacheIndex++]
+                    }
+                    map["id"] = id
+
+                    logE("request pull up from history")
+                    response(s, "199_1", map)
+                } else {
+                    over = true
+
+                    map["createDate"] = maxDate ?: ""
+                    map["endDate"] = minDate
+                    map["type"] = type.toString()
+
+                    logE("request pull up to old news")
+                    response(s, 199, map)
+                }
             }
         }
 
-        map["createDate"] = topDate
-        map["endDate"] = date
-        map["answerStatus"] = answerStatus.toString()
-
-        logE("map = $map")
-        response(s, 199, map)
         if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
     }
-
-	/*private fun downRequest(success: (ResponseBean.QABody) -> Unit) {
-        map["createDate"] = topDate
-        map["endDate"] = endDate
-        response(success, 199, map, { showToast(it); mSwipe.isRefreshing = false })
-	}
-
-	private fun upRequest(success: (ResponseBean.QABody) -> Unit) {
-		val date = when {
-			(cacheList.isNotEmpty() && cacheIndex < cacheList.size) -> {
-				cacheList[cacheIndex++]
-			}
-			else -> {
-				over = true
-				endDate
-			}
-		}
-
-        map["createDate"] = topDate
-        map["endDate"] = date
-        response(success, 199, map)
-	}*/
 
 	@SuppressLint("SetTextI18n")
 	private fun itemBind(holder: Adapter.Holder,
@@ -401,14 +363,14 @@ class QAFragment : Fragment() {
 	}
 
 	private fun saveCache() {
-		if (openCache)
-			hashMapOf<String, Any>().run {
-				put("end", endDate)
-				put("top", topDate)
-				put("menu", savedList)
+        if (!openCache) return
 
-				cacheJson = Gson().toJson(this)
-			}
+        val map = hashMapOf<String, Any>()
+        map["end"] = minDate
+        map["top"] = maxDate
+        map["menu"] = savedList
+
+        cacheJson = Gson().toJson(map)
 	}
 
 	private fun View.setWidth() {

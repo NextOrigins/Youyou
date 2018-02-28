@@ -51,14 +51,14 @@ class Answers : Activity() {
 
     override fun getContentLayoutId() = R.layout.activity_answers
 
-    override fun initWindows() {
+    /*override fun initWindows() {
         // 白底黑字状态栏 . api大于23 (Android6.0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
         }
-    }
+    }*/
 
     override fun initArgs(bundle: Bundle?): Boolean {
         title = bundle?.getString("answerTitle")

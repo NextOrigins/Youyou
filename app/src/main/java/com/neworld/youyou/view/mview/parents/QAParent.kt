@@ -29,14 +29,14 @@ class QAParent : Activity() {
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
-    @SuppressLint("PrivateApi")
+    /*@SuppressLint("PrivateApi")
     override fun initWindows() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
         }
-    }
+    }*/
 
     @SuppressLint("SetTextI18n")
     override fun initWidget() {

@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 changePage(booksFragment, null)
             }*/
         }
-        statusBar(b)
+//        statusBar(b)
     }
 
     private fun statusBar(b: Boolean) {

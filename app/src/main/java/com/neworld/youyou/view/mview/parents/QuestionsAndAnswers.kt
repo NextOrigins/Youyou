@@ -113,20 +113,9 @@ class QuestionsAndAnswers : Fragment() {
                 doAsync {
                     val response = NetBuild.getResponse(map, 112)
                     uiThread {
-                        text = if ("0" in response) {
-                            if (isChecked)
-                                "已收藏"
-                            else
-                                "${tag}人收藏"
-                        } else {
-                            if (!isChecked) {
-                                isChecked = !isChecked
-                                "已收藏"
-                            } else {
-                                isChecked = !isChecked
-                                "${tag}人收藏"
-                            }
-                        }
+                        if ("0" !in response) isChecked = !isChecked
+
+                        text = if (isChecked) "已收藏" else "${tag}人收藏"
                     }
                 }
 			}
@@ -295,7 +284,7 @@ class QuestionsAndAnswers : Fragment() {
 
 		val data = mutableList[position]
 
-		content.text = data.attachedContent ?: "null"
+		content.text = data.attachedContent?.replace("￼", "") ?: "null"
 
 		name.text = data.from_nickName
 		praises.text = "${data.commentLike}赞"
