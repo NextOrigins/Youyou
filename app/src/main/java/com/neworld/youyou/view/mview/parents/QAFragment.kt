@@ -424,7 +424,7 @@ class QAFragment : Fragment() {
                                         return@forEachIndexed
                                     }
                                 }
-                                split.forEach { if (it.isNotEmpty()) temp = "$it|" }
+                                split.forEach { if (it.isNotEmpty()) temp = "$it|" } // TODO : 这里过滤删除还是有问题.
                                 temp = temp.trim('|')
                             }
 
