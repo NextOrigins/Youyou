@@ -208,8 +208,14 @@ class QuestionsAndAnswers : Fragment() {
     private fun success(t: ResponseBean.AnswerBody) {
         swipe.isRefreshing = false
         if (t.result == null || t.stickNamicfoList == null || t.menuList == null) {
-            showToast("服务器无数据, 请到用户反馈处反馈此问题")
-            Handler().postDelayed({ activity.finish() }, 500)
+            Toast.makeText(context,
+                    "服务器无数据, 可能此话题已被关闭, 如有疑问请到用户反馈处反馈此问题",
+                    Toast.LENGTH_LONG).show()
+            Handler().postDelayed({
+                val intent = activity.intent.putExtra("error", true)
+                activity.setResult(21, intent)
+                activity.finish()
+            }, 500)
             return
         }
 

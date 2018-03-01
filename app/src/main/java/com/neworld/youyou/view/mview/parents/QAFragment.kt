@@ -30,6 +30,7 @@ import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
 /**
@@ -58,7 +59,7 @@ class QAFragment : Fragment() {
 	private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
 	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
     private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
-    private val savedList = arrayListOf<String>() // 避免cacheList读取冲突
+    private var savedList = arrayListOf<String>() // 避免cacheList读取冲突
 	private val options by lazy {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
@@ -285,9 +286,10 @@ class QAFragment : Fragment() {
 		val data = mutableList[position]
 
 		parent.setOnClickListener {
-			startActivity(Intent(context, QAParent::class.java)
+			startActivityForResult(Intent(context, QAParent::class.java)
+                    .putExtra("position", position)
 					.putExtra("taskId", data.id.toString())
-					.putExtra("commentId", data.id.toString()))
+					.putExtra("commentId", data.id.toString()), 20)
 		}
 
 		title.text = data.title
@@ -400,6 +402,39 @@ class QAFragment : Fragment() {
 			return result
 		}
 	}
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 20) {
+            data?.let {
+                val er = it.getBooleanExtra("error", false)
+                if (er) {
+                    val position = it.getIntExtra("position", -1)
+                    if (position != -1) {
+                        val element = mAdapter.bean[position].id.toString()
+                        mAdapter.remove(position)
+
+                        savedList = savedList.flatMap { property ->
+                            var temp = property
+                            if (element in temp) {
+                                val split = property.split('|').toTypedArray()
+                                temp = ""
+                                split.forEachIndexed { index, str ->
+                                    if (str == temp) {
+                                        split[index] = ""
+                                        return@forEachIndexed
+                                    }
+                                }
+                                split.forEach { if (it.isNotEmpty()) temp = "$it|" }
+                                temp = temp.trim('|')
+                            }
+
+                            listOf(temp)
+                        }.let { logE("filtered to ist : $it"); ArrayList(it) }
+                    }
+                }
+            }
+        }
+    }
 
 	override fun onResume() {
 		super.onResume()
