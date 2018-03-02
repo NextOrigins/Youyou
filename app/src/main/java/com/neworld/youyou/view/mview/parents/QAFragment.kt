@@ -197,14 +197,12 @@ class QAFragment : Fragment() {
 		inRequest({
 			val bean = it.menuList
 
-            /* top取最大的createDate 也就是最新评论的时间
-                如果已存在那么已存在的也需加入过滤比对中.  */
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
                 maxDate = it.createDate
                 minDate = it.createDate
             }
 
-			if (bean.isEmpty() && /*bean[bean.size - 1].createDate == endDate &&*/ over) {
+			if (bean.isEmpty() && over) {
 				if (b) {
 					mFootText.text = "—我是有底线的—"
 					mFootPrg.visibility = View.GONE
@@ -261,7 +259,7 @@ class QAFragment : Fragment() {
                     map["endDate"] = minDate
                     map["type"] = type.toString()
 
-                    logE("request pull up to old news")
+                    logE("request pull up to old news : newsDate = $maxDate, endDate = $minDate")
                     response(s, 199, map)
                 }
             }
@@ -413,23 +411,24 @@ class QAFragment : Fragment() {
                         val element = mAdapter.bean[position].id.toString()
                         mAdapter.remove(position)
 
-                        savedList = savedList.flatMap { property ->
-                            var temp = property
-                            if (element in temp) {
-                                val split = property.split('|').toTypedArray()
-                                temp = ""
-                                split.forEachIndexed { index, str ->
-                                    if (str == temp) {
-                                        split[index] = ""
-                                        return@forEachIndexed
-                                    }
-                                }
-                                split.forEach { if (it.isNotEmpty()) temp = "$it|" } // TODO : 这里过滤删除还是有问题.
-                                temp = temp.trim('|')
+                        val temp = arrayListOf<String>()
+
+                        savedList.forEach {
+                            val split = it.split('|')
+                            var filter = ""
+                            if (split.size > 1) {
+                                split.filterNot { it == element }.forEach { filter = "$filter|$it" }
+                            } else if (split.size == 1 && split[0] != element) {
+                                filter = split[0]
                             }
 
-                            listOf(temp)
-                        }.let { logE("filtered to ist : $it"); ArrayList(it) }
+                            if (filter.isNotEmpty())
+                                temp.add(filter.trim('|'))
+                        }
+
+                        savedList.clear()
+                        savedList.addAll(temp)
+                        logE("filtered temp = $temp")
                     }
                 }
             }

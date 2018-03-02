@@ -77,8 +77,10 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         bean.removeAt(position)
         notifyItemRemoved(position + 1)
 
-        if (position < bean.size)
-            notifyItemRangeChanged(1, bean.size)
+        notifyDataSetChanged()
+
+        /*if (position < bean.size)
+            notifyItemRangeChanged(1, bean.size)*/
     }
 
     override fun getItemViewType(position: Int) = when {

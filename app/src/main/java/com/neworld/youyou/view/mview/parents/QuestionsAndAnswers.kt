@@ -207,7 +207,7 @@ class QuestionsAndAnswers : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun success(t: ResponseBean.AnswerBody) {
         swipe.isRefreshing = false
-        if (t.result == null || t.stickNamicfoList == null || t.menuList == null) {
+        if (t.result == null || t.stickNamicfoList == null || t.menuList == null || t.status == 1) {
             Toast.makeText(context,
                     "服务器无数据, 可能此话题已被关闭, 如有疑问请到用户反馈处反馈此问题",
                     Toast.LENGTH_LONG).show()
