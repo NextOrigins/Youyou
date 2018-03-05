@@ -188,7 +188,7 @@ class ResponseBean {
 
     data class QABody(
             val tokenStatus: Int, //2
-            val menuList: List<QADetail>,
+            val menuList: List<QADetail>?,
             val status: Int,  //0
             val xinStatus: Int // 1
     )

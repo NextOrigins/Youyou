@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
+import com.neworld.youyou.activity.LoginActivity
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
@@ -29,6 +30,8 @@ import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
@@ -135,6 +138,10 @@ class QAFragment : Fragment() {
 	}
 
 	override fun initData() {
+        if (userId.isEmpty()) {
+            startActivity(Intent(context, LoginActivity::class.java))
+            return
+        }
 		if (cacheJson.isNotEmpty()) {
 			val readCache = Gson()
 					.fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
@@ -159,6 +166,27 @@ class QAFragment : Fragment() {
 		}
 		if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
 		inRequest({
+            if (it.tokenStatus > 1) {
+                doAsync {
+                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
+                    if ("0" in response) {
+                        userId = ""
+                        uiThread {
+                            /*val intent = Intent(context, LoginActivity::class.java)
+                                    .putExtra("login2", true)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)*/
+                            startActivity(Intent(context, LoginActivity::class.java)
+                                    .putExtra("login2", true))
+                        }
+                    }
+                }
+                return@inRequest
+            }
+            if (it.menuList == null) {
+                showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
+                return@inRequest
+            }
 			val bean = it.menuList
 
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
@@ -195,6 +223,23 @@ class QAFragment : Fragment() {
 		isUpdate = true
 
 		inRequest({
+            if (it.tokenStatus > 1) {
+                doAsync {
+                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
+                    if ("0" in response) {
+                        userId = ""
+                        uiThread {
+                            startActivity(Intent(context, LoginActivity::class.java)
+                                    .putExtra("login2", true))
+                        }
+                    }
+                }
+                return@inRequest
+            }
+            if (it.menuList == null) {
+                showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
+                return@inRequest
+            }
 			val bean = it.menuList
 
             bean.forEach { // ForEach 循环过滤最大 & 最小 createDate

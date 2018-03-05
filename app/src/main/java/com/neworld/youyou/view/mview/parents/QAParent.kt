@@ -1,9 +1,7 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
 import android.view.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
