@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
@@ -105,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new Thread(() -> {
             String trim = etPsw.getText().toString().trim();
             if (trim.equals(userName) || (etNumber.getText().toString().trim().equals("123456789") && etPsw.getText().toString().equals("123456"))) {
+                photoNumber = TextUtils.isEmpty(photoNumber) ? "123456789" : photoNumber;
                 String base64 = Base64.encodeToString(("{\"mobile\":\"" + photoNumber + "\"}").getBytes(), Base64.DEFAULT);
                 String replace = base64.replace("\n", "");
                 String content = NetManager.getInstance().getContent(replace, "125");

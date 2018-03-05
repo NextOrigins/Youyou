@@ -29,6 +29,7 @@ import com.neworld.youyou.utils.NetworkObs
 import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
+import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.ebook.EBooks
 import com.neworld.youyou.view.mview.parents.QAFragment
 import com.umeng.socialize.UMShareAPI
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
     private var radioGroup: RadioGroup? = null
     private var rbParent: RadioButton? = null
-    private var rbSubject: RadioButton? = null
+//    private var rbSubject: RadioButton? = null
     private var rbHot: RadioButton? = null
     private var rbMy: RadioButton? = null
 //    private var parentFragment: ParentPageFragment? = null
@@ -66,7 +67,8 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private val windowData: WindowManager
         get() = windowManager
 
-    private var booksFragment: EBooks? = null
+//    private var booksFragment: EBooks? = null
+    private var booksFragment: BooksViewImpl? = null
 
     private var mBackPressedTime by Delegates.observable(0L) {
         _, old, new ->
@@ -89,8 +91,8 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         hotFragment = HotFragment()
         myFragment = MyFragment()
 
-//        booksFragment = BooksViewImpl()  // 出售图书
-        booksFragment = EBooks() // 电子书
+        booksFragment = BooksViewImpl()  // 出售图书
+//        booksFragment = EBooks() // 电子书
 
         if (mainApplication == null) {
             mainApplication = application as MyApplication
@@ -131,7 +133,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         frameLayout = findViewById(R.id.framelayout)
         radioGroup = findViewById(R.id.rg_bottom_bar)
         rbParent = findViewById(R.id.rb_parent)
-        rbSubject = findViewById(R.id.rb_subject)
+//        rbSubject = findViewById(R.id.rb_subject)
         rbHot = findViewById(R.id.rb_hot)
         rbMy = findViewById(R.id.rb_my)
         windowData
@@ -164,10 +166,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //                changePage(parentFragment, null)
 	            changePage(parentsQA, null)
             }
-            R.id.rb_subject -> {
-                b = false
-                changePage(subjectFragment, null)
-            }
+//            R.id.rb_subject -> {
+//                b = false
+//                changePage(subjectFragment, null)
+//            }
             R.id.rb_hot -> {
                 b = false
                 changePage(hotFragment, null)
@@ -176,10 +178,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 b = false
                 changePage(myFragment, null)
             }
-            /*R.id.rb_books -> { // TODO : 图书页面 hide
+            R.id.rb_books -> { // TODO : 图书页面 hide
 //                b = true
                 changePage(booksFragment, null)
-            }*/
+            }
         }
 //        statusBar(b)
     }

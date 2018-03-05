@@ -53,7 +53,7 @@ class QAFragment : Fragment() {
     // fields
 	private var userId by preference("userId", "")
 	private var token by preference("token", "")
-	private var cacheJson by preference("cacheJson", "") // 缓存以Json格式存储本地 , 也可以存储到服务器
+	private var cacheJson by preference("cacheJson", "") // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
 	private val role by preference("role", 1) // role = 2 为管理员
 
 	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue() // RecyclerView适配器 (HeaderView FooterView)
@@ -95,7 +95,7 @@ class QAFragment : Fragment() {
 	private val imgWidth by lazy {
 		val point = Point()
 		activity.windowManager.defaultDisplay.getSize(point)
-		(point.x - resources.getDimension(R.dimen.dp30)) / 3
+		(point.x - resources.getDimension(R.dimen.dp30) - (resources.getDimensionPixelSize(R.dimen.dp15) * 2)) / 3
 	}
 
     // cache
@@ -142,21 +142,21 @@ class QAFragment : Fragment() {
             startActivity(Intent(context, LoginActivity::class.java))
             return
         }
-		if (cacheJson.isNotEmpty()) {
-			val readCache = Gson()
-					.fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
-			maxDate = readCache.top
-			minDate = readCache.end
-			cacheList.addAll(readCache.menu)
-			savedList.addAll(cacheList)
-		}
+		if (mAdapter.bean.isEmpty()) {
+            if (cacheJson.isNotEmpty()) {
+                val readCache = Gson()
+                        .fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
+                maxDate = readCache.top
+                minDate = readCache.end
+                cacheList.addAll(readCache.menu)
+                savedList.addAll(cacheList)
+            }
 
-        logE("cacheList = $cacheList")
+            map["userId"] = userId
+            map["token"] = token
 
-		map["userId"] = userId
-		map["token"] = token
-
-		upData()
+            upData()
+        }
 	}
 
 	private fun downData() {
@@ -172,12 +172,10 @@ class QAFragment : Fragment() {
                     if ("0" in response) {
                         userId = ""
                         uiThread {
-                            /*val intent = Intent(context, LoginActivity::class.java)
-                                    .putExtra("login2", true)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)*/
                             startActivity(Intent(context, LoginActivity::class.java)
                                     .putExtra("login2", true))
+                            mAdapter.bean.clear()
+                            cacheJson = ""
                         }
                     }
                 }
@@ -231,6 +229,8 @@ class QAFragment : Fragment() {
                         uiThread {
                             startActivity(Intent(context, LoginActivity::class.java)
                                     .putExtra("login2", true))
+                            mAdapter.bean.clear()
+                            cacheJson = ""
                         }
                     }
                 }
@@ -295,7 +295,8 @@ class QAFragment : Fragment() {
                     }
                     map["id"] = id
 
-                    logE("request pull up from history")
+                    logE("request pull up from history : id = $id, cacheList = $cacheList")
+                    logE("userId = $userId")
                     response(s, "199_1", map)
                 } else {
                     over = true

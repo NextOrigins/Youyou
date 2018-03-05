@@ -251,6 +251,7 @@ class QuestionsAndAnswers : Fragment() {
         headTitle.text = result.title
         headContent.text = result.content
         if (TextUtils.isEmpty(result.content)) {
+            headContent.visibility = View.GONE
             headShowAll.visibility = View.GONE
         }
         if (TextUtils.isEmpty(result.imgs) || result.imgs.split("\\|".toRegex()).first().isEmpty()) {

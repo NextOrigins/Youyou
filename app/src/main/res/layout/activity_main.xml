@@ -33,11 +33,11 @@
             android:drawableTop="@drawable/bottom_bar_parent_selector"
             android:text="家长圈" />
 
-        <RadioButton
-            android:id="@+id/rb_subject"
-            style="@style/rb_bottom_style"
-            android:drawableTop="@drawable/bottom_bar_subject_selector"
-            android:text="考证" />
+        <!--<RadioButton-->
+            <!--android:id="@+id/rb_subject"-->
+            <!--style="@style/rb_bottom_style"-->
+            <!--android:drawableTop="@drawable/bottom_bar_subject_selector"-->
+            <!--android:text="考证" />-->
 
         <RadioButton
             android:id="@+id/rb_hot"
@@ -45,11 +45,11 @@
             android:drawableTop="@drawable/bottom_bar_hot_selector"
             android:text="热文" />
 
-        <!--<RadioButton-->
-            <!--android:id="@+id/rb_books"-->
-            <!--style="@style/rb_bottom_style"-->
-            <!--android:drawableTop="@drawable/books_select"-->
-            <!--android:text="图书" />-->
+        <RadioButton
+            android:id="@+id/rb_books"
+            style="@style/rb_bottom_style"
+            android:drawableTop="@drawable/books_select"
+            android:text="图书" />
 
         <RadioButton
             android:id="@+id/rb_my"

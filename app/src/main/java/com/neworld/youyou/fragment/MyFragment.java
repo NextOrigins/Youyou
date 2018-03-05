@@ -177,8 +177,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlFav.setOnClickListener(this);
         rlSetting.setOnClickListener(this);
 
-        view.findViewById(R.id.chengji)
-                .setOnClickListener(v -> startActivity(new Intent(getContext(), AchievementActivity.class)));
+//        view.findViewById(R.id.chengji) // TODO : 成绩查询暂时去掉
+//                .setOnClickListener(v -> startActivity(new Intent(getContext(), AchievementActivity.class)));
     }
 
     @Override
