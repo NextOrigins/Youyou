@@ -254,7 +254,7 @@ class QuestionsAndAnswers : Fragment() {
             headContent.visibility = View.GONE
             headShowAll.visibility = View.GONE
         }
-        if (TextUtils.isEmpty(result.imgs) || result.imgs.split("\\|".toRegex()).first().isEmpty()) {
+        if (TextUtils.isEmpty(result.imgs) || result.imgs.split('|').first().isEmpty()) {
             headIcon.visibility = View.GONE
         } else {
             Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)

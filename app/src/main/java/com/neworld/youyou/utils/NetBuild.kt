@@ -56,6 +56,25 @@ object NetBuild {
     fun <T> response(success: (T) -> Unit, failed: (String) -> Unit,
                      url: Int, beanClass: Class<T>, map: Map<out CharSequence, CharSequence>)
 		    = response(success, failed, url.toString(), beanClass, map)
+
+    fun <T> response(success: (T) -> Unit, failed: (String) -> Unit,
+                     url: String, beanClass: Class<T>, body: String) {
+        doAsync {
+            val content = getResponse(body, url)
+            if (!TextUtils.isEmpty(content)) {
+                val t = GsonUtil.parseJsonToBean(content, beanClass)
+                uiThread {
+                    if (t == null) {
+                        failed.invoke("出错了! 请到用户反馈处反馈此问题! ")
+                    } else {
+                        success.invoke(t)
+                    }
+                }
+            } else {
+                uiThread { failed.invoke("未知错误! 错误代码[001]请到用户反馈处反馈") }
+            }
+        }
+    }
     
 	@JvmStatic
     fun <T> response(success: (T) -> Unit, failed: (String) -> Unit,
@@ -77,10 +96,12 @@ object NetBuild {
 
 	// 解析Json格式 <{"userId":"userID"}>
     @JvmStatic
-    fun getResponse(value: String, url: Int): String? {
-        val base64 = Base64.encodeToString(value.toByteArray(), Base64.DEFAULT)
+    fun getResponse(body: String, url: Int): String? = getResponse(body, url.toString())
+
+    fun getResponse(body: String, url: String): String? {
+        val base64 = Base64.encodeToString(body.toByteArray(), Base64.DEFAULT)
         val replace = base64.replace("\n", "")
-        return NetManager.getInstance().getContent(replace, url.toString())
+        return NetManager.getInstance().getContent(replace, url)
     }
 
     // 解析map

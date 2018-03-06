@@ -68,8 +68,14 @@ inline fun <reified T> response(noinline s: (T) -> Unit, url: Any, map: Map<Char
     if (url is Int || url is String) {
         NetBuild.response(s, f, url.toString(), clazz, map)
     } else {
-        throw IllegalArgumentException("This type is not be request")
+        throw IllegalArgumentException("This type is not be requested")
     }
+}
+
+inline fun <reified T> response(noinline s: (T) -> Unit, url: String, body: String,
+                                noinline f: (String) -> Unit = ::showToast) {
+    val clazz = T::class.java
+    NetBuild.response(s, f, url, clazz, body)
 }
 
 /**

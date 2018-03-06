@@ -2,10 +2,10 @@ package com.neworld.youyou.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 
 import com.neworld.youyou.R
+import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ReturnStatus
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.showSnackBar
@@ -14,28 +14,28 @@ import kotlinx.android.synthetic.main.activity_me_settings.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class SettingActivity : AppCompatActivity(), View.OnClickListener {
+class SettingActivity : Activity(), View.OnClickListener {
 	
 	private var userId by preference("userId", "")
-	private var application: MyApplication? = null
-	
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_me_settings)
-		if (application == null) {
-			application = getApplication() as MyApplication
-		}
-		initView()
-	}
-	
-	private fun initView() {
-		iv_close.setOnClickListener(this)
-		bt_quit.setOnClickListener(this)
-		
-		black_list.setOnClickListener(this)
-		address_manager.setOnClickListener(this)
-	}
-	
+	private var mApplication: MyApplication? = null
+
+    override fun getContentLayoutId() = R.layout.activity_me_settings
+
+    override fun initArgs(bundle: Bundle?): Boolean {
+        if (mApplication == null) mApplication = application as MyApplication
+        return super.initArgs(bundle)
+    }
+
+    override fun initWidget() {
+        iv_close.setOnClickListener(this)
+        bt_quit.setOnClickListener(this)
+
+        black_list.setOnClickListener(this)
+        address_manager.setOnClickListener(this)
+
+        message_control.setOnClickListener(this)
+    }
+
 	override fun onClick(v: View) {
 		when (v.id) {
 			R.id.iv_close -> finish()
@@ -44,37 +44,34 @@ class SettingActivity : AppCompatActivity(), View.OnClickListener {
 			R.id.address_manager -> startActivity(Intent(this, AddressActivity::class.java).putExtra("fromSetting", true))
 			R.id.message_control -> {
 			// 消息界面: 195 userId
+                showToast("open the message center")
 			}
 		}
 	}
-	
+
 	private fun quit() {
-		hashMapOf<CharSequence, CharSequence>().run {
-			put("userId", userId)
-			NetBuild.response(this@SettingActivity::success,
-					ToastUtil::showToast, 152, ReturnStatus::class.java, this)
-		}
+//		val map = hashMapOf<CharSequence, CharSequence>()
+//        map["userId"] = userId
+//        response(::success, 152, map)
+        response(::success, "152", "\"userId\":\"$userId\"")
 	}
 	
 	private fun success(t: ReturnStatus) {
 		if (t.status == 0) {
 			userId = ""
 			startActivity(Intent(this@SettingActivity, LoginActivity::class.java))
-			application?.removeALLActivity_()
+			mApplication?.removeALLActivity_()
 			finish()
 		} else {
 			showSnackBar(_parent, "状态错误, 请截图到用户反馈处反馈此问题, 我们会尽快处理, 谢谢.", 2000)
 		}
 	}
-	
+
 	override fun onStart() {
 		super.onStart()
-		doAsync {
-			NetBuild.getResponse("\"userId\":\"$userId\"", 194)?.run {
-				take(length - 5).contains("1").let { b ->
-					uiThread { _hint.visibility = if (b) View.VISIBLE else View.GONE }
-				}
-			}
-		}
+        doAsync {
+            val response = NetBuild.getResponse("\"userId\":\"$userId\"", 194) ?: "null"
+            uiThread { _hint.visibility = if ("1" in response) View.VISIBLE else View.GONE }
+        }
 	}
 }
