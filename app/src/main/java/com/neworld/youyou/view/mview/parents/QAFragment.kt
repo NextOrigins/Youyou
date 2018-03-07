@@ -29,7 +29,6 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
-import com.neworld.youyou.view.mview.common.BigPicActivity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
@@ -296,7 +295,6 @@ class QAFragment : Fragment() {
                     map["id"] = id
 
                     logE("request pull up from history : id = $id, cacheList = $cacheList")
-                    logE("userId = $userId")
                     response(s, "199_1", map)
                 } else {
                     over = true
@@ -351,20 +349,20 @@ class QAFragment : Fragment() {
 			when (split.size) {
 				1 -> {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
-					img1.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-					}
+//					img1.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+//					}
 					img2.visibility = View.GONE
 				}
 				2 -> {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					Glide.with(img2).load(split[1]).apply(options).into(img2)
-					img1.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-					}
-					img2.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-					}
+//					img1.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+//					}
+//					img2.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+//					}
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.GONE
 				}
@@ -372,15 +370,15 @@ class QAFragment : Fragment() {
 					Glide.with(img1).load(split[0]).apply(options).into(img1)
 					Glide.with(img2).load(split[1]).apply(options).into(img2)
 					Glide.with(img3).load(split[2]).apply(options).into(img3)
-					img1.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-					}
-					img2.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-					}
-					img3.setOnClickListener {
-						BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
-					}
+//					img1.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
+//					}
+//					img2.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
+//					}
+//					img3.setOnClickListener {
+//						BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
+//					}
 					img2.visibility = View.VISIBLE
 					img3.visibility = View.VISIBLE
 				}

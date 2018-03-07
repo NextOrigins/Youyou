@@ -70,7 +70,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
                     b = false
                 }
             }
-            2 -> showSnackBar(swipe!!, "没有更多数据了_")
+            2 -> showSnackBar(swipe!!, "没有更多数据了")
         }
     }
 
@@ -102,10 +102,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
                     .apply(options)
                     .into(img)
 
-            if (data.author.isEmpty()) {
-                author.visibility = View.GONE
-
-            } else author.visibility = View.VISIBLE
+            author.visibility = if (data.author.isEmpty()) View.GONE else View.VISIBLE
 
             name.text = data.bookName
             author.text = data.author
@@ -132,7 +129,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
         }
     }
 
-    override fun getContentLayoutId(): Int = R.layout.fragment_books
+    override fun getContentLayoutId() = R.layout.fragment_books
 
     override fun initArgs(bundle: Bundle?) {
         presenter = BooksImpl(this@BooksViewImpl)
@@ -150,10 +147,12 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
     }
 
     override fun initData() {
-        swipe?.setOnRefreshListener {
+        if (mAdapter.bean.isEmpty()) {
+            swipe?.setOnRefreshListener {
+                presenter?.down(map, 178, ResponseBean.BooksBody::class.java)
+            }
             presenter?.down(map, 178, ResponseBean.BooksBody::class.java)
         }
-        presenter?.down(map, 178, ResponseBean.BooksBody::class.java)
     }
 
     override fun notifyData() {

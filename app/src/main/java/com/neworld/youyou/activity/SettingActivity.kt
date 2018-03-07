@@ -33,26 +33,24 @@ class SettingActivity : Activity(), View.OnClickListener {
         black_list.setOnClickListener(this)
         address_manager.setOnClickListener(this)
 
-        message_control.setOnClickListener(this)
+//        message_control.setOnClickListener(this)
+	    message_control.visibility = View.GONE
     }
 
 	override fun onClick(v: View) {
 		when (v.id) {
 			R.id.iv_close -> finish()
 			R.id.black_list -> startActivity(Intent(this@SettingActivity, BlackNameActivity::class.java))
-			R.id.bt_quit -> displayDialog(this, "确定退出登录吗", this::quit)
+			R.id.bt_quit -> displayDialog(this, "确定退出登录吗", this@SettingActivity::quit)
 			R.id.address_manager -> startActivity(Intent(this, AddressActivity::class.java).putExtra("fromSetting", true))
 			R.id.message_control -> {
-			// 消息界面: 195 userId
+			// 消息界面: 195 userId (暂时没做)
                 showToast("open the message center")
 			}
 		}
 	}
 
 	private fun quit() {
-//		val map = hashMapOf<CharSequence, CharSequence>()
-//        map["userId"] = userId
-//        response(::success, 152, map)
         response(::success, "152", "\"userId\":\"$userId\"")
 	}
 	
@@ -63,7 +61,7 @@ class SettingActivity : Activity(), View.OnClickListener {
 			mApplication?.removeALLActivity_()
 			finish()
 		} else {
-			showSnackBar(_parent, "状态错误, 请截图到用户反馈处反馈此问题, 我们会尽快处理, 谢谢.", 2000)
+			showSnackBar(_parent, "网络出错, 退出失败(如果持续出现此问题请到用户反馈处反馈)", 2000)
 		}
 	}
 
