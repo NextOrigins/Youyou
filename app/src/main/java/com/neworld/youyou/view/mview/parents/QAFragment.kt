@@ -94,7 +94,7 @@ class QAFragment : Fragment() {
 	private val imgWidth by lazy {
 		val point = Point()
 		activity.windowManager.defaultDisplay.getSize(point)
-		(point.x - resources.getDimension(R.dimen.dp30) - (resources.getDimensionPixelSize(R.dimen.dp15) * 2)) / 3
+		(point.x - resources.getDimension(R.dimen.dp30) - (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
 	}
 
     // cache
@@ -337,39 +337,36 @@ class QAFragment : Fragment() {
 		title.text = data.title
 		reply.text = "${data.comment_count}回答"
 
-		if (data.imgs == null) {
+		if (data.imgs == null || data.imgs.isEmpty()) {
 			img1.visibility = View.GONE
 			return
 		}
 
-		img1.visibility = if (data.imgs.isEmpty()) View.GONE else View.VISIBLE
-
-		if (data.imgs.isNotEmpty()) {
-			val split = data.imgs.split("\\|".toRegex())
-			when (split.size) {
-				1 -> {
-					Glide.with(img1).load(split[0]).apply(options).into(img1)
+        val split = data.imgs.split('|')
+        when (split.size) {
+            1 -> {
+                Glide.with(img1).load(split[0]).apply(options).into(img1)
 //					img1.setOnClickListener {
 //						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
 //					}
-					img2.visibility = View.GONE
-				}
-				2 -> {
-					Glide.with(img1).load(split[0]).apply(options).into(img1)
-					Glide.with(img2).load(split[1]).apply(options).into(img2)
+                img2.visibility = View.GONE
+            }
+            2 -> {
+                Glide.with(img1).load(split[0]).apply(options).into(img1)
+                Glide.with(img2).load(split[1]).apply(options).into(img2)
 //					img1.setOnClickListener {
 //						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
 //					}
 //					img2.setOnClickListener {
 //						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
 //					}
-					img2.visibility = View.VISIBLE
-					img3.visibility = View.GONE
-				}
-				3 -> {
-					Glide.with(img1).load(split[0]).apply(options).into(img1)
-					Glide.with(img2).load(split[1]).apply(options).into(img2)
-					Glide.with(img3).load(split[2]).apply(options).into(img3)
+                img2.visibility = View.VISIBLE
+                img3.visibility = View.GONE
+            }
+            3 -> {
+                Glide.with(img1).load(split[0]).apply(options).into(img1)
+                Glide.with(img2).load(split[1]).apply(options).into(img2)
+                Glide.with(img3).load(split[2]).apply(options).into(img3)
 //					img1.setOnClickListener {
 //						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
 //					}
@@ -379,11 +376,10 @@ class QAFragment : Fragment() {
 //					img3.setOnClickListener {
 //						BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
 //					}
-					img2.visibility = View.VISIBLE
-					img3.visibility = View.VISIBLE
-				}
-			}
-		}
+                img2.visibility = View.VISIBLE
+                img3.visibility = View.VISIBLE
+            }
+        }
 	}
 
 	private fun setScrollChangedListener() {

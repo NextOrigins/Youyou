@@ -3,7 +3,6 @@ package com.neworld.youyou
 
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 
 import android.support.design.widget.Snackbar
@@ -13,7 +12,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
-import android.view.View
 import android.view.ViewGroup
 
 import android.view.WindowManager
@@ -30,7 +28,6 @@ import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
-import com.neworld.youyou.view.mview.ebook.EBooks
 import com.neworld.youyou.view.mview.parents.QAFragment
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
@@ -155,14 +152,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
     //切换页面 并把上一个界面添加到退栈中
     private fun changePage(fragment: Fragment?, tag: String?) {
-        fragmentManager.beginTransaction().replace(R.id.framelayout, fragment).addToBackStack(tag).commit()
+        fragmentManager.beginTransaction()
+                .replace(R.id.framelayout, fragment).addToBackStack(tag).commit()
     }
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
-        var b = false
+//        var b = false
         when (checkedId) {
             R.id.rb_parent -> {
-                b = false
+//                b = false
 //                changePage(parentFragment, null)
 	            changePage(parentsQA, null)
             }
@@ -171,11 +169,11 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //                changePage(subjectFragment, null)
 //            }
             R.id.rb_hot -> {
-                b = false
+//                b = false
                 changePage(hotFragment, null)
             }
             R.id.rb_my -> {
-                b = false
+//                b = false
                 changePage(myFragment, null)
             }
             R.id.rb_books -> { // TODO : 图书页面 hide
@@ -186,7 +184,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //        statusBar(b)
     }
 
-    private fun statusBar(b: Boolean) {
+    /*private fun statusBar(b: Boolean) {
         if (b) {
             // 白底黑字状态栏 . api大于23 (Android6.0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -202,7 +200,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 window.statusBarColor = ContextCompat.getColor(baseContext, R.color.colorPrimaryDark)
             }
         }
-    }
+    }*/
 
     // 实现两秒内连续点击回退按钮退出效果
 //    override fun onBackPressed() {

@@ -254,10 +254,13 @@ class QuestionsAndAnswers : Fragment() {
             headContent.visibility = View.GONE
             headShowAll.visibility = View.GONE
         }
-        if (TextUtils.isEmpty(result.imgs) || result.imgs.split('|').first().isEmpty()) {
+
+        val split = if (!TextUtils.isEmpty(result.imgs)) result.imgs.split('|') else null
+
+        if (split == null || split[0].isEmpty()) {
             headIcon.visibility = View.GONE
         } else {
-            Glide.with(headIcon).load(result.imgs).apply(options).into(headIcon)
+            Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
         }
 
         if (!measured)
