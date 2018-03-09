@@ -281,7 +281,7 @@ class QAFragment : Fragment() {
                 map["endDate"] = minDate
                 map["type"] = type.toString()
 
-                logE("request pull down : createDate = $maxDate, endDate = $minDate")
+//                logE("request pull down : createDate = $maxDate, endDate = $minDate")
                 response(s, 199, map)
             }
             2 -> {
@@ -294,7 +294,7 @@ class QAFragment : Fragment() {
                     }
                     map["id"] = id
 
-                    logE("request pull up from history : id = $id, cacheList = $cacheList")
+//                    logE("request pull up from history : id = $id, cacheList = $cacheList")
                     response(s, "199_1", map)
                 } else {
                     over = true
@@ -303,7 +303,7 @@ class QAFragment : Fragment() {
                     map["endDate"] = minDate
                     map["type"] = type.toString()
 
-                    logE("request pull up to old news : newsDate = $maxDate, endDate = $minDate")
+//                    logE("request pull up to old news : newsDate = $maxDate, endDate = $minDate")
                     response(s, 199, map)
                 }
             }
@@ -341,6 +341,8 @@ class QAFragment : Fragment() {
 			img1.visibility = View.GONE
 			return
 		}
+
+        img1.visibility = View.VISIBLE
 
         val split = data.imgs.split('|')
         when (split.size) {
@@ -468,7 +470,7 @@ class QAFragment : Fragment() {
 
                         savedList.clear()
                         savedList.addAll(temp)
-                        logE("filtered temp = $temp")
+//                        logE("filtered temp = $temp")
                     }
                 }
             }

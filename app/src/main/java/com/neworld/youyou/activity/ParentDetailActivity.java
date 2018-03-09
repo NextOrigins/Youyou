@@ -33,8 +33,6 @@ import com.neworld.youyou.utils.NetUtil;
 import com.neworld.youyou.utils.Sputil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
-import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
-import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -83,7 +81,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 	private Intent mIntent;
 
 	private boolean errorShowing;
-	private StandardGSYVideoPlayer video;
+//	private StandardGSYVideoPlayer video;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +98,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 	@SuppressLint("SetJavaScriptEnabled")
 	private void initWebView(String id) {
 		taskId = Integer.parseInt(id);
-		video = findViewById(R.id.video);
+		/*video = findViewById(R.id.video);
 		Intent intent = getIntent();
 		if (intent.getIntExtra("sort", 1) == 2) {
 			video.setVisibility(View.VISIBLE);
@@ -124,7 +122,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 				video.getBackButton().setVisibility(View.VISIBLE);
 			else
 				video.getBackButton().setVisibility(View.INVISIBLE);
-		} else video.setVisibility(View.GONE);
+		} else video.setVisibility(View.GONE);*/
 		initData();
 		final WebSettings webSettings = webView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
@@ -512,18 +510,18 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 //            if (NetBuild.isNetworkConnected(getApplicationContext()))
 //                loadData();
 //        }
-		video.onVideoResume();
+//		video.onVideoResume();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		video.onVideoPause();
+//		video.onVideoPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		video.destroyDrawingCache();
+//		video.destroyDrawingCache();
 		super.onDestroy();
 	}
 

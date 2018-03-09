@@ -24,8 +24,6 @@ import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.view.gridlayout.NineGridTestLayout;
 import com.neworld.youyou.view.nine.CircleImageView;
 import com.neworld.youyou.view.nine.FlowLayout;
-import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
-import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +105,7 @@ public class ParentAdapter extends BaseAdapter {
             holder.llFav = (LinearLayout) convertView.findViewById(R.id.ll_fav);
             holder.llShare = (LinearLayout) convertView.findViewById(R.id.ll_share);
             holder.ivFav = (ImageView) convertView.findViewById(R.id.iv_fav);
-            holder.video = convertView.findViewById(R.id._video);
+//            holder.video = convertView.findViewById(R.id._video);
 
             convertView.setTag(holder);
 
@@ -207,7 +205,7 @@ public class ParentAdapter extends BaseAdapter {
         final String imgs = menuListBean.getImgs();
         if (imgs != null && imgs.length() > 0) {
             if (menuListBean.sort == 1) {
-                holder.video.setVisibility(View.GONE);
+//                holder.video.setVisibility(View.GONE);
                 holder.ivNine.setVisibility(View.VISIBLE);
                 final String[] split = imgs.split("\\|");
                 List<String> list = Arrays.asList(split);
@@ -221,15 +219,15 @@ public class ParentAdapter extends BaseAdapter {
 //                holder.ivNine.setIsShowAll(true);
 //                String[] s = {menuListBean.voideImg};
 //                holder.ivNine.setUrlList(Arrays.asList(s));
-                holder.ivNine.setVisibility(View.GONE);
+                /*holder.ivNine.setVisibility(View.GONE);
                 holder.video.setVisibility(View.VISIBLE);
                 holder.video.setLockLand(true);
-                holder.video.setUp(menuListBean.getImgs(), false, "");
+                holder.video.setUp(menuListBean.getImgs(), false, "");*/
                 ImageView imageView = new ImageView(context);
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 Glide.with(imageView).load(menuListBean.voideImg).into(imageView);
-                holder.video.setThumbImageView(imageView);
-                holder.video.getFullscreenButton().setVisibility(View.INVISIBLE);
+                /*holder.video.setThumbImageView(imageView);
+                holder.video.getFullscreenButton().setVisibility(View.INVISIBLE);*/
 //                holder.video.getFullscreenButton().setOnClickListener(v -> {
 //                    if (notDelay())
 //                        holder.video.startWindowFullscreen(context, false, true);
@@ -242,14 +240,14 @@ public class ParentAdapter extends BaseAdapter {
 //                    else
 //                        ToastUtil.showToast("点击频率太高, 请请稍等");
 //                });
-                if (holder.video.isIfCurrentIsFullscreen())
+               /* if (holder.video.isIfCurrentIsFullscreen())
                     holder.video.getBackButton().setVisibility(View.VISIBLE);
                 else
-                    holder.video.getBackButton().setVisibility(View.INVISIBLE);
+                    holder.video.getBackButton().setVisibility(View.INVISIBLE);*/
             }
         } else {
             holder.ivNine.setVisibility(View.GONE);
-            holder.video.setVisibility(View.GONE);
+//            holder.video.setVisibility(View.GONE);
         }
         //收藏数 评论数 分享数
         int collect_count = menuListBean.getCollect_count();
@@ -328,7 +326,7 @@ public class ParentAdapter extends BaseAdapter {
 
         public ImageView ivFav;
 
-        public StandardGSYVideoPlayer video;
+//        public StandardGSYVideoPlayer video;
     }
 
 

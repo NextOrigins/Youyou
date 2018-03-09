@@ -1,6 +1,7 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.support.v4.app.FragmentTransaction
 import android.view.*
 import com.google.gson.Gson
@@ -9,6 +10,7 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.utils.NetBuild
+import com.neworld.youyou.utils.logE
 import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 import org.jetbrains.anko.doAsync
@@ -148,6 +150,19 @@ class QAParent : Activity() {
     private data class CommentIdCollection(
             val menuList: MutableList<HashMap<String, String>>
     )
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (questionsAndAnswers == null) return
+
+        if (questionsAndAnswers!!.isVisible) {
+            questionsAndAnswers?.resize()
+        } else {
+            answersDetail
+        }
+
+
+    }
 //	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //		menuInflater.inflate(R.menu.menu_item, menu)
 //		val item = menu?.findItem(R.id.menu_item1)

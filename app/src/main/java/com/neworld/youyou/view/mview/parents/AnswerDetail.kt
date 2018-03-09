@@ -467,6 +467,7 @@ class AnswerDetail : Fragment() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 if (newProgress > 75) {
                     if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+                    mRecycle.toPosition(0)
                 }
             }
         }

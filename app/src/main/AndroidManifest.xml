@@ -31,7 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.PublishActivity" />
         <activity android:name=".activity.FocusActivity" />
@@ -117,7 +118,8 @@
         <activity android:name=".view.mview.ebook.EBookDetail"
             android:launchMode="singleTop" />
 
-        <activity android:name=".view.mview.parents.QAParent" />
+        <activity android:name=".view.mview.parents.QAParent"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

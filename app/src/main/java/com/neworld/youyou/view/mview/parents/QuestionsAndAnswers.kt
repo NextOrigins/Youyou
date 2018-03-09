@@ -59,6 +59,8 @@ class QuestionsAndAnswers : Fragment() {
 	// fields
 	private val userId by preference("userId", "")
     private lateinit var taskId: String
+    private var starWidth = 0
+    private var answerCountWidth = 0
 
 	// View
 	private var recycle by notNullSingleValue<RecyclerView>()
@@ -252,7 +254,8 @@ class QuestionsAndAnswers : Fragment() {
         headContent.text = result.content
         if (TextUtils.isEmpty(result.content)) {
             headContent.visibility = View.GONE
-            headShowAll.visibility = View.GONE
+        } else {
+            headShowAll.visibility = View.VISIBLE
         }
 
         val split = if (!TextUtils.isEmpty(result.imgs)) result.imgs.split('|') else null
@@ -261,23 +264,34 @@ class QuestionsAndAnswers : Fragment() {
             headIcon.visibility = View.GONE
         } else {
             Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
+            headIcon.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity, it, split.first()) }
         }
 
         if (!measured)
             star.post {
+                starWidth = star.measuredWidth
+                answerCountWidth = answerCount.measuredWidth
+
                 val point = Point()
-                val left = activity.windowManager.defaultDisplay.getSize(point).let {
-                    (point.x - (star.measuredWidth * 3)) / 6
-                }
+                activity.windowManager.defaultDisplay.getSize(point)
 
-                answerCount.setPadding(left, 0, left, 0)
-                star.setPadding(left, 0, left, 0)
+                logE("before--------------------------------")
+                logE("point.x = ${point.x}")
 
+                var width = point.x / 3
                 answer.layoutParams = answer.layoutParams.also {
-                    it.width = left * 2 + star.measuredWidth
+                    it.width = width
                 }
+
+                width = ((width * 2) - (starWidth + answerCountWidth)) / 4
+
+                logE("measuredWidth (before) ${star.measuredWidth}")
+                answerCount.paddingSet(width)
+                star.paddingSet(width)
 
                 measured = true
+                logE("width = $width; measuredWidth = ${star.measuredWidth}")
+                logE("before--------------------------------")
             }
     }
 
@@ -294,7 +308,7 @@ class QuestionsAndAnswers : Fragment() {
 
 		val data = mutableList[position]
 
-		content.text = data.attachedContent?.replace("￼", "") ?: "null"
+		content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
 
 		name.text = data.from_nickName
 		praises.text = "${data.commentLike}赞"
@@ -368,5 +382,24 @@ class QuestionsAndAnswers : Fragment() {
 
     fun setObserver(listener: View.() -> Unit) {
         this@QuestionsAndAnswers.obs = listener
+    }
+
+    fun resize() {
+        val point = Point()
+        activity.windowManager.defaultDisplay.getSize(point)
+
+        var width = point.x / 3
+        answer.layoutParams = answer.layoutParams.also {
+            it.width = width
+        }
+
+        width = ((width * 2) - (starWidth + answerCountWidth)) / 4
+
+        answerCount.paddingSet(width)
+        star.paddingSet(width)
+    }
+
+    private fun View.paddingSet(offset: Int) {
+        setPadding(offset, 0, offset, 0)
     }
 }

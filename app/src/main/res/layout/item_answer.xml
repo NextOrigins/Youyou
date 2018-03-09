@@ -32,8 +32,8 @@
 
     <CheckBox
         android:id="@+id/item_praise"
-        android:layout_width="@dimen/dp15"
-        android:layout_height="@dimen/dp15"
+        android:layout_width="@dimen/dp20"
+        android:layout_height="@dimen/dp20"
         android:background="@drawable/praise_bg"
         android:button="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@id/item_icon"
