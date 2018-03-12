@@ -5,8 +5,10 @@ import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -14,6 +16,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -62,6 +65,8 @@ class QAFragment : Fragment() {
 	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
     private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
     private var savedList = arrayListOf<String>() // 避免cacheList读取冲突
+	private var measured = false
+	private var mWidthSum = 0
 	private val options by lazy {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
@@ -89,6 +94,16 @@ class QAFragment : Fragment() {
 
         return@vetoable true
     }
+	private val praiseBg by lazy {
+		ContextCompat.getDrawable(context, R.drawable.praise_bg).also {
+			it.setBounds(1, 1, 35, 35)
+		}
+	}
+	private val commentBg by lazy {
+		ContextCompat.getDrawable(context, R.drawable.review).also {
+			it.setBounds(1, 1, 35, 35)
+		}
+	}
 
     // 图片等宽
 	/*private val imgWidth by lazy {
@@ -120,6 +135,7 @@ class QAFragment : Fragment() {
 				LinearLayoutManager.VERTICAL, false)
 		mRecycle.adapter = AdapterK(this::itemBind,
 				R.layout.item_qa_1, list).also { mAdapter = it }
+		mRecycle.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
 		setScrollChangedListener()
 
@@ -325,6 +341,29 @@ class QAFragment : Fragment() {
 		val img3 = holder.find<ImageView>(R.id.item_img3)
 				.also { it.setWidth() }
 
+		val share = holder.find<TextView>(R.id.item_share) // TODO : 不知道哪个字段
+		val comments = holder.find<TextView>(R.id.item_review)
+		val praise = holder.find<CheckBox>(R.id.item_praise)
+		val pCount = holder.find<TextView>(R.id.item_praise_count)
+
+
+		praise.setCompoundDrawables(praiseBg, null, null, null)
+		comments.setCompoundDrawables(commentBg, null, null, null)
+
+		if (!measured) {
+			share.post {
+				mWidthSum = share.measuredWidth + praise.measuredWidth + comments.measuredWidth
+				share.sharedWidth(mWidthSum)
+				praise.sharedWidth(mWidthSum)
+				comments.sharedWidth(mWidthSum)
+				measured = true
+			}
+		} else {
+			share.sharedWidth(mWidthSum)
+			praise.sharedWidth(mWidthSum)
+			comments.sharedWidth(mWidthSum)
+		}
+
 		val data = mutableList[position]
 
 		parent.setOnClickListener {
@@ -334,8 +373,23 @@ class QAFragment : Fragment() {
 					.putExtra("commentId", data.id.toString()), 20)
 		}
 
+		share.setOnClickListener {
+			showToast("TODO : Share !")
+		}
+
+		praise.setOnClickListener {
+			if (praise.isChecked) {
+				showToast("点赞 !")
+			} else {
+				showToast("取消 !")
+			}
+		}
+
 		title.text = data.title
 		reply.text = "${data.comment_count}回答"
+		comments.text = data.comment_count.toString()
+		pCount.text = "TODO : 1"
+		praise.text = "12"
 
 		if (data.imgs == null || data.imgs.isEmpty()) {
 			img1.visibility = View.GONE
@@ -423,6 +477,14 @@ class QAFragment : Fragment() {
 
         layoutParams = layoutParams.also { it.width = width.toInt() }
     }
+
+	private fun View.sharedWidth(widthSum: Int) {
+		val p = Point()
+		activity.windowManager.defaultDisplay.getSize(p)
+		val pWidth = p.x - resources.getDimensionPixelOffset(R.dimen.dp30)
+		val padding = (pWidth - widthSum) / 6
+		setPadding(padding, 0, padding, 0)
+	}
 
 	private data class ReadCache(val top: String = "",
 	                             val end: String = "",

@@ -4,23 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/dp15"
-    android:paddingRight="@dimen/dp15">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/item_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginRight="@dimen/dp15"
         android:layout_marginTop="@dimen/dp15"
         android:lineSpacingExtra="@dimen/dp5"
         android:maxLines="2"
         android:textColor="@color/black"
         android:textSize="@dimen/sp18"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="皇马惨败巴萨, 问题出在哪里？问题出在哪里？问题出在哪里？问题出在哪里？" />
 
     <ImageView
+        app:layout_constraintLeft_toLeftOf="@id/item_title"
         android:id="@+id/item_img1"
         android:layout_width="0dp"
         android:layout_height="@dimen/dp65"
@@ -55,19 +58,86 @@
         app:layout_constraintTop_toTopOf="@id/item_img2" />
 
     <TextView
-        android:id="@+id/item_reply"
+        android:id="@+id/item_praise_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp15"
         android:layout_marginTop="@dimen/dp10"
         android:textSize="@dimen/sp12"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/item_title"
+        app:layout_constraintTop_toBottomOf="@id/item_img1"
+        tools:text="100赞" />
+
+    <TextView
+        android:id="@+id/item_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp15"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginStart="@dimen/dp15"
+        android:layout_marginTop="@dimen/dp10"
+        android:textSize="@dimen/sp12"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/item_praise_count"
         app:layout_constraintTop_toBottomOf="@id/item_img1"
         tools:text="1402回答" />
 
     <View
+        android:id="@+id/item_line1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ECECEC"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_marginTop="@dimen/dp10"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/item_reply" />
+
+    <TextView
+        android:id="@+id/item_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
+        android:drawableLeft="@drawable/share"
+        android:drawablePadding="@dimen/dp5"
+        android:drawableStart="@drawable/share"
+        android:text="@string/share"
+        android:textSize="@dimen/sp12"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/item_praise_count"
+        app:layout_constraintTop_toBottomOf="@id/item_line1"
+        app:layout_goneMarginBottom="@dimen/dp10" />
+
+    <TextView
+        android:id="@+id/item_review"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:drawableLeft="@drawable/review"
+        android:drawablePadding="@dimen/dp5"
+        android:drawableStart="@drawable/review"
+        android:paddingBottom="@dimen/dp10"
+        android:paddingTop="@dimen/dp10"
+        android:textSize="@dimen/sp12"
+        app:layout_constraintBottom_toBottomOf="@id/item_share"
+        app:layout_constraintLeft_toRightOf="@id/item_share"
+        app:layout_constraintTop_toTopOf="@id/item_share"
+        tools:text="2" />
+
+    <CheckBox
+        android:id="@+id/item_praise"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:button="@null"
+        android:drawableLeft="@drawable/praise_bg"
+        android:drawablePadding="@dimen/dp5"
+        android:drawableStart="@drawable/praise_bg"
+        android:paddingBottom="@dimen/dp10"
+        android:paddingTop="@dimen/dp10"
+        android:textSize="@dimen/sp12"
+        app:layout_constraintBottom_toBottomOf="@id/item_review"
+        app:layout_constraintLeft_toRightOf="@id/item_review"
+        app:layout_constraintTop_toTopOf="@id/item_review"
+        tools:checked="true"
+        tools:text="1" />
+
 </android.support.constraint.ConstraintLayout>

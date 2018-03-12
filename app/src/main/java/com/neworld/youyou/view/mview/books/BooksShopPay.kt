@@ -2,12 +2,8 @@ package com.neworld.youyou.view.mview.books
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.text.TextUtils
-import android.view.View
-import android.view.WindowManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
@@ -89,7 +85,7 @@ class BooksShopPay : Activity() {
 
     override fun getContentLayoutId(): Int = R.layout.activity_books_pay
 
-    override fun initArgs(bundle: Bundle?): Boolean {
+    /*override fun initArgs(bundle: Bundle?): Boolean {
         // 白底黑字状态栏 . api大于23 (Android6.0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -98,7 +94,7 @@ class BooksShopPay : Activity() {
         }
 
         return super.initArgs(bundle)
-    }
+    }*/
 
     override fun initWidget() {
         delivery.setOnClickListener {
@@ -176,8 +172,8 @@ class BooksShopPay : Activity() {
         book_name.text = name
 
         val map = hashMapOf<CharSequence, CharSequence>()
-        map.put("userId", userId)
-        map.put("bookId", bookId)
+        map["userId"] = userId
+        map["bookId"] = bookId
         doAsync {
             val response = NetBuild.getResponse(map, 187)
             val data: Order = Gson().fromJson(response,
@@ -210,7 +206,7 @@ class BooksShopPay : Activity() {
 
     private fun loadAddress() {
         val map = hashMapOf<CharSequence, CharSequence>()
-        map.put("userId", userId)
+        map["userId"] = userId
         NetBuild.response({
             val list = it.menuList
             if (list.isEmpty()) dialog.show()

@@ -5,9 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.PagerAdapter
 import android.text.SpannableString
 import android.text.Spanned
@@ -15,7 +13,6 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -87,12 +84,12 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     override fun getContentLayoutId(): Int = R.layout.activity_books_detail
 
     override fun initWindows() {
-        // 白底黑字状态栏 . api大于23 (Android6.0)
+       /* // 白底黑字状态栏 . api大于23 (Android6.0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
-        }
+        }*/
         presenter = DetailImpl(this@BooksDetailsViewImpl)
     }
 
@@ -139,8 +136,8 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     override fun initData() {
         val bookId = intent.getStringExtra("bookId")
         val map = HashMap<CharSequence, CharSequence>()
-        map.put("bookId", bookId)
-        map.put("userId", userId)
+        map["bookId"] = bookId
+        map["userId"] = userId
         presenter?.down(map, 179, ResponseBean.BooksDetailBody::class.java)
     }
 
@@ -160,12 +157,11 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
 
     override fun setData(t: ResponseBean.BooksDetailBody) {
         val menuList = t.menuList
-        val list = menuList.contentImg.split("\\|".toRegex())
-                .flatMap {
-                    val imageView = ImageView(this)
-                    Glide.with(imageView).load(it).into(imageView).onLoadStarted(loadingDrawable)
-                    listOf(imageView)
-                }
+        val list = menuList.contentImg.split('|').flatMap {
+            val imageView = ImageView(this)
+            Glide.with(imageView).load(it).into(imageView).onLoadStarted(loadingDrawable)
+            listOf(imageView)
+        }
         images.addAll(list)
 
         val end = menuList.price.toString().split("\\.".toRegex()).toTypedArray()[0].length + 2
@@ -185,7 +181,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         sale.text = sl                                  // 月销
         author_text.text = menuList.author              // 作者
         press_text.text = menuList.publishDate          // 地址
-        ems.text = es                                    // 邮费
+        ems.text = es                                   // 邮费
 
         praise.text = menuList.likeSum.toString()
         stars.text = menuList.collectSum.toString()
@@ -202,14 +198,12 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
                 val images = LinearImage(this)
                 content.addView(images)
 
-                menuList.introduceImg
-                        .split("\\|".toRegex())
-                        .forEach {
-                            val imageView = ImageView(this)
-                            imageView.scaleType = ImageView.ScaleType.MATRIX
-                            Glide.with(baseContext).load(it).into(imageView)
-                            images.addView(imageView)
-                        }
+                menuList.introduceImg.split('|').forEach {
+                    val imageView = ImageView(this)
+                    imageView.scaleType = ImageView.ScaleType.MATRIX
+                    Glide.with(baseContext).load(it).into(imageView)
+                    images.addView(imageView)
+                }
             }
         }
 
