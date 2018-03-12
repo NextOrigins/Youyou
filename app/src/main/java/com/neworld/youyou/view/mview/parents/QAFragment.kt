@@ -91,11 +91,11 @@ class QAFragment : Fragment() {
     }
 
     // 图片等宽
-	private val imgWidth by lazy {
+	/*private val imgWidth by lazy {
 		val point = Point()
 		activity.windowManager.defaultDisplay.getSize(point)
 		(point.x - resources.getDimension(R.dimen.dp30) - (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
-	}
+	}*/
 
     // cache
     private var cacheIndex = 0 // 读取缓存下标
@@ -416,7 +416,12 @@ class QAFragment : Fragment() {
 	}
 
 	private fun View.setWidth() {
-        layoutParams = layoutParams.also { it.width = imgWidth.toInt() }
+		val point = Point()
+		activity.windowManager.defaultDisplay.getSize(point)
+		val width = (point.x - resources.getDimension(R.dimen.dp30)
+				- (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
+
+        layoutParams = layoutParams.also { it.width = width.toInt() }
     }
 
 	private data class ReadCache(val top: String = "",
@@ -508,5 +513,9 @@ class QAFragment : Fragment() {
 			}
 		}
 		return true
+	}
+
+	fun resize() {
+		mAdapter.notifyDataSetChanged()
 	}
 }
