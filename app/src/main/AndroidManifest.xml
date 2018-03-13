@@ -109,11 +109,9 @@
         <activity android:name=".add.feed.PostedActivity" />
         <activity android:name=".add.StudentActivity" />
         <activity android:name=".view.mview.comment.ReplyViewImpl" />
-        <activity android:name=".view.mview.books.BooksDetailsViewImpl"
-            android:screenOrientation="portrait" />
+        <activity android:name=".view.mview.books.BooksDetailsViewImpl" />
         <activity android:name=".view.mview.common.BigPicActivity" />
-        <activity android:name=".view.mview.books.BooksShopPay"
-            android:screenOrientation="portrait" />
+        <activity android:name=".view.mview.books.BooksShopPay" />
         <activity android:name=".view.mview.my.BooksOrderActivity" />
         <activity android:name=".view.mview.parents.Answers" />
 

@@ -10,6 +10,7 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.utils.NetBuild
+import com.neworld.youyou.utils.logE
 import com.neworld.youyou.utils.preference
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 import org.jetbrains.anko.doAsync
@@ -157,8 +158,10 @@ class QAParent : Activity() {
         if (questionsAndAnswers!!.isVisible) {
             questionsAndAnswers?.resize()
         } else {
-            answersDetail?.resize()
+            answersDetail
         }
+
+
     }
 //	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //		menuInflater.inflate(R.menu.menu_item, menu)
