@@ -3,6 +3,7 @@ package com.neworld.youyou
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Bundle
 
 import android.support.design.widget.Snackbar
@@ -228,5 +229,12 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
     override fun isSuccessful(isSuccess: Boolean) {
         this.isSuccess = isSuccess
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (parentsQA.isVisible) {
+            parentsQA.resize()
+        }
     }
 }

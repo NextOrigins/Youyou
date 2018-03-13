@@ -40,11 +40,6 @@ class AnswerDetail : Fragment() {
 
     //property
     private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswersDetailList>>()
-    private val point by lazy {
-        val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
-        point
-    }
     private val praises by lazy {
         val map = hashMapOf<CharSequence, CharSequence>()
         map["userId"] = userId
@@ -71,6 +66,9 @@ class AnswerDetail : Fragment() {
     private var mLike by notNullSingleValue<CheckBox>()
     private var hintText by notNullSingleValue<TextView>()
     private var hintProgress by notNullSingleValue<ProgressBar>()
+    private var mReply by notNullSingleValue<TextView>()
+    private var mReview by notNullSingleValue<ImageView>()
+    private var mNext by notNullSingleValue<ImageView>()
 
     //fields
     private val userId by preference("userId", "")
@@ -173,7 +171,7 @@ class AnswerDetail : Fragment() {
         // Bottom
         mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
             // 滚动到第一条
-            val mReview = findViewById<ImageView>(R.id._review).apply {
+            mReview = findViewById<ImageView>(R.id._review).apply {
                 setOnClickListener { mRecycle.toPosition(1) }
             }
             // 点赞
@@ -196,7 +194,7 @@ class AnswerDetail : Fragment() {
                 }
             }
             // Next Page
-            val mNext = findViewById<ImageView>(R.id._next_comment).apply {
+            mNext = findViewById<ImageView>(R.id._next_comment).apply {
                 setOnClickListener {
                     if (nextArray != null && nextArray!!.size > index) {
                         val id = nextArray!![index++]
@@ -207,8 +205,11 @@ class AnswerDetail : Fragment() {
                     }
                 }
             }
+
+            val point = Point()
+            activity.windowManager.defaultDisplay.getSize(point)
             // 点击清理缓存数据 & 弹出键盘
-            findViewById<TextView>(R.id._ac_reply).apply {
+            mReply = findViewById<TextView>(R.id._ac_reply).apply {
                 setOnClickListener {
                     isShowSoftInput = true
                     fromUserId = ""
@@ -513,5 +514,17 @@ class AnswerDetail : Fragment() {
         layoutParams = layoutParams.also {
             it.width = width
         }
+    }
+
+    fun resize() {
+        val point = Point()
+        activity.windowManager.defaultDisplay.getSize(point)
+        val width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp40)) / 2
+        val x = width / 3
+
+        mReply.layoutParamsWidth(width)
+        mReview.layoutParamsWidth(x)
+        mLike.layoutParamsWidth(x)
+        mNext.layoutParamsWidth(x)
     }
 }
