@@ -3,8 +3,10 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
@@ -49,6 +51,21 @@ class QuestionsAndAnswers : Fragment() {
         }
 
         return@vetoable true
+    }
+    private val selectedBg by lazy {
+        ContextCompat.getDrawable(context, R.drawable.web_zan_red).also {
+            it.setBounds(0, 0, 35, 35)
+        }
+    }
+    private val cancelBg by lazy {
+        ContextCompat.getDrawable(context, R.drawable.web_zan).also {
+            it.setBounds(0, 0, 35, 35)
+        }
+    }
+    private val reviewBg by lazy {
+        ContextCompat.getDrawable(context, R.drawable.review).also {
+            it.setBounds(0, 0, 35, 35)
+        }
     }
 
     // observer
@@ -275,9 +292,6 @@ class QuestionsAndAnswers : Fragment() {
                 val point = Point()
                 activity.windowManager.defaultDisplay.getSize(point)
 
-                logE("before--------------------------------")
-                logE("point.x = ${point.x}")
-
                 var width = point.x / 3
                 answer.layoutParams = answer.layoutParams.also {
                     it.width = width
@@ -285,38 +299,94 @@ class QuestionsAndAnswers : Fragment() {
 
                 width = ((width * 2) - (starWidth + answerCountWidth)) / 4
 
-                logE("measuredWidth (before) ${star.measuredWidth}")
                 answerCount.paddingSet(width)
                 star.paddingSet(width)
 
                 measured = true
-                logE("width = $width; measuredWidth = ${star.measuredWidth}")
-                logE("before--------------------------------")
             }
     }
 
 	@SuppressLint("SetTextI18n")
 	private fun bind(holder: Adapter.Holder,
 	                 mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
-		val name = holder.find<TextView>(R.id.item_name)
-		val praise = holder.find<CheckBox>(R.id.item_praise)
-		val icon = holder.find<ImageView>(R.id.item_icon)
-		val content = holder.find<TextView>(R.id.item_content)
-		val praises = holder.find<TextView>(R.id.item_praise_count)
-		val read = holder.find<TextView>(R.id.item_read_count)
-		val img = holder.find<ImageView>(R.id.item_img)
+		val name = holder.find<TextView>(R.id.item_name)                // Authors
+		val praise = holder.find<TextView>(R.id.item_praise)            // 点赞状态展示
+		val icon = holder.find<ImageView>(R.id.item_icon)               // 头像
+		val content = holder.find<TextView>(R.id.item_content)          // 内容
+		val praises = holder.find<TextView>(R.id.item_praise_count)     // 点赞数
+		val read = holder.find<TextView>(R.id.item_read_count)          // 阅读数
+		val img = holder.find<ImageView>(R.id.item_img)                 // 回复图片
+        val commentCount = holder.find<TextView>(R.id.item_comment)     // 评论数
+        val shareCount = holder.find<TextView>(R.id.item_share)         // 分享数
 
 		val data = mutableList[position]
 
 		content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
 
 		name.text = data.from_nickName
-		praises.text = "${data.commentLike}赞"
+		praises.text = "${data.commentLike} 赞"
 		read.text = if (data.clickSum > 0) "${data.clickSum} 阅读" else "0 阅读"
+        commentCount.text = data.comment_count.toString()
+        shareCount.text = if (data.transmit_count > 0) data.transmit_count.toString() else "分享"
+
+        praises.tag = data.commentLike
 
 		Glide.with(icon).load(data.faceImg).into(icon)
 
-		praise.isChecked = data.likeCommentStatus == 0
+        commentCount.setCompoundDrawables(reviewBg, null, null, null)
+
+        var isChecked = data.likeCommentStatus == 0
+
+        if (isChecked) {
+            praise.setCompoundDrawables(selectedBg, null, null, null)
+        } else {
+            praise.setCompoundDrawables(cancelBg, null, null, null)
+        }
+
+        holder.find<View>(R.id.item_share_c).setOnClickListener {
+            showToast("分享 !")
+        }
+
+        holder.find<View>(R.id.item_comment_c).setOnClickListener {
+            if (data.comment_count > 0) {
+                newModel(mutableList, position)
+                arguments.putBoolean("review", data.comment_count > 0)
+                obs.invoke(it)
+            } else {
+                newModel(mutableList, position)
+                arguments.putBoolean("review", false)
+                obs.invoke(it)
+            }
+        }
+
+        holder.find<View>(R.id.item_praise_c).setOnClickListener {
+            val map = hashMapOf<CharSequence, CharSequence>()
+            map["userId"] = userId
+            map["commentId"] = data.commentId.toString()
+            map["type"] = "5"
+            map["status"] = if (isChecked) "0" else "1"
+
+            doAsync {
+                NetBuild.getResponse(map, 193).let {
+                    if ("0" in it) {
+                        var temp = praises.tag as Int
+                        uiThread {
+                            if (!isChecked) {
+                                praise.setCompoundDrawables(selectedBg, null, null, null)
+                                praises.text = "${++temp} 赞"
+                            } else {
+                                praise.setCompoundDrawables(cancelBg, null, null, null)
+                                praises.text = "${--temp} 赞"
+                            }
+                            isChecked = !isChecked
+                            praises.tag = temp
+                        }
+                    } else {
+                        showToast("出错了!(如果频繁出错请到用户反馈处反馈错误代码[193])")
+                    }
+                }
+            }
+        }
 
         img.visibility = if (TextUtils.isEmpty(data.commentImg)) {
             View.GONE
@@ -330,38 +400,9 @@ class QuestionsAndAnswers : Fragment() {
             View.VISIBLE
         }
 
-		praise.setOnClickListener {
-            val map = hashMapOf<CharSequence, CharSequence>()
-            map["userId"] = userId
-            map["commentId"] = data.commentId.toString()
-            map["type"] = "5"
-            map["status"] = if (praise.isChecked) "1" else "0"
-
-            doAsync {
-                val response = NetBuild.getResponse(map, 193)
-                if ("0" !in response) {
-                    uiThread {
-                        praise.isChecked = !praise.isChecked
-                        showToast("未知错误, 请到用户反馈处反馈此问题: 错误代码[193]")
-                    }
-                }
-            }
-		}
-
 		holder.find<View>(R.id._parent).setOnClickListener {
-            val array = mutableList
-                    .drop(position + 1)
-                    .flatMap { arrayListOf(it.commentId.toString()) }
-                    .toTypedArray()
-            val minDate = mutableList
-                    .forEach { dateFilter = it.createDate }
-                    .let { dateFilter }
-
-            arguments.putString("cId", data.commentId.toString())
-            arguments.putString("taskId", data.taskId.toString())
-            arguments.putString("fromUID", data.from_userId.toString())
-            arguments.putString("minCreateDate", minDate)
-			arguments.putStringArray("nextArray", array)
+            newModel(mutableList, position)
+            arguments.putBoolean("review", false)
             obs.invoke(it)
 		}
 	}
@@ -374,6 +415,25 @@ class QuestionsAndAnswers : Fragment() {
 
     private fun <T> List<T>.custom(): Boolean {
         return isEmpty() || size < 10
+    }
+
+    private fun newModel(list: MutableList<ResponseBean.AnswerList>, position: Int) {
+        val array = list
+                .drop(position + 1)
+                .flatMap { arrayListOf(it.commentId.toString()) }
+                .toTypedArray()
+        val minDate = list
+                .forEach { dateFilter = it.createDate }
+                .let { dateFilter }
+
+        val data = list[position]
+        val bundle = Bundle()
+        bundle.putString("cId", data.commentId.toString())
+        bundle.putString("taskId", data.taskId.toString())
+        bundle.putString("fromUID", data.from_userId.toString())
+        bundle.putString("minCreateDate", minDate)
+        bundle.putStringArray("nextArray", array)
+        arguments.putAll(bundle)
     }
 
     /*fun refreshData() {

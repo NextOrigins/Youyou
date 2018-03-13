@@ -123,5 +123,6 @@
     <string name="reply">回复</string>
     <string name="send">发送</string>
     <string name="no_more_data">没有更多数据了</string>
+    <string name="praise">赞</string>
 
 </resources>
