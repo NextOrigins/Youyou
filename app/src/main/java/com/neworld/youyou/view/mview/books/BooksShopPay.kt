@@ -108,7 +108,43 @@ class BooksShopPay : Activity() {
                 showSnackBar(_parent, "未检测到WiFi模块, 请到用户反馈处反馈此问题, 我们会尽快解决", 2000)
                 return@setOnClickListener
             }
-            hashMapOf<CharSequence, CharSequence>().run {
+            val map = hashMapOf<CharSequence, CharSequence>()
+            map["userId"] = userId
+            map["money"] = money
+            map["subjectId"] = "0"
+            map["typeId"] = "0"
+            map["babyName"] = name
+            map["phone"] = _phone.text
+            map["spbill_create_ip"] = ip!!
+            map["orderId"] = orderId
+            map["count"] = totalPrice.toString()
+
+            doAsync {
+                val response = NetBuild.getResponse(map, 188)
+                val pay: Pay = Gson().fromJson(response, Pay::class.java)
+                if (pay.status == 1) {
+                    showSnackBar(_parent, "商品卖完了哦亲~")
+                    return@doAsync
+                }
+
+                val api = WXAPIFactory.createWXAPI(baseContext, pay.appid)
+                if (!api.isWXAppInstalled) {
+                    showToast(getString(R.string.text_uninstalled_wchat))
+                    return@doAsync
+                }
+                PayReq().run {
+                    appId = pay.appid
+                    prepayId = pay.prepayid
+                    nonceStr = pay.noncestr
+                    timeStamp = pay.timeStamp
+                    sign = pay.sign
+                    partnerId = "1480432402"
+                    packageValue = "Sign=WXPay"
+                    api.registerApp(pay.appid)
+                    api.sendReq(this@run)
+                }
+            }
+            /*hashMapOf<CharSequence, CharSequence>().run {
                 put("userId", userId)
                 put("money", money)
                 put("subjectId", "0")
@@ -126,7 +162,7 @@ class BooksShopPay : Activity() {
                         if (it.status == 0) {
                             val api = WXAPIFactory.createWXAPI(this@BooksShopPay, it.appid)
                             if (!api.isWXAppInstalled) {
-                                ToastUtil.showToast(getString(R.string.text_uninstalled_wchat))
+                                showToast(getString(R.string.text_uninstalled_wchat))
                                 return@doAsync
                             }
                             PayReq().run {
@@ -144,7 +180,7 @@ class BooksShopPay : Activity() {
                             uiThread { showSnackBar(_parent, "商品卖完了哦亲_") }
                     }
                 }
-            }
+            }*/
         }
         up.setOnClickListener {
             val i = count.text.toString().toInt() + 1

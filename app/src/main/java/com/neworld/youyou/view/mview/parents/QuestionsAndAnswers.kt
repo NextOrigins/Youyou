@@ -3,7 +3,6 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Point
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.ContextCompat
@@ -24,6 +23,11 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
+import com.umeng.socialize.ShareAction
+import com.umeng.socialize.UMShareListener
+import com.umeng.socialize.bean.SHARE_MEDIA
+import com.umeng.socialize.media.UMImage
+import com.umeng.socialize.media.UMWeb
 import com.umeng.socialize.utils.DeviceConfig
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -35,6 +39,9 @@ import kotlin.properties.Delegates
 class QuestionsAndAnswers : Fragment() {
 
 	// property
+    private val dp35 by lazy {
+        resources.getDimensionPixelOffset(R.dimen.dp15)
+    }
 	private val list = arrayListOf<ResponseBean.AnswerList>()
 	private var result: ResponseBean.Result by Delegates.notNull()
     private val options by lazy {
@@ -54,22 +61,46 @@ class QuestionsAndAnswers : Fragment() {
     }
     private val selectedBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.web_zan_red).also {
-            it.setBounds(0, 0, 35, 35)
+            it.setBounds(0, 0, dp35, dp35)
         }
     }
     private val cancelBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.web_zan).also {
-            it.setBounds(0, 0, 35, 35)
+            it.setBounds(0, 0, dp35, dp35)
         }
     }
     private val reviewBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.review).also {
-            it.setBounds(0, 0, 35, 35)
+            it.setBounds(0, 0, dp35, dp35)
         }
     }
 
     // observer
     private lateinit var obs: View.() -> Unit
+    private val umListener = object : UMShareListener {
+        override fun onResult(p0: SHARE_MEDIA?) {
+            doAsync {
+                val body = "{\"taskId\":\"$taskId\", \"type\":\"5\"}"
+                val response = NetBuild.getResponse(body, 144)
+                if (response != null && "0" in response) {
+                    uiThread { showToast("分享成功!") }
+                } else {
+                    uiThread { showToast("分享失败, 错误代码[QAA88]") }
+                }
+            }
+        }
+
+        override fun onCancel(p0: SHARE_MEDIA?) {
+            showToast("取消分享")
+        }
+
+        override fun onError(p0: SHARE_MEDIA?, p1: Throwable?) {
+            Toast.makeText(context, p1.toString(), Toast.LENGTH_LONG).show()
+        }
+
+        override fun onStart(p0: SHARE_MEDIA?) {
+        }
+    }
 
 	// adapter
 	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
@@ -78,6 +109,7 @@ class QuestionsAndAnswers : Fragment() {
     private lateinit var taskId: String
     private var starWidth = 0
     private var answerCountWidth = 0
+
 
 	// View
 	private var recycle by notNullSingleValue<RecyclerView>()
@@ -102,9 +134,8 @@ class QuestionsAndAnswers : Fragment() {
 			= R.layout.fragment_questions_answers
 
     override fun initArgs(bundle: Bundle?) {
-        bundle?.let {
-            taskId = bundle.getString("taskId", "")
-        }
+        if (bundle == null) return
+        taskId = bundle.getString("taskId", "")
     }
 
 	override fun initWidget(root: View) {
@@ -313,7 +344,7 @@ class QuestionsAndAnswers : Fragment() {
 		val praise = holder.find<TextView>(R.id.item_praise)            // 点赞状态展示
 		val icon = holder.find<ImageView>(R.id.item_icon)               // 头像
 		val content = holder.find<TextView>(R.id.item_content)          // 内容
-		val praises = holder.find<TextView>(R.id.item_praise_count)     // 点赞数
+//		val praises = holder.find<TextView>(R.id.item_praise_count)     // 点赞数
 		val read = holder.find<TextView>(R.id.item_read_count)          // 阅读数
 		val img = holder.find<ImageView>(R.id.item_img)                 // 回复图片
         val commentCount = holder.find<TextView>(R.id.item_comment)     // 评论数
@@ -324,12 +355,12 @@ class QuestionsAndAnswers : Fragment() {
 		content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
 
 		name.text = data.from_nickName
-		praises.text = "${data.commentLike} 赞"
+        praise.text = if (data.commentLike > 0) "${data.commentLike}" else "赞"
 		read.text = if (data.clickSum > 0) "${data.clickSum} 阅读" else "0 阅读"
         commentCount.text = data.comment_count.toString()
         shareCount.text = if (data.transmit_count > 0) data.transmit_count.toString() else "分享"
 
-        praises.tag = data.commentLike
+        praise.tag = data.commentLike
 
 		Glide.with(icon).load(data.faceImg).into(icon)
 
@@ -344,7 +375,21 @@ class QuestionsAndAnswers : Fragment() {
         }
 
         holder.find<View>(R.id.item_share_c).setOnClickListener {
-            showToast("分享 !")
+            // debug
+            val url = "http://192.168.1.123:8080/neworld/user/210?commentId=${data.commentId}&userId=$userId"
+            // release
+//            val url = "http://192.168.1.123:8080/neworld/user/210?commentId=${data.commentId}&userId=$userId"
+            val um = UMWeb(url)
+            um.title = result.title
+            um.description = data.content
+            if (!TextUtils.isEmpty(data.commentImg)) {
+                um.setThumb(UMImage(context, data.commentImg))
+            }
+            ShareAction(activity)
+                    .withMedia(um)
+                    .setDisplayList(SHARE_MEDIA.QZONE, SHARE_MEDIA.QQ, SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
+                    .setCallback(umListener)
+                    .open()
         }
 
         holder.find<View>(R.id.item_comment_c).setOnClickListener {
@@ -369,17 +414,17 @@ class QuestionsAndAnswers : Fragment() {
             doAsync {
                 NetBuild.getResponse(map, 193).let {
                     if ("0" in it) {
-                        var temp = praises.tag as Int
+                        var temp = praise.tag as Int
                         uiThread {
                             if (!isChecked) {
                                 praise.setCompoundDrawables(selectedBg, null, null, null)
-                                praises.text = "${++temp} 赞"
+                                praise.text = "${++temp}"
                             } else {
                                 praise.setCompoundDrawables(cancelBg, null, null, null)
-                                praises.text = "${--temp} 赞"
+                                praise.text = if (--temp == 0) "赞" else temp.toString()
                             }
                             isChecked = !isChecked
-                            praises.tag = temp
+                            praise.tag = temp
                         }
                     } else {
                         showToast("出错了!(如果频繁出错请到用户反馈处反馈错误代码[193])")

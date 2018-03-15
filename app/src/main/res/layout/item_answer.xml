@@ -52,26 +52,23 @@
         app:layout_constraintTop_toBottomOf="@id/item_content"
         tools:src="@mipmap/bigimage" />
 
+    <!--<TextView-->
+    <!--android:id="@+id/item_praise_count"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/dp5"-->
+    <!--android:textColor="#999999"-->
+    <!--android:textSize="@dimen/sp12"-->
+    <!--tools:text="12345赞" />-->
+
     <TextView
-        android:id="@+id/item_praise_count"
+        android:id="@+id/item_read_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp5"
         android:textColor="#999999"
         android:textSize="@dimen/sp12"
         app:layout_constraintTop_toBottomOf="@id/item_img"
-        tools:text="12345赞" />
-
-    <TextView
-        android:id="@+id/item_read_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp5"
-        android:layout_marginStart="@dimen/dp5"
-        android:textColor="#999999"
-        android:textSize="@dimen/sp12"
-        app:layout_constraintLeft_toRightOf="@id/item_praise_count"
-        app:layout_constraintTop_toTopOf="@id/item_praise_count"
         tools:text="300万阅读" />
 
     <View
@@ -82,7 +79,7 @@
         android:background="@color/gray"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_praise_count" />
+        app:layout_constraintTop_toBottomOf="@id/item_read_count" />
 
     <LinearLayout
         android:layout_width="0dp"

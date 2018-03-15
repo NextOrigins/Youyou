@@ -277,7 +277,10 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, AddChildActivity.class));
                 break;
             case R.id.my_subject:
-	            startActivity(new Intent(context, MySubjectActivity.class));
+                // 暂时取消考证订单
+//	            startActivity(new Intent(context, MySubjectActivity.class));
+                // 图书订单
+                startActivity(new Intent(context, BooksOrderActivity.class));
                 // 暂时没有图书订单
                 /*AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 if (dialogView.getParent() != null)

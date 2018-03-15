@@ -63,4 +63,5 @@
     <dimen name="sp10">10sp</dimen>
     <dimen name="dp40">40dp</dimen>
     <dimen name="dp135">135dp</dimen>
+    <dimen name="dp13">13dp</dimen>
 </resources>
