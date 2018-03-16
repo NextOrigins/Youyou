@@ -159,7 +159,7 @@
             app:layout_constraintTop_toBottomOf="@id/line1" />
 
         <Button
-            android:id="@+id/up"
+            android:id="@+id/add"
             android:layout_width="@dimen/dp25"
             android:layout_height="@dimen/dp25"
             android:layout_marginEnd="@dimen/dp15"
@@ -177,12 +177,12 @@
             android:paddingRight="@dimen/dp15"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/buy_count"
-            app:layout_constraintRight_toLeftOf="@id/up"
+            app:layout_constraintRight_toLeftOf="@id/add"
             app:layout_constraintTop_toTopOf="@id/buy_count"
             tools:text="1" />
 
         <Button
-            android:id="@+id/down"
+            android:id="@+id/reduce"
             android:layout_width="@dimen/dp25"
             android:layout_height="@dimen/dp25"
             android:background="#F1F1F1"

@@ -1,5 +1,6 @@
 package com.neworld.youyou.view.mview.books
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -18,7 +19,6 @@ import com.tencent.mm.opensdk.modelpay.PayReq
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import kotlin.properties.Delegates
 
 /**
@@ -26,11 +26,12 @@ import kotlin.properties.Delegates
  */
 class BooksShopPay : Activity() {
 
-    private val price by lazy { intent.getStringExtra("price").toDouble() }
+    private var price: Double = 0.0
     private val icon by lazy { intent.getStringExtra("iconImg") }
     private val name by lazy { intent.getStringExtra("name") }
     private val bookId by lazy { intent.getIntExtra("bookId", 0).toString() }
     private val expressFee by lazy { intent.getDoubleExtra("expressFee", 0.0) }
+    private val fromOrder by lazy { intent.getBooleanExtra("fromOrder", false) }
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("userId", userId),
                 Pair("orderId", orderId), Pair("addressId", addressId))
@@ -97,15 +98,11 @@ class BooksShopPay : Activity() {
     }*/
 
     override fun initWidget() {
-        delivery.setOnClickListener {
-            startActivityForResult(Intent(this@BooksShopPay, AddressActivity::class.java), totalPrice)
-        }
-//        description.setOnClickListener {
-//            // 没定需求. 同步iOS不需要新界面(买家留言)
-//        }
+        close.setOnClickListener { finish() }
+
         commit.setOnClickListener {
             if (ip == null) {
-                showSnackBar(_parent, "未检测到WiFi模块, 请到用户反馈处反馈此问题, 我们会尽快解决", 2000)
+                showSnackBar(_parent, "未检测到WiFi模块", 2000)
                 return@setOnClickListener
             }
             val map = hashMapOf<CharSequence, CharSequence>()
@@ -132,6 +129,7 @@ class BooksShopPay : Activity() {
                     showToast(getString(R.string.text_uninstalled_wchat))
                     return@doAsync
                 }
+
                 PayReq().run {
                     appId = pay.appid
                     prepayId = pay.prepayid
@@ -144,58 +142,44 @@ class BooksShopPay : Activity() {
                     api.sendReq(this@run)
                 }
             }
-            /*hashMapOf<CharSequence, CharSequence>().run {
-                put("userId", userId)
-                put("money", money)
-                put("subjectId", "0")
-                put("typeId", "0")
-                put("babyName", name)
-                put("phone", _phone.text)
-                put("spbill_create_ip", ip!!)
-                put("orderId", orderId)
-                put("count", totalPrice.toString())
-                doAsync {
-                    val response = NetBuild.getResponse(this@run, 188)
-                    val pay: Pay = Gson().fromJson(response,
-                            object : TypeToken<Pay>() {}.type)
-                    pay.let {
-                        if (it.status == 0) {
-                            val api = WXAPIFactory.createWXAPI(this@BooksShopPay, it.appid)
-                            if (!api.isWXAppInstalled) {
-                                showToast(getString(R.string.text_uninstalled_wchat))
-                                return@doAsync
-                            }
-                            PayReq().run {
-                                appId = it.appid
-                                prepayId = it.prepayid
-                                nonceStr = it.noncestr
-                                timeStamp = it.timeStamp
-                                sign = it.sign
-                                partnerId = "1480432402"
-                                packageValue = "Sign=WXPay"
-                                api.registerApp(it.appid)
-                                api.sendReq(this)
-                            }
-                        } else
-                            uiThread { showSnackBar(_parent, "商品卖完了哦亲_") }
-                    }
-                }
-            }*/
         }
-        up.setOnClickListener {
+        if (fromOrder) {
+            description.isFocusable = false
+            commit.text = "付款"
+            return
+        }
+
+        delivery.setOnClickListener {
+            startActivityForResult(Intent(this@BooksShopPay, AddressActivity::class.java), totalPrice)
+        }
+//        description.setOnClickListener {
+//            // 没定需求. 同步iOS不需要新界面(买家留言)
+//        }
+        add.setOnClickListener {
             val i = count.text.toString().toInt() + 1
             totalPrice = i
         }
-        down.setOnClickListener {
+        reduce.setOnClickListener {
             val i = count.text.toString().toInt() - 1
             if (i == 0) return@setOnClickListener
             totalPrice = i
         }
         description.clearFocus()
-        close.setOnClickListener { finish() }
     }
 
     override fun initData() {
+        if (fromOrder) {
+            val orderId = intent.getStringExtra("orderId")
+            val body = "{\"userId\":\"$userId\", \"orderId\":\"$orderId\"}"
+//            doAsync {
+//                val response = NetBuild.getResponse(body, 189)
+//                LogUtils.LOG_JSON(response)
+//            }
+            response(this@BooksShopPay::onResponse, "189", body)
+            return
+        }
+        price = intent.getStringExtra("price")?.toDouble() ?: 0.0
+
         totalPrice = 1
         val str = "快递费用${expressFee}元"
         _express_fee.text = str
@@ -218,6 +202,34 @@ class BooksShopPay : Activity() {
         }
 
         loadAddress()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onResponse(response: ResponseBean.BooksOrderModel) {
+        val data = response.menuList
+        val user = response.UserAddressList
+
+        if (user == null || user.status == 1) {
+            showToast("出现未知错误")
+            return
+        }
+
+        _name.text = user.consignee
+        _phone.text = user.phone
+        _address.text = user.address
+
+        book_name.text = data.bookName // 书名
+        book_price.text = data.price.toString() // 图标旁边的价格
+        num.text = "x${data.count}"  // 总数 : x2个
+        count.text = data.count.toString()  // 总数
+        Glide.with(book_icon).load(data.iconImg).into(book_icon) // 书的预览图
+        commodity.text = "共${data.count}件商品"    // 商品总数
+
+        _express_fee.text = "快递费用${data.expressFee}元"
+        val str: CharSequence = data.userMeassge ?: ""
+        description.setText(str)
+
+        total.text = data.money.toString()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -245,20 +257,22 @@ class BooksShopPay : Activity() {
         map["userId"] = userId
         NetBuild.response({
             val list = it.menuList
-            if (list.isEmpty()) dialog.show()
-            else list.firstOrNull { it.status == 0 } ?: list[0]
-                    .let {
-                        _name.text = it.consignee
-                        _phone.text = it.phone
-                        _address.text = it.address
-                        addressId = it.id
-                    }
+            if (list.isEmpty()) {
+                dialog.show()
+            } else {
+                list.firstOrNull { it.status == 0 } ?: list[0].let {
+                    _name.text = it.consignee
+                    _phone.text = it.phone
+                    _address.text = it.address
+                    addressId = it.id
+                }
+            }
         }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBody::class.java, map)
     }
 
     override fun onBackPressed() {
         doAsync {
-            if (!TextUtils.isEmpty(_name.text))
+            if (!TextUtils.isEmpty(_name.text) && !fromOrder)
                 NetBuild.getResponse(map, 184)
         }
         super.onBackPressed()
@@ -266,7 +280,7 @@ class BooksShopPay : Activity() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         doAsync {
-            if (!TextUtils.isEmpty(_name.text))
+            if (!TextUtils.isEmpty(_name.text) && !fromOrder)
                 NetBuild.getResponse(map, 184)
         }
         super.onSaveInstanceState(outState)

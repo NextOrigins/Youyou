@@ -1,5 +1,6 @@
 package com.neworld.youyou.view.mview.my
 
+import android.content.Intent
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -14,6 +15,7 @@ import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.books.BooksShopPay
 import kotlinx.android.synthetic.main.activity_books_order.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -38,6 +40,12 @@ class BooksOrderActivity : Activity() {
             val icon = holder.find<ImageView>(R.id.item_icon)
             val sum = holder.find<TextView>(R.id.item_num)
             val total = holder.find<TextView>(R.id.item_total)
+
+            holder.find<View>(R.id.item_parent).setOnClickListener {
+                startActivity(Intent(this@BooksOrderActivity, BooksShopPay::class.java)
+                        .putExtra("orderId", data.orderId)
+                        .putExtra("fromOrder", true))
+            }
 
             when (data.payStatus) {
                 0 -> {

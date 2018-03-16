@@ -31,7 +31,7 @@
             style="@style/rb_bottom_style"
             android:checked="true"
             android:drawableTop="@drawable/bottom_bar_parent_selector"
-            android:text="家长圈" />
+            android:text="问答" />
 
         <!--<RadioButton-->
             <!--android:id="@+id/rb_subject"-->
