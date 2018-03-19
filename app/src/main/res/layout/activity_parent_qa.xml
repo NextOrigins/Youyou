@@ -34,6 +34,17 @@
         </android.support.v7.widget.Toolbar>
     </android.support.v7.widget.CardView>
 
+    <ProgressBar
+        android:id="@+id/_progress"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/_card"
+        tools:progress="60" />
+
     <FrameLayout
         android:id="@+id/_content"
         android:layout_width="0dp"

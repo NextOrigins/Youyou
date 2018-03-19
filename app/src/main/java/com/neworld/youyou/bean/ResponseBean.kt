@@ -367,7 +367,7 @@ class ResponseBean {
             val userId: String, //null
             val bookName: String, //新概念英语青少版(3B)
             val bookId: Int, //24
-            val money: Int, //50
+            val money: Double, //50
             val collectSum: Int, //1
             val phone: String, //13888888888
             val bookSum: Int, //0
@@ -384,5 +384,30 @@ class ResponseBean {
             val id: Int, //198
             val userId: Int, //33866
             val status: Int //1
+    )
+
+    data class QACollectBody(
+            val menuList: List<QAMenu>,
+            val status: Int //0
+    )
+
+    data class QAMenu(
+            val comment_count: Int, //24
+            val imgs: String,
+            val like: Int, //0
+            val voideImg: Any, //null
+            val ip_address: Any, //null
+            val sort: Int, //1
+            val type: Any, //null
+            val title: String, //如何用10个以内汉字写一篇微小说？
+            val from_uid: Int, //10002
+            val content: Any, //null
+            val collect_count: Int, //1
+            val stickStatus: Int, //1
+            val newDate: String, //2018-02-07 18:26:05
+            val id: Int, //1923
+            val createDate: String, //2018-02-06 17:26:53
+            val status: Int, //0
+            val transmit_count: Int //0
     )
 }

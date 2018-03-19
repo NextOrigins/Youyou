@@ -91,6 +91,14 @@ class QAParent : Activity() {
                     begin.addToBackStack("fragment2")
 
                     begin.commit()
+
+                    answersDetail!!.loadingListener({ _progress.visibility = View.VISIBLE }, {
+                        _progress.progress = it
+                        if (it >= 100) {
+                            _progress.visibility = View.GONE
+                            _progress.progress = 0
+                        }
+                    })
                 }
             }
 

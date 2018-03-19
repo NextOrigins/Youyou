@@ -39,7 +39,7 @@ import kotlin.properties.Delegates
 class QuestionsAndAnswers : Fragment() {
 
 	// property
-    private val dp35 by lazy {
+    private val dp15 by lazy {
         resources.getDimensionPixelOffset(R.dimen.dp15)
     }
 	private val list = arrayListOf<ResponseBean.AnswerList>()
@@ -61,18 +61,23 @@ class QuestionsAndAnswers : Fragment() {
     }
     private val selectedBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.web_zan_red).also {
-            it.setBounds(0, 0, dp35, dp35)
+            it.setBounds(0, 0, dp15, dp15)
         }
     }
     private val cancelBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.web_zan).also {
-            it.setBounds(0, 0, dp35, dp35)
+            it.setBounds(0, 0, dp15, dp15)
         }
     }
     private val reviewBg by lazy {
         ContextCompat.getDrawable(context, R.drawable.review).also {
-            it.setBounds(0, 0, dp35, dp35)
+            it.setBounds(0, 0, dp15, dp15)
         }
+    }
+    private val imgWideHigh by lazy {
+        val point = Point()
+        activity.windowManager.defaultDisplay.getSize(point)
+        (point.x - (resources.getDimensionPixelOffset(R.dimen.dp10) - dp15 * 2)) / 3
     }
 
     // observer
@@ -443,6 +448,13 @@ class QuestionsAndAnswers : Fragment() {
             img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
                     img, data.commentImg!!) }
             View.VISIBLE
+        }
+
+        img.post {
+            img.layoutParams = img.layoutParams.also {
+                it.width = imgWideHigh
+                it.height = imgWideHigh
+            }
         }
 
 		holder.find<View>(R.id._parent).setOnClickListener {

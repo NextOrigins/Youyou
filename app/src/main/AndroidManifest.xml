@@ -122,6 +122,9 @@
 
         <activity android:name=".view.mview.parents.QAParent"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
+
+        <activity android:name=".view.mview.common.QACollectActivity"
+            android:screenOrientation="portrait" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

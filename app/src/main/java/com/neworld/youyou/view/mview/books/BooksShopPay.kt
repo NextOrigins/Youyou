@@ -19,6 +19,7 @@ import com.tencent.mm.opensdk.modelpay.PayReq
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.properties.Delegates
 
 /**
@@ -28,10 +29,11 @@ class BooksShopPay : Activity() {
 
     private var price: Double = 0.0
     private val icon by lazy { intent.getStringExtra("iconImg") }
-    private val name by lazy { intent.getStringExtra("name") }
     private val bookId by lazy { intent.getIntExtra("bookId", 0).toString() }
-    private val expressFee by lazy { intent.getDoubleExtra("expressFee", 0.0) }
+    private var name = ""
+    private var expressFee = 0.0
     private val fromOrder by lazy { intent.getBooleanExtra("fromOrder", false) }
+    private val bookCount by lazy { intent.getIntExtra("count", 0) }
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("userId", userId),
                 Pair("orderId", orderId), Pair("addressId", addressId))
@@ -39,7 +41,7 @@ class BooksShopPay : Activity() {
 
     private val userId by preference("userId", "")
 
-    private var orderId: String by notNullSingleValue()
+    private var orderId = ""
     private var addressId: String by Delegates.notNull()
     private var money: String by Delegates.notNull()
     private val ip: String? by lazy { NetUtil.wifiConfig() }
@@ -84,6 +86,13 @@ class BooksShopPay : Activity() {
         total_money.text = str
     }
 
+    override fun initArgs(bundle: Bundle?): Boolean {
+        expressFee = bundle?.getDouble("expressFee", 0.0) ?: 0.0
+        name = bundle?.getString("name") ?: ""
+
+        return super.initArgs(bundle)
+    }
+
     override fun getContentLayoutId(): Int = R.layout.activity_books_pay
 
     /*override fun initArgs(bundle: Bundle?): Boolean {
@@ -105,28 +114,36 @@ class BooksShopPay : Activity() {
                 showSnackBar(_parent, "未检测到WiFi模块", 2000)
                 return@setOnClickListener
             }
+            if (commit.text == "请稍等..") return@setOnClickListener
+
+            commit.text = "请稍等.."
             val map = hashMapOf<CharSequence, CharSequence>()
             map["userId"] = userId
             map["money"] = money
             map["subjectId"] = "0"
             map["typeId"] = "0"
             map["babyName"] = name
-            map["phone"] = _phone.text
+            map["phone"] = _phone.text.toString()
             map["spbill_create_ip"] = ip!!
             map["orderId"] = orderId
             map["count"] = totalPrice.toString()
+            map["addressId"] = addressId
+            map["userMessage"] = description.text.toString()
 
             doAsync {
+                logE("request map = $map")
                 val response = NetBuild.getResponse(map, 188)
                 val pay: Pay = Gson().fromJson(response, Pay::class.java)
                 if (pay.status == 1) {
                     showSnackBar(_parent, "商品卖完了哦亲~")
+                    uiThread { commit.text = if (!fromOrder) "提交订单" else "  付款  " }
                     return@doAsync
                 }
 
                 val api = WXAPIFactory.createWXAPI(baseContext, pay.appid)
                 if (!api.isWXAppInstalled) {
                     showToast(getString(R.string.text_uninstalled_wchat))
+                    uiThread { commit.text = if (!fromOrder) "提交订单" else "  付款  " }
                     return@doAsync
                 }
 
@@ -140,12 +157,14 @@ class BooksShopPay : Activity() {
                     packageValue = "Sign=WXPay"
                     api.registerApp(pay.appid)
                     api.sendReq(this@run)
+
+                    uiThread { commit.text = if (!fromOrder) "提交订单" else "  付款  " }
                 }
             }
         }
         if (fromOrder) {
             description.isFocusable = false
-            commit.text = "付款"
+            commit.text = "  付款  "
             return
         }
 
@@ -171,11 +190,8 @@ class BooksShopPay : Activity() {
         if (fromOrder) {
             val orderId = intent.getStringExtra("orderId")
             val body = "{\"userId\":\"$userId\", \"orderId\":\"$orderId\"}"
-//            doAsync {
-//                val response = NetBuild.getResponse(body, 189)
-//                LogUtils.LOG_JSON(response)
-//            }
             response(this@BooksShopPay::onResponse, "189", body)
+
             return
         }
         price = intent.getStringExtra("price")?.toDouble() ?: 0.0
@@ -209,7 +225,7 @@ class BooksShopPay : Activity() {
         val data = response.menuList
         val user = response.UserAddressList
 
-        if (user == null || user.status == 1) {
+        if (user == null) {
             showToast("出现未知错误")
             return
         }
@@ -219,17 +235,21 @@ class BooksShopPay : Activity() {
         _address.text = user.address
 
         book_name.text = data.bookName // 书名
-        book_price.text = data.price.toString() // 图标旁边的价格
-        num.text = "x${data.count}"  // 总数 : x2个
-        count.text = data.count.toString()  // 总数
         Glide.with(book_icon).load(data.iconImg).into(book_icon) // 书的预览图
-        commodity.text = "共${data.count}件商品"    // 商品总数
 
         _express_fee.text = "快递费用${data.expressFee}元"
         val str: CharSequence = data.userMeassge ?: ""
         description.setText(str)
 
-        total.text = data.money.toString()
+        name = user.consignee
+        addressId = data.addressId.toString()
+        orderId = data.orderId
+        expressFee = data.expressFee // 快递费
+        price = data.price // 设置单价
+        totalPrice = bookCount // 设置联动数字
+
+
+        total.text = "¥${data.money}"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

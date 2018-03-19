@@ -80,6 +80,8 @@ class AnswerDetail : Fragment() {
     private var fromCommentId = ""
     private var replyUserName: String? = null
     private var replyContent: String? = null
+    private var onStart: (() -> Unit)? = null
+    private var onLoading: ((new: Int) -> Unit)? = null
 
     // by observer
     private var isShowSoftInput by Delegates.observable(false) { _, old, new ->
@@ -116,7 +118,7 @@ class AnswerDetail : Fragment() {
         bundle?.let {
             index = 0
             taskId = it.getString("taskId")
-            commentId = arguments.getString("cId")
+            commentId = it.getString("cId")
         }
     }
 
@@ -307,7 +309,7 @@ class AnswerDetail : Fragment() {
     }
 
     override fun initData() {
-        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
+//        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
 
@@ -317,6 +319,8 @@ class AnswerDetail : Fragment() {
         map["createDate"] = ""
 
         response(this@AnswerDetail::onResponse, 202, map)
+
+        onStart?.invoke()
     }
 
     @SuppressLint("SetTextI18n")
@@ -466,7 +470,7 @@ class AnswerDetail : Fragment() {
 
         webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                if (newProgress > 75) {
+                if (newProgress > 95) {
                     if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
                     if (arguments.getBoolean("review", false)) {
                         mRecycle.toPosition(1)
@@ -474,6 +478,7 @@ class AnswerDetail : Fragment() {
                         mRecycle.toPosition(0)
                     }
                 }
+                onLoading?.invoke(newProgress)
             }
         }
         webViewClient = object : WebViewClient() {
@@ -530,5 +535,10 @@ class AnswerDetail : Fragment() {
         mReview.layoutParamsWidth(x)
         mLike.layoutParamsWidth(x)
         mNext.layoutParamsWidth(x)
+    }
+
+    fun loadingListener(onStart: () -> Unit, onLoading: (new: Int) -> Unit) {
+        this@AnswerDetail.onStart = onStart
+        this@AnswerDetail.onLoading = onLoading
     }
 }

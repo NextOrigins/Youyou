@@ -23,7 +23,7 @@
         android:id="@+id/head_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="@dimen/dp5"
         android:lineSpacingExtra="3dp"
         android:singleLine="true"
         android:textSize="@dimen/sp16"
@@ -49,11 +49,14 @@
 
     <ImageView
         android:id="@+id/head_img"
-        android:layout_width="@dimen/dp120"
-        android:layout_height="@dimen/dp120"
-        android:layout_marginTop="18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp5"
+        android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:scaleType="fitCenter"
+        android:maxHeight="@dimen/dp120"
+        android:maxWidth="@dimen/dp120"
+        android:scaleType="fitXY"
         app:layout_constraintTop_toBottomOf="@id/head_content"
         tools:src="@mipmap/bigimage" />
 </android.support.constraint.ConstraintLayout>

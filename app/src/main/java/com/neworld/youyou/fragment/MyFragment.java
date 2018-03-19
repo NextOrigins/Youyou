@@ -310,7 +310,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     }
 
     public void toggleRound(boolean b) {
-	    msgHint.setVisibility(b ? View.VISIBLE : View.GONE);
+	    Util.uiThread(() -> msgHint.setVisibility(b ? View.VISIBLE : View.GONE));
     }
 
     private <T extends View> T $(View v, int res) {

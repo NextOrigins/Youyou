@@ -15,4 +15,5 @@
     <color name="status_bar">#08000000</color>
     <color name="light_gray">#F4F5F6</color>
     <color name="gray">#EAEAF0</color>
+    <color name="line_bg">#dfdfdf</color>
 </resources>

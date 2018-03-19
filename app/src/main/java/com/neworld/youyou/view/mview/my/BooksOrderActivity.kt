@@ -44,7 +44,8 @@ class BooksOrderActivity : Activity() {
             holder.find<View>(R.id.item_parent).setOnClickListener {
                 startActivity(Intent(this@BooksOrderActivity, BooksShopPay::class.java)
                         .putExtra("orderId", data.orderId)
-                        .putExtra("fromOrder", true))
+                        .putExtra("fromOrder", true)
+                        .putExtra("count", data.bookCount.toInt()))
             }
 
             when (data.payStatus) {
