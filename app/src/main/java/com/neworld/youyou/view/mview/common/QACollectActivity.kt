@@ -1,10 +1,10 @@
 package com.neworld.youyou.view.mview.common
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.system.Os.bind
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -16,6 +16,8 @@ import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.parents.QAParent
+import com.umeng.socialize.utils.DeviceConfig.context
 import kotlinx.android.synthetic.main.activity_collect_qa.*
 
 /**
@@ -34,16 +36,6 @@ class QACollectActivity : Activity() {
     private var mFootProgress by notNullSingleValue<ProgressBar>()
 
 //    property
-    /*private var filterDate by Delegates.vetoable("") {
-        _, old, new ->
-        if (old.isNotEmpty()) {
-            val one = toDateLong(new)
-            val two = toDateLong(old)
-            return@vetoable one < two
-        }
-
-        return@vetoable true
-    }*/
     private var endDate = ""
 
     override fun getContentLayoutId() = R.layout.activity_collect_qa
@@ -52,7 +44,16 @@ class QACollectActivity : Activity() {
         _close.setOnClickListener { finish() }
 
         _swipe.setOnRefreshListener {
-            initData()
+            if (!_swipe.isRefreshing) _swipe.isRefreshing = true
+            mFootText.text = "加载中..."
+            mFootProgress.visibility = View.VISIBLE
+
+            val map = hashMapOf<CharSequence, CharSequence>()
+            map["userId"] = userId
+            map["createDate"] = ""
+            map["type"] = "5"
+
+            response(::refresh, 113, map)
         }
         _recycle.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         _recycle.adapter = AdapterK(::bind, R.layout.item_qa_collect, arrayListOf())
@@ -69,25 +70,19 @@ class QACollectActivity : Activity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (!_recycle.canScrollVertically(1)) {
-                        if (!_swipe.isRefreshing) _swipe.isRefreshing = true
-                        mFootText.text = "加载中..."
-                        mFootProgress.visibility = View.VISIBLE
-
-                        val map = hashMapOf<CharSequence, CharSequence>()
-                        map["userId"] = userId
-                        map["createDate"] = endDate
-                        map["type"] = "5"
-
-                        response(::refresh, 113, map)
+                        initData()
                     }
                 }
             }
         })
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initData() {
+        if (mFootText.text == "NO DATA") return
+
         if (!_swipe.isRefreshing) _swipe.isRefreshing = true
-        mFootText.text = "加载中..."
+        mFootText.text = "LOADING..."
         mFootProgress.visibility = View.VISIBLE
 
         val map = hashMapOf<CharSequence, CharSequence>()
@@ -98,11 +93,17 @@ class QACollectActivity : Activity() {
         response(::success, 113, map)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun success(body: ResponseBean.QACollectBody) {
         if (_swipe.isRefreshing) _swipe.isRefreshing = false
 
-        mFootText.text = "加载更多"
         mFootProgress.visibility = View.GONE
+        if (body.menuList.isEmpty()) {
+            mFootText.text = "NO DATA"
+            return
+        } else {
+            mFootText.text = "LOAD MORE"
+        }
 
         if (body.status == 1) {
             showToast("出错了 !")
@@ -113,16 +114,19 @@ class QACollectActivity : Activity() {
         mAdapter.addData(body.menuList)
         mAdapter.notifyDataSetChanged()
 
-        endDate = body.menuList.last().createDate
-        /*body.menuList.forEach {
-            filterDate = it.createDate
-        }*/
+        endDate = body.menuList.last().newDate
     }
 
+    @SuppressLint("SetTextI18n")
     private fun refresh(body: ResponseBean.QACollectBody) {
         if (_swipe.isRefreshing) _swipe.isRefreshing = false
 
-        mFootText.text = "加载更多"
+        if (body.menuList.isEmpty()) {
+            mFootText.text = "NO DATA"
+            return
+        } else {
+            mFootText.text = "LOAD MORE"
+        }
         mFootProgress.visibility = View.GONE
 
         if (body.status == 1) {
@@ -134,7 +138,7 @@ class QACollectActivity : Activity() {
         mAdapter.addDataAndClear(body.menuList)
         mAdapter.notifyDataSetChanged()
 
-        endDate = body.menuList.last().createDate
+        endDate = body.menuList.last().newDate
     }
 
     @SuppressLint("SetTextI18n")
@@ -149,14 +153,12 @@ class QACollectActivity : Activity() {
         title.text = data.title
         commentCount.text = "${data.transmit_count}评论"
         Glide.with(icon).load(data.imgs.split('|').first()).into(icon)
+
+        holder.find<View>(R.id.item_parent).setOnClickListener {
+            startActivity(Intent(baseContext, QAParent::class.java)
+                    .putExtra("position", position)
+                    .putExtra("taskId", data.id.toString())
+                    .putExtra("commentId", data.id.toString()))
+        }
     }
-
-    /*private fun loadData() {
-        val map = hashMapOf<CharSequence, CharSequence>()
-        map["userId"] = userId
-        map["createDate"] = endDate
-        map["type"] = "5"
-
-        response(::success, 113, map)
-    }*/
 }

@@ -60,17 +60,17 @@ class QuestionsAndAnswers : Fragment() {
         return@vetoable true
     }
     private val selectedBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.web_zan_red).also {
+        ContextCompat.getDrawable(context, R.drawable.push2).also {
             it.setBounds(0, 0, dp15, dp15)
         }
     }
     private val cancelBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.web_zan).also {
+        ContextCompat.getDrawable(context, R.drawable.push).also {
             it.setBounds(0, 0, dp15, dp15)
         }
     }
     private val reviewBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.review).also {
+        ContextCompat.getDrawable(context, R.drawable.qa_review).also {
             it.setBounds(0, 0, dp15, dp15)
         }
     }

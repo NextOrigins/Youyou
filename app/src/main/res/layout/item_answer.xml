@@ -105,11 +105,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:drawableLeft="@drawable/share"
+                android:drawableLeft="@drawable/qa_share"
                 android:drawablePadding="@dimen/dp5"
-                android:drawableStart="@drawable/share"
+                android:drawableStart="@drawable/qa_share"
                 android:gravity="center"
-                android:text="@string/share" />
+                android:text="@string/share"
+                android:textColor="#2b2b2b" />
         </FrameLayout>
 
         <FrameLayout
@@ -125,9 +126,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableLeft="@drawable/review"
+                android:drawableLeft="@drawable/qa_review"
                 android:drawablePadding="@dimen/dp5"
-                android:drawableStart="@drawable/review"
+                android:drawableStart="@drawable/qa_review"
+                android:textColor="#2b2b2b"
                 tools:text="1" />
         </FrameLayout>
 
@@ -144,10 +146,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableLeft="@drawable/web_zan"
+                android:drawableLeft="@drawable/push"
                 android:drawablePadding="@dimen/dp5"
-                android:drawableStart="@drawable/web_zan"
-                android:text="@string/praise" />
+                android:drawableStart="@drawable/push"
+                android:text="@string/praise"
+                android:textColor="#2b2b2b" />
         </FrameLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
