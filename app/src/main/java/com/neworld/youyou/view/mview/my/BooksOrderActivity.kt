@@ -42,10 +42,12 @@ class BooksOrderActivity : Activity() {
             val total = holder.find<TextView>(R.id.item_total)
 
             holder.find<View>(R.id.item_parent).setOnClickListener {
-                startActivity(Intent(this@BooksOrderActivity, BooksShopPay::class.java)
-                        .putExtra("orderId", data.orderId)
-                        .putExtra("fromOrder", true)
-                        .putExtra("count", data.bookCount.toInt()))
+                if (data.payStatus == 0) {
+                    startActivity(Intent(this@BooksOrderActivity, BooksShopPay::class.java)
+                            .putExtra("orderId", data.orderId)
+                            .putExtra("fromOrder", true)
+                            .putExtra("count", data.bookCount.toInt()))
+                }
             }
 
             when (data.payStatus) {
