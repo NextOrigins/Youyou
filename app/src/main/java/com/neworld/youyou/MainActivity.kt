@@ -24,6 +24,7 @@ import com.neworld.youyou.fragment.HotFragment
 import com.neworld.youyou.fragment.MyFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
+import com.neworld.youyou.update.UpdateChecker
 import com.neworld.youyou.utils.NetworkObs
 import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.preference
@@ -99,6 +100,9 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         initView()
         initData()
         initBroadcast()
+
+        //进行版本更新
+        UpdateChecker.checkForDialog(this)
     }
 
     private fun initBroadcast() {
