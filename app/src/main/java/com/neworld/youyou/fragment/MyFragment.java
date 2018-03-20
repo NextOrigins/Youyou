@@ -103,23 +103,24 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 	@Override
 	public void onStart() {
 		super.onStart();
-		new Thread(() -> {
-			String response = NetBuild.getResponse("{\"userId\":\"" + userId + "\"}", 194); // 194 是否收到消息
-            NewStatusBody b;
-			try {
-			    b = new Gson().fromJson(response, new TypeToken<NewStatusBody>(){}.getType());
-            } catch (Exception e) {
-			    b = null;
-            }
-			if (b == null) {
-                ToastUtil.showToast("数据错误, 请到用户反馈处反馈此问题[MF116]");
-				return;
-			}
-			if (b.status == 0) {
-				newMsg = b.newMeStatus;
-				toggleRound(b.newMeStatus == 1);
-			}
-		}).start();
+        msgHint.setVisibility(View.GONE);
+//		new Thread(() -> {
+//			String response = NetBuild.getResponse("{\"userId\":\"" + userId + "\"}", 194); // 194 是否收到消息
+//            NewStatusBody b;
+//			try {
+//			    b = new Gson().fromJson(response, new TypeToken<NewStatusBody>(){}.getType());
+//            } catch (Exception e) {
+//			    b = null;
+//            }
+//			if (b == null) {
+//                ToastUtil.showToast("数据错误, 请到用户反馈处反馈此问题[MF116]");
+//				return;
+//			}
+//			if (b.status == 0) {
+//				newMsg = b.newMeStatus;
+//				toggleRound(b.newMeStatus == 1);
+//			}
+//		}).start();
 	}
 
 	@Override
@@ -309,9 +310,9 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
-    public void toggleRound(boolean b) {
+    /*public void toggleRound(boolean b) {
 	    Util.uiThread(() -> msgHint.setVisibility(b ? View.VISIBLE : View.GONE));
-    }
+    }*/
 
     private <T extends View> T $(View v, int res) {
         return v.findViewById(res);
