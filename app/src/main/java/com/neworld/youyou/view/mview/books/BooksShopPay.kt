@@ -128,7 +128,8 @@ class BooksShopPay : Activity() {
             map["orderId"] = orderId
             map["count"] = totalPrice.toString()
             map["addressId"] = addressId
-            map["userMessage"] = description.text.toString()
+            map["userMeassage"] = description.text.toString()
+            map["bookId"] = bookId
 
             doAsync {
                 logE("request map = $map")
@@ -269,7 +270,7 @@ class BooksShopPay : Activity() {
                 _phone.text = getStringExtra("phone")
             }
         }
-        addressId = data?.getStringExtra("addressId") ?: ""
+        addressId = data?.getIntExtra("addressId", 0).toString()
     }
 
     private fun loadAddress() {
