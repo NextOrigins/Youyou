@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 
 public class LogUtils {
 
-    private static final boolean LOG = false; // TODO : release版本改为false
+    private static final boolean LOG = true; // TODO : release版本改为false
     private static int start;
     private static int end;
     private static final Object obj = new Object();

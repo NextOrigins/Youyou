@@ -112,15 +112,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         filter.addAction("android.net.wifi.STATE_CHANGE")
         netObs = NetworkObs(object : NetworkObs.NetworkState {
             override fun onWifiConnected() {
-
+                // wifi 连接上
             }
 
             override fun onMobileConnected() {
-
+                // 移动数据连接
             }
 
             override fun onNetworkUnknown() {
-
+                // 没有网络连接
             }
         })
         registerReceiver(netObs, filter)

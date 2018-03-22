@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.Html;
 import android.view.KeyEvent;
 
-import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.R;
 
 
@@ -34,7 +32,7 @@ class UpdateDialog {
         }
     }
 
-    static void show(final Activity context, String content, final String downloadUrl, int version) {
+    static void show(final Activity context, String content, final String downloadUrl) {
         if (isContextValid(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle(R.string.android_auto_update_dialog_title);

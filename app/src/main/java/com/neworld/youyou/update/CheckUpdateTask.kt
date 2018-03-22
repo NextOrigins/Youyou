@@ -60,23 +60,20 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
             when {
                 (m > l) -> {
                     // 强制更新
-                    showOneDialog(context, "重大版本更新, 请升级新版本", Fields.APK_URL, 0)
-                    showNotification(context, "重大版本更新, 请升级新版本", Fields.APK_URL)
+                    showOneDialog(context, "重大版本更新, 请升级新版本", url)
+                    showNotification(context, "重大版本更新, 请升级新版本", url)
                 }
                 (res.out == 0 && r > l) -> {
                     // 提示更新
-                    showDialog(context, res.msg!!, Fields.APK_URL)
-                    showNotification(context, res.msg, Fields.APK_URL)
+                    showDialog(context, res.msg!!, url)
+                    showNotification(context, res.msg, url)
                 }
             }
         }
     }
 
     private fun toInt(str: String): Int {
-        return str
-                .split("\\.".toRegex())
-                .map { it.toInt() }
-                .reduce { acc, i -> acc + i }
+        return str.split('.').fold(0){ total, next -> total + next.toInt() } // TODO : 待测试
     }
 
     /**
@@ -86,8 +83,8 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
         UpdateDialog.show(context, content, apkUrl)
     }
 
-    private fun showOneDialog(context: Activity, content: String, apkUrl: String, versionNum: Int) {
-        UpdateDialog.show(context, content, apkUrl, versionNum)
+    private fun showOneDialog(context: Activity, content: String, apkUrl: String) {
+        UpdateDialog.show(context, content, apkUrl)
     }
 
     /**
