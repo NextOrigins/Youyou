@@ -23,7 +23,7 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase;
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.umeng.socialize.ShareAction;
@@ -67,17 +67,17 @@ public class CollectDetailActivity extends AppCompatActivity implements View.OnC
         initView();
     }
     private void initUser() {
-        userId = Sputil.getString(CollectDetailActivity.this, "userId", "");
+        userId = SPUtil.getString(CollectDetailActivity.this, "userId", "");
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        boolean wxShare = Sputil.getBoolean(this, "WXShare", false);
+        boolean wxShare = SPUtil.getBoolean(this, "WXShare", false);
         if (wxShare) {
                 shareNet(clickTask, clickPosition);
-            Sputil.saveBoolean(this, "WXShare", false);
+            SPUtil.saveBoolean(this, "WXShare", false);
         }
     }
 

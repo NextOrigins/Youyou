@@ -16,7 +16,7 @@ import com.neworld.youyou.bean.BlackNameBean;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 
@@ -40,7 +40,7 @@ public class BlackNameActivity extends AppCompatActivity implements View.OnClick
         initData();
     }
     private void initUser() {
-        userId = Sputil.getString(BlackNameActivity.this, "userId", "");
+        userId = SPUtil.getString(BlackNameActivity.this, "userId", "");
     }
     //164
     private void initData() {

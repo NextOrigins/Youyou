@@ -77,7 +77,7 @@ class StudentActivity : AppCompatActivity() {
     }
 
     private fun data() {
-        val userId = Sputil.getString(this, "userId", "")
+        val userId = SPUtil.getString(this, "userId", "")
         val map = HashMap<String, String>()
         map.put("userId", userId)
         NetBuild.response(object : NetBuild.ResponseObs<ChildDetailBean> {

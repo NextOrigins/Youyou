@@ -16,7 +16,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.neworld.youyou.R;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 
 public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,7 +33,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUser() {
-        userId = Sputil.getString(TestActivity.this, "userId", "");
+        userId = SPUtil.getString(TestActivity.this, "userId", "");
     }
 
     private void initView() {

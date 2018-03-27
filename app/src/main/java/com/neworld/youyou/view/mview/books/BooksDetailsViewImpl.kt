@@ -20,9 +20,9 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.presenter.books.DetailImpl
-import com.neworld.youyou.utils.SpUtil
 import com.neworld.youyou.utils.ToastUtil
 import com.neworld.youyou.utils.notNullSingleValue
+import com.neworld.youyou.utils.preference
 import com.neworld.youyou.view.mview.common.LinearImage
 import kotlinx.android.synthetic.main.activity_books_detail.*
 
@@ -55,7 +55,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         textView
     }
 
-    private val userId by lazy { SpUtil.getString(baseContext, "userId") }
+    private val userId by preference("userId", "")
     private val map by lazy {
         hashMapOf<CharSequence, CharSequence>(Pair("userId", userId), Pair("taskId", bkId.toString())
                 , Pair("type", "4"))

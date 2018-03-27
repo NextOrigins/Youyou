@@ -11,7 +11,7 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase;
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class HotStudyFragment extends BaseFragment {
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
+        userId = SPUtil.getString(context, "userId", "");
     }
 
     @Override

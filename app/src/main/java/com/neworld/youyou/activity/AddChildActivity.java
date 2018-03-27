@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import com.neworld.youyou.R;
 import com.neworld.youyou.adapter.ChildDetailFragment;
 import com.neworld.youyou.fragment.AddChildFragment;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.view.BackHandlerHelper;
 import com.neworld.youyou.view.ChildId;
 
@@ -48,7 +48,7 @@ public class AddChildActivity extends AppCompatActivity implements ChildId {
     }
 
     private void initUser() {
-        userId = Sputil.getString(AddChildActivity.this, "userId", "");
+        userId = SPUtil.getString(AddChildActivity.this, "userId", "");
         Intent intent = getIntent();
         if (intent != null) {
             Bundle extras = intent.getExtras();

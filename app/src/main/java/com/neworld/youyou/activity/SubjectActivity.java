@@ -31,7 +31,7 @@ import com.neworld.youyou.bean.SubjectDetailBean;
 import com.neworld.youyou.bean.SubjectOrder;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.FocusListView;
@@ -101,7 +101,7 @@ public class SubjectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initUser() {
-        userId = Sputil.getString(SubjectActivity.this, "userId", "");
+        userId = SPUtil.getString(SubjectActivity.this, "userId", "");
     }
 
     // 162 us

@@ -17,7 +17,7 @@ import com.neworld.youyou.bean.MySubjectBean;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class MySubjectActivity extends AppCompatActivity implements View.OnClick
         initData();
     }
     private void initUser() {
-        userId = Sputil.getString(MySubjectActivity.this, "userId", "");
+        userId = SPUtil.getString(MySubjectActivity.this, "userId", "");
     }
     private void initData() {
         new Thread(new Runnable() {

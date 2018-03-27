@@ -21,8 +21,7 @@ import com.neworld.youyou.bean.AddressBean;
 import com.neworld.youyou.dialog.DialogUtils;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.LogUtils;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ThreadUtils;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
@@ -63,7 +62,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     private void initView() {
         //获取userId
-        mUserId = Sputil.getString(this, "userId", "");
+        mUserId = SPUtil.getString(this, "userId", "");
         RecyclerView mRecyclerView = findViewById(R.id.add_recycleView_address);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this
                 , LinearLayoutManager.VERTICAL, false));

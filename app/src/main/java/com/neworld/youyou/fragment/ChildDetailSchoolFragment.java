@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.neworld.youyou.R;
 import com.neworld.youyou.activity.AddChildActivity;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 
 /**
  * Created by tt on 2017/8/15.
@@ -45,7 +45,7 @@ public class ChildDetailSchoolFragment extends BaseFragment implements View.OnCl
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
+        userId = SPUtil.getString(context, "userId", "");
     }
 
     @Override

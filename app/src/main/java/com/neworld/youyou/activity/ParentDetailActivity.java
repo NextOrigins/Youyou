@@ -28,20 +28,14 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.LogUtils;
-import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.NetUtil;
-import com.neworld.youyou.utils.Sputil;
-import com.neworld.youyou.utils.ToastUtil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class ParentDetailActivity extends AppCompatActivity implements View.OnClickListener {
@@ -92,7 +86,7 @@ public class ParentDetailActivity extends AppCompatActivity implements View.OnCl
 	}
 
 	private void initUser() {
-		userId = Sputil.getString(ParentDetailActivity.this, "userId", "");
+		userId = SPUtil.getString(ParentDetailActivity.this, "userId", "");
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")

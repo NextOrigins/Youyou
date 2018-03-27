@@ -20,7 +20,7 @@ import com.neworld.youyou.bean.SubjectWebBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -125,7 +125,7 @@ public class SubjectWebActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initUser() {
-        userId = Sputil.getString(SubjectWebActivity.this, "userId", "");
+        userId = SPUtil.getString(SubjectWebActivity.this, "userId", "");
         Bundle extras = getIntent().getExtras();
         assert extras != null;
         taskId = extras.getInt("taskId");

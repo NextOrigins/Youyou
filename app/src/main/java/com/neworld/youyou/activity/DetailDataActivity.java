@@ -14,7 +14,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.DetailDataBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 
 public class DetailDataActivity extends AppCompatActivity implements View.OnClickListener {
@@ -57,7 +57,7 @@ public class DetailDataActivity extends AppCompatActivity implements View.OnClic
         getNetData();
     }
     private void initUser() {
-        userId = Sputil.getString(DetailDataActivity.this, "userId", "");
+        userId = SPUtil.getString(DetailDataActivity.this, "userId", "");
     }
     private void getNetData() {
         //ewogICAgInVzZXJJZCI6ICIxMDg1MCIsCiAgICAiY3JlYXRlRGF0ZSI6ICIiCn0=

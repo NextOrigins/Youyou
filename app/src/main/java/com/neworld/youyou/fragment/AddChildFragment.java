@@ -16,7 +16,7 @@ import com.neworld.youyou.bean.ChildDetailBean;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class AddChildFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
+        userId = SPUtil.getString(context, "userId", "");
     }
 
     @Override

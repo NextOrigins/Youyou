@@ -1,20 +1,15 @@
 package com.neworld.youyou.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.R;
 import com.neworld.youyou.activity.FocusActivity;
 import com.neworld.youyou.activity.PublishActivity;
 import com.neworld.youyou.utils.NetUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 
 /**
@@ -43,7 +38,7 @@ public class ParentPageFragment extends BaseFragment implements View.OnClickList
     }
 
     private void initUser() {
-        String userId = Sputil.getString(context, "userId", "");
+        String userId = SPUtil.getString(context, "userId", "");
     }
     @Override
     public Object getData() {

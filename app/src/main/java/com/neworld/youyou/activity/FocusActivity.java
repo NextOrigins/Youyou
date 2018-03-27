@@ -1,11 +1,9 @@
 package com.neworld.youyou.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -17,7 +15,7 @@ import com.neworld.youyou.bean.FocusTitleBean;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.NewContentFocus;
@@ -46,7 +44,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initUser() {
-        userId = Sputil.getString(FocusActivity.this, "userId", "");
+        userId = SPUtil.getString(FocusActivity.this, "userId", "");
     }
 
     private void initData() {

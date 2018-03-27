@@ -76,21 +76,21 @@ public class WXEntryActivity extends WXCallbackActivity {
 			switch (resp.errCode) {
 				case BaseResp.ErrCode.ERR_OK:
 					result = "分享成功";
-					Sputil.saveBoolean(this, "WXShare", true);
+					SPUtil.saveBoolean(this, "WXShare", true);
 					break;
 				case BaseResp.ErrCode.ERR_USER_CANCEL:
 					result = "取消分享";
-					Sputil.saveBoolean(this, "WXShare", false);
+					SPUtil.saveBoolean(this, "WXShare", false);
 					break;
 				case BaseResp.ErrCode.ERR_SENT_FAILED:
 					result = "分享失败";
-					Sputil.saveBoolean(this, "WXShare", false);
+					SPUtil.saveBoolean(this, "WXShare", false);
 					break;
 				deftimg:
                     ToastUtil.showToast(result+"");
 					result = "未知原因";
 
-					Sputil.saveBoolean(this, "WXShare", false);
+					SPUtil.saveBoolean(this, "WXShare", false);
 					break;
 			}
 			ToastUtil.showToast(result);

@@ -96,18 +96,18 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        val isSuccess = Sputil.getBoolean(context, getString(R.string.android_success), false)
+        val isSuccess = SPUtil.getBoolean(context, getString(R.string.android_success), false)
         if (isSuccess) {
             Thread {
                 getParent(PARENTDOWN)
-                Sputil.saveBoolean(context, getString(R.string.android_success), false)
+                SPUtil.saveBoolean(context, getString(R.string.android_success), false)
             }.start()
         }
 
-        val wxShare = Sputil.getBoolean(context, "WXShare", false)
+        val wxShare = SPUtil.getBoolean(context, "WXShare", false)
         if (wxShare) {
             shareNet(clickTask, clickPosition)
-            Sputil.saveBoolean(context, "WXShare", false)
+            SPUtil.saveBoolean(context, "WXShare", false)
         }
     }
 
@@ -229,7 +229,7 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
             clear()
             put("userId", userId)
             NetBuild.getResponse(this, 152).let {
-                Sputil.saveString(context, "userId", "")
+                SPUtil.saveString(context, "userId", "")
                 if (login2) intent.putExtra("login2", true)
                 startActivity(intent)
                 activity?.mainApplication?.removeALLActivity_()

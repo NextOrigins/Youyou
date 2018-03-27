@@ -19,15 +19,12 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.LoginBean;
 import com.neworld.youyou.bean.LoginUserIdBean;
 import com.neworld.youyou.bean.PersonDataBean;
-import com.neworld.youyou.bean.ReportBean;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
-import com.neworld.youyou.utils.DelegateExtKt;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.NetBuild;
-import com.neworld.youyou.utils.SpUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -114,9 +111,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     LoginUserIdBean loginUserIdBean = GsonUtil.parseJsonToBean(content, LoginUserIdBean.class);
                     if (loginUserIdBean != null && loginUserIdBean.getStatus() == 0) {
                         if (loginUserIdBean.getUserId() != null && loginUserIdBean.getUserId().length() > 0) {
-                            Sputil.saveString(LoginActivity.this, "userId", loginUserIdBean.getUserId());
-                            Sputil.saveString(LoginActivity.this, "number", photoNumber);
-                            Sputil.saveString(LoginActivity.this, "token", loginUserIdBean.getToken());
+                            SPUtil.saveString(LoginActivity.this, "userId", loginUserIdBean.getUserId());
+                            SPUtil.saveString(LoginActivity.this, "number", photoNumber);
+                            SPUtil.saveString(LoginActivity.this, "token", loginUserIdBean.getToken());
                             Map<CharSequence, CharSequence> map = new HashMap<>();
                             map.put("userId", loginUserIdBean.getUserId());
                             map.put("token", loginUserIdBean.getToken());
@@ -124,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 		                        @Override
 		                        public void onSuccess(PersonDataBean personDataBean) {
 			                        int role = personDataBean.getMenuList().getRole();
-			                        Sputil.saveInt(LoginActivity.this, "role", role);
+			                        SPUtil.saveInt(LoginActivity.this, "role", role);
 		                        }
 
 		                        @Override

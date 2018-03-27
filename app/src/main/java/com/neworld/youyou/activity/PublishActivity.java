@@ -44,7 +44,7 @@ import com.neworld.youyou.bean.TypeBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.select.ImageSelectorUtils;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 
@@ -132,7 +132,7 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initUser() {
-        userId = Sputil.getString(PublishActivity.this, "userId", "");
+        userId = SPUtil.getString(PublishActivity.this, "userId", "");
     }
 
     private void initData() {
@@ -811,7 +811,7 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
                 if (newList != null && newList.size() > 0) {
                     uploadingPhoto(taskId);
                 } else {
-                    Sputil.saveBoolean(PublishActivity.this, "isSuccess", true);
+                    SPUtil.saveBoolean(PublishActivity.this, "isSuccess", true);
                     PublishActivity.this.finish();
                 }
             } else {
@@ -839,7 +839,7 @@ public class PublishActivity extends AppCompatActivity implements View.OnClickLi
             String imageMsg = sendImageMsg(path);
             postPhoto(taskId, imageMsg, photoEnd);
         }
-        Sputil.saveBoolean(PublishActivity.this, "isSuccess", true);
+        SPUtil.saveBoolean(PublishActivity.this, "isSuccess", true);
         progressDialog.dismiss();
         PublishActivity.this.finish();
     }

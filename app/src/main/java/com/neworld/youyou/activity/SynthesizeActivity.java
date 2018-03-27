@@ -23,7 +23,7 @@ import com.neworld.youyou.bean.LoginBean;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 
 import java.util.regex.Matcher;
@@ -71,7 +71,7 @@ public class SynthesizeActivity extends AppCompatActivity implements View.OnClic
         initData();
     }
     private void initUser() {
-        userId = Sputil.getString(SynthesizeActivity.this, "userId", "");
+        userId = SPUtil.getString(SynthesizeActivity.this, "userId", "");
     }
     private void initData() {
 
@@ -315,7 +315,7 @@ public class SynthesizeActivity extends AppCompatActivity implements View.OnClic
                     ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
                     if (returnStatus != null && returnStatus.getStatus() == 0) {
                         if (personName != null && personName.length() > 0) {
-                            Sputil.saveString(SynthesizeActivity.this, "personName", personName);
+                            SPUtil.saveString(SynthesizeActivity.this, "personName", personName);
                         }
                         resultData();
                     }

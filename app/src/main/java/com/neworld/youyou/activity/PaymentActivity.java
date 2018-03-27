@@ -26,7 +26,7 @@ import com.neworld.youyou.bean.PaymentBean;
 import com.neworld.youyou.bean.ReturnChatBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.tencent.mm.opensdk.modelpay.PayReq;
@@ -154,7 +154,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initUser() {
-        userId = Sputil.getString(PaymentActivity.this, "userId", "");
+        userId = SPUtil.getString(PaymentActivity.this, "userId", "");
         wxApi = WXAPIFactory.createWXAPI(PaymentActivity.this, "wxd7cf604bab22c904", true);
         wxApi.registerApp("wxd7cf604bab22c904");
     }
@@ -188,7 +188,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         String examinee_name = extras.getString("examinee_name", "");
         if (examinee_name != null && examinee_name.length() > 0) {
             studentName = examinee_name;
-            String number = Sputil.getString(PaymentActivity.this, "number", "");
+            String number = SPUtil.getString(PaymentActivity.this, "number", "");
             tvName.setText(examinee_name + "/" + number);
             rlStudentMsg.setClickable(false);
             ivJian.setVisibility(View.GONE);
@@ -364,7 +364,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     // ctStr,@"typeId":self.type,@"babyName":self.payNameStr,@"phone":self.phoneNumber,@"spbill_create_ip":[GetIP getIPAddress],@"orderId":self.orderId};
     private void orderMoney() {
         btOrder.setOnClickListener(null);
-        final String number = Sputil.getString(PaymentActivity.this, "number", "");
+        final String number = SPUtil.getString(PaymentActivity.this, "number", "");
         if (number != null && number.length() > 0 && orderId != 0 && subjectId != 0 && typeId != 0 && ip != null && ip.length() > 0) {
             new Thread(new Runnable() {
                 @Override
@@ -436,7 +436,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 String name = data.getStringExtra("studentName");
                 studentName = name;
                 if (!TextUtils.isEmpty(name)) {
-                    String number = Sputil.getString(PaymentActivity.this, "number", "");
+                    String number = SPUtil.getString(PaymentActivity.this, "number", "");
                     if (TextUtils.isEmpty(number))
                         number = "testNum";
 
@@ -449,7 +449,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 String stringExtra = data.getStringExtra("name");
                 studentName = stringExtra;
                 if (stringExtra != null && stringExtra.length() > 0) {
-                    String number = Sputil.getString(PaymentActivity.this, "number", "");
+                    String number = SPUtil.getString(PaymentActivity.this, "number", "");
                     tvName.setText(stringExtra + "/" + number);
                 }
             }

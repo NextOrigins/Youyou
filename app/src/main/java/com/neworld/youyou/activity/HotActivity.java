@@ -24,7 +24,7 @@ import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -78,7 +78,7 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void initUder() {
-        userId = Sputil.getString(HotActivity.this, "userId", "");
+        userId = SPUtil.getString(HotActivity.this, "userId", "");
     }
 
     private void initView() {

@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.util.Base64
 import com.neworld.youyou.utils.NetBuild
-import com.neworld.youyou.utils.Sputil
+import com.neworld.youyou.utils.SPUtil
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.ByteArrayOutputStream
@@ -34,7 +34,7 @@ class PhotoModelImpl : PhotoModel {
         }
         doAsync {
             val map = HashMap<CharSequence, CharSequence>()
-            val userId = Sputil.getString(context, "userId", "")
+            val userId = SPUtil.getString(context, "userId", "")
             map.put("userId", userId)
             map.put("content", content)
             map.put("bugId", "0")

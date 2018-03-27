@@ -16,8 +16,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.PersonDataBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.LogUtils;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.nine.CircleImageView;
@@ -54,7 +53,7 @@ public class PersonDataActivity extends AppCompatActivity implements View.OnClic
         initNetData();
     }
     private void initUser() {
-        userId = Sputil.getString(PersonDataActivity.this, "userId", "");
+        userId = SPUtil.getString(PersonDataActivity.this, "userId", "");
     }
     private void initNetData() {
         new Thread(new Runnable() {

@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,8 +25,7 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase;
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.NetBuild;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.nine.CircleImageView;
@@ -38,9 +36,7 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PersonDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -199,7 +195,7 @@ public class PersonDetailActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initUser() {
-        userId = Sputil.getString(PersonDetailActivity.this, "userId", "");
+        userId = SPUtil.getString(PersonDetailActivity.this, "userId", "");
     }
 
     private void initData() {

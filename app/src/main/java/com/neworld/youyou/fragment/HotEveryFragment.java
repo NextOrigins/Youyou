@@ -16,7 +16,7 @@ import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase;
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 
@@ -115,8 +115,8 @@ public class HotEveryFragment extends BaseFragment {
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
-        token = Sputil.getString(context, "token", "");
+        userId = SPUtil.getString(context, "userId", "");
+        token = SPUtil.getString(context, "token", "");
         activity = ((MainActivity) getActivity());
     }
 
@@ -142,7 +142,7 @@ public class HotEveryFragment extends BaseFragment {
                 if (content != null && content.length() > 0) {
                     ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
                     if (returnStatus != null && returnStatus.getStatus() == 0) {
-                        Sputil.saveString(context, "userId", "");
+                        SPUtil.saveString(context, "userId", "");
                         startActivity(new Intent(context, LoginActivity.class).putExtra("login2", true));
                         MyApplication mainApplication = activity.getMainApplication();
                         mainApplication.removeALLActivity_();

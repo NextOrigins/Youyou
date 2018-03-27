@@ -16,7 +16,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 
 public class SubjectCommentActivity extends AppCompatActivity implements View.OnClickListener {
@@ -36,7 +36,7 @@ public class SubjectCommentActivity extends AppCompatActivity implements View.On
         initView();
     }
     private void initUser() {
-        userId = Sputil.getString(SubjectCommentActivity.this, "userId", "");
+        userId = SPUtil.getString(SubjectCommentActivity.this, "userId", "");
         Bundle extras = getIntent().getExtras();
         from_userId = extras.getString("from_uid");
         taskId = extras.getString("taskId");

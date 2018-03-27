@@ -1,15 +1,12 @@
 package com.neworld.youyou.fragment;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -18,30 +15,22 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.neworld.youyou.MainActivity;
 import com.neworld.youyou.R;
 import com.neworld.youyou.activity.AddChildActivity;
 import com.neworld.youyou.activity.LoginActivity;
 import com.neworld.youyou.activity.MyCollectActivity;
-import com.neworld.youyou.activity.MySubjectActivity;
 import com.neworld.youyou.activity.PersonDataActivity;
 import com.neworld.youyou.activity.PhotoActivity;
 import com.neworld.youyou.activity.SettingActivity;
-import com.neworld.youyou.add.AchievementActivity;
 import com.neworld.youyou.add.feed.FeedbackActivity;
 import com.neworld.youyou.bean.HotBean;
 import com.neworld.youyou.bean.PersonDataBean;
 import com.neworld.youyou.bean.ReturnStatus;
-import com.neworld.youyou.dialog.DialogUtils;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.LogUtils;
-import com.neworld.youyou.utils.NetBuild;
-import com.neworld.youyou.utils.Sputil;
-import com.neworld.youyou.utils.ToastUtil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
 import com.neworld.youyou.view.nine.CircleImageView;
@@ -96,8 +85,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
-        token = Sputil.getString(context, "token", "");
+        userId = SPUtil.getString(context, "userId", "");
+        token = SPUtil.getString(context, "token", "");
     }
 
 	@Override
@@ -126,10 +115,10 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 	@Override
     public void onResume() {
         super.onResume();
-        String personName = Sputil.getString(context, "personName", "");
+        String personName = SPUtil.getString(context, "personName", "");
         if (personName != null && personName.length() > 0) {
             tvName.setText(personName);
-            Sputil.saveString(context, "personName", "");
+            SPUtil.saveString(context, "personName", "");
         }
     }
 
@@ -247,7 +236,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
             if (content != null && content.length() > 0) {
                 ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
                 if (returnStatus != null && returnStatus.getStatus() == 0) {
-                    Sputil.saveString(context, "userId", "");
+                    SPUtil.saveString(context, "userId", "");
                     startActivity(new Intent(context, LoginActivity.class).putExtra("login2", true));
                     MyApplication mainApplication = activity.getMainApplication();
                     mainApplication.removeALLActivity_();

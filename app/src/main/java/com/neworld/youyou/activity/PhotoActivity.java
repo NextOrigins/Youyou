@@ -41,7 +41,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.LogUtils;
 import com.neworld.youyou.utils.PhotoUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.view.PhotoViewPager;
 
@@ -92,7 +92,7 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initUser() {
-        userId = Sputil.getString(PhotoActivity.this, "userId", "");
+        userId = SPUtil.getString(PhotoActivity.this, "userId", "");
     }
 
     private void initData() {

@@ -16,7 +16,7 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 
 public class HotCommentActivity extends AppCompatActivity implements View.OnClickListener {
@@ -52,7 +52,7 @@ public class HotCommentActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initUser() {
-        userId = Sputil.getString(HotCommentActivity.this, "userId", "");
+        userId = SPUtil.getString(HotCommentActivity.this, "userId", "");
         extras = getIntent().getExtras();
         from_userId = extras.getString("from_uid", "");
         taskId = extras.getString("taskId", "");

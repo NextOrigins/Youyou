@@ -13,7 +13,7 @@ import com.neworld.youyou.adapter.AddStudentAdapter;
 import com.neworld.youyou.bean.ChildDetailBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class AllStudentActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initUser() {
-        userId = Sputil.getString(AllStudentActivity.this, "userId", "");
+        userId = SPUtil.getString(AllStudentActivity.this, "userId", "");
     }
 
     private void initData() {

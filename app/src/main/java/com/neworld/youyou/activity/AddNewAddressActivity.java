@@ -13,7 +13,7 @@ import android.widget.EditText;
 import com.neworld.youyou.R;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.DialogUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Validator;
 
@@ -57,7 +57,7 @@ public class AddNewAddressActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initUser() {
-        mUserId = Sputil.getString(this, "userId", "");
+        mUserId = SPUtil.getString(this, "userId", "");
     }
 
     private void initView() {

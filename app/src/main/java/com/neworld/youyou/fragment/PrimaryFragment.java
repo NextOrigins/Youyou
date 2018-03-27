@@ -19,7 +19,7 @@ import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.bean.SchoolNameBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
-import com.neworld.youyou.utils.Sputil;
+import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 
@@ -77,7 +77,7 @@ public class PrimaryFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void initUser() {
-        userId = Sputil.getString(context, "userId", "");
+        userId = SPUtil.getString(context, "userId", "");
     }
 
     @Override

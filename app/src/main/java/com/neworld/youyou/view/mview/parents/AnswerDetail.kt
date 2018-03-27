@@ -262,8 +262,8 @@ class AnswerDetail : Fragment() {
                             replyUserName,
                             "",
                             "",
-                            user.id,
-                            0,
+                            if (fromCommentId.isEmpty()) 0 else fromCommentId.toInt(), // TODO : commentId如果不是回复就传空？是的话就传回复的commentId？
+                            commentId.toInt(),
                             Util.getDateFormatInstance().format(Date())
                     )
                     uiThread {
@@ -310,7 +310,7 @@ class AnswerDetail : Fragment() {
 
     override fun initData() {
 //        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
-        val url = "http://192.168.1.123:8080/neworld/android/201?userId=$userId&commentId=$commentId"
+        val url = "${Fields.BASEURL}201?userId=$userId&commentId=$commentId"
         mWeb.loadUrl(url)
 
         val map = hashMapOf<CharSequence, CharSequence>()
