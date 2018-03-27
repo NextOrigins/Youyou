@@ -324,7 +324,7 @@ class ResponseBean {
             val remarkName: String?, //晴天
             val commentImg: String,
             val to_uid: String, //10854
-            val commentId: Int, //2717
+            val commentId: String, //2717
             val taskId: Int, //2575
             val createDate: String //2018-01-31 11:04:08
     )

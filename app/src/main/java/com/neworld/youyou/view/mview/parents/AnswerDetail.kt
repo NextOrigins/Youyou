@@ -21,6 +21,8 @@ import android.webkit.*
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
@@ -31,6 +33,7 @@ import com.neworld.youyou.view.nine.CircleImageView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 /**
@@ -248,7 +251,10 @@ class AnswerDetail : Fragment() {
 
             doAsync {
                 val response = NetBuild.getResponse(map, 206)
-                if ("0" in response) {
+                logE("206 response = $response")
+                val responseMap = Gson().fromJson<HashMap<String, String>>(response,
+                        object : TypeToken<HashMap<String, String>>() {}.type)
+                if (responseMap["status"] == "0") {
                     val insert = ResponseBean.AnswersDetailList(
                             user.id,
                             0,
@@ -262,7 +268,7 @@ class AnswerDetail : Fragment() {
                             replyUserName,
                             "",
                             "",
-                            if (fromCommentId.isEmpty()) 0 else fromCommentId.toInt(), // TODO : commentId如果不是回复就传空？是的话就传回复的commentId？
+                            responseMap["comentId"] ?: "",
                             commentId.toInt(),
                             Util.getDateFormatInstance().format(Date())
                     )
@@ -397,7 +403,7 @@ class AnswerDetail : Fragment() {
 
         reply.setOnClickListener {
             fromUserId = data.from_userId.toString()
-            fromCommentId = data.commentId.toString()
+            fromCommentId = data.commentId
             replyContent = data.content
             replyUserName = data.from_nickName
             isShowSoftInput = true
@@ -409,7 +415,7 @@ class AnswerDetail : Fragment() {
                     val map = hashMapOf<CharSequence, CharSequence>()
                     map["userId"] = userId
                     map["taskId"] = data.taskId.toString()
-                    map["commentId"] = data.commentId.toString()
+                    map["commentId"] = data.commentId
 
                     doAsync {
                         val response = NetBuild.getResponse(map, 207)
@@ -424,7 +430,7 @@ class AnswerDetail : Fragment() {
         }
 
         praise.setOnClickListener {
-            praises["commentId"] = data.commentId.toString()
+            praises["commentId"] = data.commentId
             praises["status"] = if (praise.isChecked) "1" else "0"
 
             doAsync {
@@ -494,7 +500,8 @@ class AnswerDetail : Fragment() {
                 return true
             }
 
-            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
+            override fun onReceivedError(view: WebView?,
+                                         errorCode: Int, description: String?, failingUrl: String?) {
                 showToast("error : $errorCode")
             }
         }
