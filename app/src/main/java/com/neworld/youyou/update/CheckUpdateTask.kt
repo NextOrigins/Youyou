@@ -73,7 +73,7 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
     }
 
     private fun toInt(str: String): Int {
-        return str.split('.').fold(0){ total, next -> total + next.toInt() } // TODO : 待测试
+        return str.split('.').fold(0){ total, next -> total + next.toInt() }
     }
 
     /**

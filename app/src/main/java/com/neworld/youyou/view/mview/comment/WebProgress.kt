@@ -26,7 +26,8 @@ constructor(context: Context, attr: AttributeSet? = null, def: Int = 0)
     }
     private var mHeight = 0
     private var mWidth = 0
-    private var mProgress = 0f
+    var newProgress = 0f
+        set(value) { field = value; invalidate() }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         mHeight = h
@@ -35,13 +36,8 @@ constructor(context: Context, attr: AttributeSet? = null, def: Int = 0)
     }
 
     override fun onDraw(canvas: Canvas?) {
-        canvas?.drawRect(0f, 0f, mWidth * mProgress / 100, mWidth.toFloat(), mPaint)
+        canvas?.drawRect(0f, 0f, mWidth * newProgress / 100, mWidth.toFloat(), mPaint)
         super.onDraw(canvas)
-    }
-
-    fun setProgress(newProgress: Int) {
-        mProgress = newProgress.toFloat()
-        invalidate()
     }
 
     fun setColor(color: Int) {

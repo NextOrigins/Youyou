@@ -183,4 +183,9 @@ public class HotEveryFragment extends BaseFragment {
     protected ListView getListView() {
         return refreshableView;
     }
+
+    public void refresh() {
+        ptrlvPri.doPullRefreshing(true, 0);
+        refreshableView.setSelection(0);
+    }
 }

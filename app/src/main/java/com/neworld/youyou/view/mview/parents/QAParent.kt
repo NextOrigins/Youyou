@@ -94,11 +94,10 @@ class QAParent : Activity() {
 
                     answersDetail!!.loadingListener({
                         _progress.visibility = View.VISIBLE
-                        _progress.max = 100
-                        _progress.progress = 1
+                        _progress.newProgress = 1f
                     }, {
-                        _progress.progress = it
-                        if (it >= 95) {
+                        _progress.newProgress = it.toFloat()
+                        if (it >= 100) {
                             _progress.visibility = View.INVISIBLE
                         }
                     })

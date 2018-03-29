@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.ViewGroup
 
-import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -55,12 +54,11 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var myFragment: MyFragment? = null
     private var fragmentManager: FragmentManager by Delegates.notNull()
     private var isSuccess = false
+    private var homeEnable = true
+    private var hotNewsEnable = false
     var mainApplication: MyApplication? = null
 //        private set
     private var netObs: NetworkObs? = null
-
-    private val windowData: WindowManager
-        get() = windowManager
 
 //    private var booksFragment: EBooks? = null
     private var booksFragment: BooksViewImpl? = null
@@ -134,7 +132,25 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //        rbSubject = findViewById(R.id.rb_subject)
         rbHot = findViewById(R.id.rb_hot)
         rbMy = findViewById(R.id.rb_my)
-        windowData
+
+        rbParent!!.setOnClickListener { // 点击主页面刷新
+            if (rbParent!!.isChecked) {
+                if (!homeEnable) {
+                    homeEnable = true
+                    return@setOnClickListener
+                }
+                parentsQA.rdRefresh()
+            }
+        }
+        rbHot?.setOnClickListener {
+            if (rbHot!!.isChecked) {
+                if (!hotNewsEnable) {
+                    hotNewsEnable = true
+                    return@setOnClickListener
+                }
+                hotFragment?.rdRefresh() // 缺少动画效果
+            }
+        }
     }
 
     private fun initData() {
@@ -155,6 +171,12 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     }
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
+        if (checkedId != R.id.rb_parent) {
+            homeEnable = false
+        }
+        if (checkedId != R.id.rb_hot) {
+            hotNewsEnable = false
+        }
 //        var b = false
         when (checkedId) {
             R.id.rb_parent -> {

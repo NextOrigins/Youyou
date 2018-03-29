@@ -316,8 +316,12 @@ class QuestionsAndAnswers : Fragment() {
         if (split == null || split[0].isEmpty()) {
             headIcon.visibility = View.GONE
         } else {
-            Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
-            headIcon.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity, it, split.first()) }
+            try {
+                Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
+                headIcon.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity, it, split.first()) }
+            } catch (e: Exception) {
+                return
+            }
         }
 
         if (!measured)

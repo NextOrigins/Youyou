@@ -52,10 +52,12 @@ class QAFragment : Fragment() {
     // fields
 	private var userId by preference("userId", "")
 	private var token by preference("token", "")
-	private var cacheJson by preference("cacheJson", "") // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
+    // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
+	private var cacheJson by preference("cacheJson", "")
 	private val role by preference("role", 1) // role = 2 为管理员
 
-	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue() // RecyclerView适配器 (HeaderView FooterView)
+    // RecyclerView适配器 (HeaderView FooterView)
+	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue()
 
     // property & cacheList
 	private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
@@ -98,6 +100,7 @@ class QAFragment : Fragment() {
 
     // cache
     private var cacheIndex = 0 // 读取缓存下标
+    private var readLength = 6 // 每次读取缓存的个数
 
     // status
 	private var b = true // 加载完成提示 只显示一次
@@ -148,6 +151,8 @@ class QAFragment : Fragment() {
                 minDate = readCache.end
                 cacheList.addAll(readCache.menu)
                 savedList.addAll(cacheList)
+
+                logE("cacheList = $cacheList")
             }
 
             map["userId"] = userId
@@ -205,9 +210,13 @@ class QAFragment : Fragment() {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
             b = true
 
-            var k = ""
-            bean.forEach { k = "$k|${it.id}" }
-            savedList.add(0, k.trim('|'))
+            // 缓存
+//            var k = ""
+//            bean.forEach { k = "$k|${it.id}" }
+//            savedList.add(0, k.trim('|'))
+            val temp = arrayListOf<String>()
+            bean.forEach { temp.add(it.id.toString()) }
+            savedList.addAll(temp)
 		}, 1)
 	}
 
@@ -218,60 +227,74 @@ class QAFragment : Fragment() {
 		mFootText.text = "加载中"
 		isUpdate = true
 
-		inRequest({
-            if (it.tokenStatus > 1) {
-                doAsync {
-                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
-                    if ("0" in response) {
-                        userId = ""
-                        uiThread {
-                            startActivity(Intent(context, LoginActivity::class.java)
-                                    .putExtra("login2", true))
-                            mAdapter.bean.clear()
-                            cacheJson = ""
-                        }
+		inRequest(::upReq, 2)
+	}
+
+    private fun upReq(it: ResponseBean.QABody) {
+        // 判断是否多端登陆
+        if (it.tokenStatus > 1) {
+            doAsync {
+                val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
+                if ("0" in response) {
+                    userId = ""
+                    uiThread {
+                        startActivity(Intent(context, LoginActivity::class.java)
+                                .putExtra("login2", true))
+                        mAdapter.bean.clear()
+                        cacheJson = ""
                     }
                 }
-                return@inRequest
             }
-            if (it.menuList == null) {
-                showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
-                return@inRequest
+            return
+        }
+        if (it.menuList == null) {
+            showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
+            return
+        }
+        val bean = it.menuList
+
+        bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
+            maxDate = it.createDate
+            minDate = it.createDate
+        }
+
+        if (bean.isEmpty() && over) {
+            if (b) {
+                mFootText.text = "—我是有底线的—"
+                mFootPrg.visibility = View.GONE
+                b = false
             }
-			val bean = it.menuList
+            isUpdate = false
+            return
+        }
 
-            bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
-                maxDate = it.createDate
-                minDate = it.createDate
-            }
+        //  判断如果有已删除的item则略继续取id。
+        if (bean.size < 6 && !over) {
+            readLength = 6 - bean.size
+            mAdapter.addData(bean)
+            return
+        } else {
+            readLength = 6
+        }
 
-			if (bean.isEmpty() && over) {
-				if (b) {
-					mFootText.text = "—我是有底线的—"
-					mFootPrg.visibility = View.GONE
-					b = false
-				}
-                isUpdate = false
-				return@inRequest
-			}
-			mAdapter.addData(bean)
-			mAdapter.notifyDataSetChanged()
+        mAdapter.addData(bean)
+        mAdapter.notifyDataSetChanged()
 
-			// 改变FooterView状态
-			mFootText.text = "加载更多"
-			mFootPrg.visibility = View.GONE
-			isUpdate = false
-            b = true
+        // 改变FooterView状态
+        mFootText.text = "加载更多"
+        mFootPrg.visibility = View.GONE
+        isUpdate = false
+        b = true
 
-			// 缓存
-			if (over) {
-                var k = ""
-                bean.forEach { k = "$k|${it.id}" }
-                savedList.add(k.trim('|'))
-			}
+        // 缓存
+        if (over) {
+            bean.forEach { savedList.add(it.id.toString()) }
+        }
 
-		}, 2)
-	}
+        if (mAdapter.bean.size < 7) {
+            downData()
+        }
+    }
 
     private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
         when (type) {
@@ -280,20 +303,12 @@ class QAFragment : Fragment() {
                 map["endDate"] = minDate
                 map["type"] = type.toString()
 
-//                logE("request pull down : createDate = $maxDate, endDate = $minDate")
                 response(s, 199, map)
             }
             2 -> {
                 if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
-                    val id = if (cacheList[cacheIndex].split("\\|".toRegex()).size < 3
-                            && cacheIndex + 1 < cacheList.size) {
-                        "${cacheList[cacheIndex++]}|${cacheList[cacheIndex++]}"
-                    } else {
-                        cacheList[cacheIndex++]
-                    }
-                    map["id"] = id
+                    map["id"] = spliceId()
 
-//                    logE("request pull up from history : id = $id, cacheList = $cacheList")
                     response(s, "199_1", map)
                 } else {
                     over = true
@@ -302,7 +317,6 @@ class QAFragment : Fragment() {
                     map["endDate"] = minDate
                     map["type"] = type.toString()
 
-//                    logE("request pull up to old news : newsDate = $maxDate, endDate = $minDate")
                     response(s, 199, map)
                 }
             }
@@ -393,6 +407,16 @@ class QAFragment : Fragment() {
 			}
 		})
 	}
+
+    private fun spliceId(): String {
+        var temp = 0
+        var id = ""
+        while (temp++ < readLength && cacheIndex < cacheList.size) {
+            id = "$id|${cacheList[cacheIndex++]}"
+        }
+
+        return id.trim('|')
+    }
 
 	override fun onSaveInstanceState(outState: Bundle?) {
 		saveCache()
@@ -517,4 +541,9 @@ class QAFragment : Fragment() {
 	fun resize() {
 		mAdapter.notifyDataSetChanged()
 	}
+
+    fun rdRefresh() {
+        mRecycle.scrollToPosition(0)
+        downData()
+    }
 }

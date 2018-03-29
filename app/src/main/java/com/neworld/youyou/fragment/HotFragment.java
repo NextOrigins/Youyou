@@ -31,15 +31,17 @@ public class HotFragment extends BaseFragment implements View.OnClickListener {
     private HotAdapter hotAdapter;
     private View view;
     private ImageView ivHot;
+    private HotEveryFragment all;
 
     private void initData() {
         tableLayout = (TabLayout) view.findViewById(R.id.tl_hot);
         viewPager = (ViewPager) view.findViewById(R.id.vp_hot);
         ivHot = ((ImageView) view.findViewById(R.id.iv_hot));
         ivHot.setOnClickListener(this);
+        all = new HotEveryFragment();
         if (mShowItems != null) {
             mShowItems.clear();
-            mShowItems.add(new HotInfo(subjectTtiles[0], new HotEveryFragment()));//全部
+            mShowItems.add(new HotInfo(subjectTtiles[0], all));//全部
             mShowItems.add(new HotInfo(subjectTtiles[1], new HotYoungFragment()));//幼升小
             mShowItems.add(new HotInfo(subjectTtiles[2], new HotPrimaryFragment()));//小升初
             mShowItems.add(new HotInfo(subjectTtiles[3], new HotMiddleFragment()));//中考
@@ -82,5 +84,9 @@ public class HotFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(hotintent);
                 break;
         }
+    }
+
+    public void rdRefresh() {
+        all.refresh();
     }
 }
