@@ -269,12 +269,25 @@ class QAFragment : Fragment() {
         }
 
         //  判断如果有已删除的item则略继续取id。
-        if (bean.size < 6 && !over) {
-            readLength = 6 - bean.size
+        if (bean.size < readLength && !over) {
+            val idList = bean.map { it.id.toString() }
+            val temp = arrayListOf<String>()
+            cacheList.take(readLength).forEach {
+                if (!idList.contains(it)) temp.add(it)
+            }
+            if (temp.isNotEmpty()) temp.forEach {
+                cacheList.remove(it)
+                savedList.remove(it)
+            }
+
+            cacheIndex -= temp.size
+            readLength -= bean.size
             mAdapter.addData(bean)
+            upData()
             return
-        } else {
-            readLength = 6
+        } else if (!over) {
+            val count = cacheList.size - cacheIndex
+            readLength = if (count > 6) 6 else count
         }
 
         mAdapter.addData(bean)
@@ -291,7 +304,7 @@ class QAFragment : Fragment() {
             bean.forEach { savedList.add(it.id.toString()) }
         }
 
-        if (mAdapter.bean.size < 7) {
+        if (mAdapter.bean.size < 7 && cacheList.isNotEmpty()) {
             downData()
         }
     }
