@@ -210,13 +210,9 @@ class QAFragment : Fragment() {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
             b = true
 
-            // 缓存
-//            var k = ""
-//            bean.forEach { k = "$k|${it.id}" }
-//            savedList.add(0, k.trim('|'))
             val temp = arrayListOf<String>()
             bean.forEach { temp.add(it.id.toString()) }
-            savedList.addAll(temp)
+            savedList.addAll(0, temp)
 		}, 1)
 	}
 
@@ -270,9 +266,12 @@ class QAFragment : Fragment() {
 
         //  判断如果有已删除的item则略继续取id。
         if (bean.size < readLength && !over) {
+            mAdapter.addData(bean)
+            val l = bean.size - 1
+            val r = mAdapter.bean.size
             val idList = bean.map { it.id.toString() }
             val temp = arrayListOf<String>()
-            cacheList.take(readLength).forEach {
+            cacheList.takeLast(r - l).forEach {
                 if (!idList.contains(it)) temp.add(it)
             }
             if (temp.isNotEmpty()) temp.forEach {
@@ -282,12 +281,12 @@ class QAFragment : Fragment() {
 
             cacheIndex -= temp.size
             readLength -= bean.size
-            mAdapter.addData(bean)
             upData()
             return
         } else if (!over) {
-            val count = cacheList.size - cacheIndex
-            readLength = if (count > 6) 6 else count
+//            val count = cacheList.size - cacheIndex // 如果需要加载缓存的时候不混合加载新数据 就启用这段代码。
+//            readLength = if (count > 6) 6 else count
+            readLength = 6
         }
 
         mAdapter.addData(bean)
@@ -304,7 +303,7 @@ class QAFragment : Fragment() {
             bean.forEach { savedList.add(it.id.toString()) }
         }
 
-        if (mAdapter.bean.size < 7 && cacheList.isNotEmpty()) {
+        if (mAdapter.bean.size > 0 && cacheList.isNotEmpty()) {
             downData()
         }
     }
@@ -558,5 +557,9 @@ class QAFragment : Fragment() {
     fun rdRefresh() {
         mRecycle.scrollToPosition(0)
         downData()
+    }
+
+    fun clearCache() {
+        openCache = false
     }
 }

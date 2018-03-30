@@ -45,11 +45,11 @@
             android:drawableTop="@drawable/bottom_bar_hot_selector"
             android:text="热文" />
 
-        <RadioButton
-            android:id="@+id/rb_books"
-            style="@style/rb_bottom_style"
-            android:drawableTop="@drawable/books_select"
-            android:text="图书" />
+        <!--<RadioButton-->
+            <!--android:id="@+id/rb_books"-->
+            <!--style="@style/rb_bottom_style"-->
+            <!--android:drawableTop="@drawable/books_select"-->
+            <!--android:text="图书" />-->
 
         <RadioButton
             android:id="@+id/rb_my"

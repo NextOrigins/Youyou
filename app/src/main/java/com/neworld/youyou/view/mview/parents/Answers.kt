@@ -114,7 +114,7 @@ class Answers : Activity() {
                                 val data = Gson().fromJson<ImgUrl>(response,
                                         object : TypeToken<ImgUrl>() {}.type)
                                 data.imgUrl
-                            }.let { if (it.isNotEmpty()) append("<img src=\"$it\"/>"); cacheImgPath = it }
+                            }.let { if (it.isNotEmpty()) append("<img src=\"$it\"/>"); cacheImgPath = "$cacheImgPath|$it" }
                         }
                         it.isNotEmpty() -> {
                             it.split('\n').forEach {
@@ -143,7 +143,7 @@ class Answers : Activity() {
                             put("comment_id", "")
                             put("attachedContent", sb.subSequence(0, sb.length - 1))
                             put("content", it)
-                            put("commentImg", cacheImgPath)
+                            put("commentImg", cacheImgPath.trim('|'))
                         }
                         val response = NetBuild.getResponse(map, 205)
                         uiThread {

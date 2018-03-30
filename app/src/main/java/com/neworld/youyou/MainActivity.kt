@@ -151,6 +151,9 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 hotFragment?.rdRefresh() // 缺少动画效果
             }
         }
+        myFragment?.setOnCacheRemoved {
+            parentsQA.clearCache()
+        }
     }
 
     private fun initData() {
@@ -196,10 +199,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //                b = false
                 changePage(myFragment, null)
             }
-            R.id.rb_books -> { // TODO : 图书页面 hide
-//                b = true
-                changePage(booksFragment, null)
-            }
+//            R.id.rb_books -> { // TODO : 图书页面 hide
+////                b = true
+//                changePage(booksFragment, null)
+//            }
         }
 //        statusBar(b)
     }

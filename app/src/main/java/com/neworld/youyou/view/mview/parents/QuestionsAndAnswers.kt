@@ -448,9 +448,10 @@ class QuestionsAndAnswers : Fragment() {
             val options = RequestOptions()
                     .placeholder(R.drawable.deftimg)
                     .error(R.drawable.deftimg)
-            Glide.with(img).load(data.commentImg).apply(options).into(img)
+            logE("Q&A imgs : ${data.commentImg}")
+            Glide.with(img).load(data.commentImg!!.split('|')[0]).apply(options).into(img)
             img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
-                    img, data.commentImg!!) }
+                    img, data.commentImg) }
             View.VISIBLE
         }
 

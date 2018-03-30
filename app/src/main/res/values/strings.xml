@@ -125,5 +125,6 @@
     <string name="no_more_data">没有更多数据了</string>
     <string name="praise">赞</string>
     <string name="qa_collect">问答收藏</string>
+    <string name="clear_home_cache">清除首页缓存</string>
 
 </resources>

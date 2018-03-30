@@ -94,6 +94,7 @@
 
             <RelativeLayout
                 android:id="@+id/my_child"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -132,6 +133,7 @@
                 android:background="#efeff4" />
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/my_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -320,6 +322,7 @@
                 <View
                     android:id="@+id/_msg_hint"
                     android:layout_width="5dp"
+                    android:visibility="gone"
                     android:layout_height="5dp"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/dp35"

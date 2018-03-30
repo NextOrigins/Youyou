@@ -65,6 +65,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private View msgHint;
 
     private int newMsg;
+    private OnCacheRemoved l;
 
     @Override
     public View createView() {
@@ -146,6 +147,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                     }
                 }
             }
+        } else if (resultCode == 6) {
+            if (l != null) l.onRemoved();
         }
     }
 
@@ -291,7 +294,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, MyCollectActivity.class));
                 break;
             case R.id.my_setting:
-	            startActivity(new Intent(context, SettingActivity.class));
+	            startActivityForResult(new Intent(context, SettingActivity.class), 20);
                 break;
             case R.id.feed_back:
                 startActivity(new Intent(context, FeedbackActivity.class));
@@ -310,5 +313,13 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private static class NewStatusBody {
     	int newMeStatus;
     	int status;
+    }
+
+    public void setOnCacheRemoved(OnCacheRemoved l) {
+        this.l = l;
+    }
+
+    private interface OnCacheRemoved {
+        void onRemoved();
     }
 }

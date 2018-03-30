@@ -31,6 +31,7 @@
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
+        android:visibility="gone"
         android:id="@+id/black_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,12 +59,14 @@
     </FrameLayout>
 
     <View
+        android:visibility="gone"
         android:id="@+id/line"
         style="@style/lines"
         android:background="#33000000"
         app:layout_constraintTop_toBottomOf="@id/black_list" />
 
     <FrameLayout
+        android:visibility="gone"
         android:id="@+id/address_manager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -94,6 +97,7 @@
     <View
         android:id="@+id/line1"
         style="@style/lines"
+        android:visibility="gone"
         android:background="#33000000"
         app:layout_constraintTop_toBottomOf="@id/address_manager" />
 
@@ -101,6 +105,7 @@
         android:id="@+id/message_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/line1">
 
         <TextView
@@ -121,7 +126,8 @@
             android:layout_gravity="center_vertical|right"
             android:layout_marginEnd="@dimen/dp50"
             android:layout_marginRight="@dimen/dp50"
-            android:background="@drawable/round_red" />
+            android:background="@drawable/round_red"
+            android:visibility="gone" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -134,11 +140,40 @@
             android:tint="#33000000" />
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/_clear"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp5"
+            android:layout_marginStart="@dimen/dp5"
+            android:padding="@dimen/dp10"
+            android:text="@string/clear_home_cache"
+            android:textColor="#2b2b2b"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/cache_size"
+            android:padding="@dimen/dp10"
+            android:textColor="#2b2b2b"
+            android:textSize="16sp"
+            tools:text="0.72 Mb"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/dp5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="RtlHardcoded" />
+    </FrameLayout>
+
     <View
         android:id="@+id/line2"
         style="@style/lines"
         android:background="#33000000"
-        app:layout_constraintTop_toBottomOf="@id/message_control" />
+        app:layout_constraintTop_toBottomOf="@id/_clear" />
 
     <Button
         android:id="@+id/bt_quit"
@@ -151,5 +186,5 @@
         android:text="@string/login_out"
         android:textColor="#FFF"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/line2" />
+        app:layout_constraintTop_toBottomOf="@id/_clear" />
 </android.support.constraint.ConstraintLayout>
