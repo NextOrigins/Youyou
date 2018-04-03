@@ -28,6 +28,7 @@ import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
 import org.jetbrains.anko.doAsync
@@ -212,7 +213,7 @@ class AnswerDetail : Fragment() {
             }
 
             val point = Point()
-            activity.windowManager.defaultDisplay.getSize(point)
+            activity?.windowManager?.defaultDisplay?.getSize(point)
             // 点击清理缓存数据 & 弹出键盘
             mReply = findViewById<TextView>(R.id._ac_reply).apply {
                 setOnClickListener {
@@ -352,7 +353,7 @@ class AnswerDetail : Fragment() {
         user = t.userbean
         mLike.post { mLike.isChecked = t.commentBean.likeCommentStatus == 0 }
 
-        nextArray = arguments.getStringArray("nextArray")
+        nextArray = arguments!!.getStringArray("nextArray")
     }
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
@@ -422,7 +423,7 @@ class AnswerDetail : Fragment() {
                         uiThread { if ("0" in response) mAdapter.remove(position) }
                     }
                 }
-                displayDialog(context, "确定删除吗", enter)
+                displayDialog(context ?: MyApplication.sContext, "确定删除吗", enter)
             }
             View.VISIBLE
         } else {
@@ -478,7 +479,7 @@ class AnswerDetail : Fragment() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 if (newProgress > 95) {
                     if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
-                    if (arguments.getBoolean("review", false)) {
+                    if (arguments!!.getBoolean("review", false)) {
                         mRecycle.toPosition(1)
                     } else {
                         mRecycle.toPosition(0)
@@ -494,7 +495,7 @@ class AnswerDetail : Fragment() {
                         startActivity(Intent(context, Answers::class.java).putExtras(arguments))
                     } else if ("http://106.14.251.200/neworld/user/153" in it) {
 //                            mRecycle.toPosition(1)
-                        activity.onKeyDown(KeyEvent.KEYCODE_BACK, null)
+                        activity?.onKeyDown(KeyEvent.KEYCODE_BACK, null)
                     }
                 }
                 return true
@@ -534,7 +535,7 @@ class AnswerDetail : Fragment() {
 
     fun resize() {
         val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
+        activity?.windowManager?.defaultDisplay?.getSize(point)
         val width = (point.x - resources.getDimensionPixelOffset(R.dimen.dp40)) / 2
         val x = width / 3
 

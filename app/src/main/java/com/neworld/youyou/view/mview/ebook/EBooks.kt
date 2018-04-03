@@ -34,7 +34,7 @@ class EBooks : Fragment() {
 	
 	private val x by lazy {
         val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
+        activity?.windowManager?.defaultDisplay?.getSize(point)
         (point.x - resources.getDimension(R.dimen.dp10) - spacing * 2) / 3 - resources.getDimension(R.dimen.dp10)
     }
     private val y by lazy { x * 1.420 }

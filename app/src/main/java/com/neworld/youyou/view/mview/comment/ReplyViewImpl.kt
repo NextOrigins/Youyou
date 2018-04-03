@@ -53,11 +53,11 @@ class ReplyViewImpl<T> : Activity(), RecyclerDataView<T> {
     }
 
     override fun initWidget() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            window.statusBarColor = resources.getColor(android.R.color.white)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+//            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//            window.statusBarColor = resources.getColor(android.R.color.white)
+//        }
 
         close.setOnClickListener { onBackPressed() }
         recycler.layoutManager = LinearLayoutManager(this@ReplyViewImpl,

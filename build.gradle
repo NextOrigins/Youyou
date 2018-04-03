@@ -5,7 +5,8 @@ buildscript {
         kotlin_version = '1.2.31'
         anko_version = '0.10.1'
         plugin_version = '2.3.2'
-        supportVersion = '26.1.0'
+        supportVersion = '27.1.0'
+        glideVersion = '4.6.1'
     }
     repositories {
         google()

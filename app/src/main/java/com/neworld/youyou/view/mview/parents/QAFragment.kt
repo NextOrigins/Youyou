@@ -431,7 +431,7 @@ class QAFragment : Fragment() {
         return id.trim('|')
     }
 
-	override fun onSaveInstanceState(outState: Bundle?) {
+	override fun onSaveInstanceState(outState: Bundle) {
 		saveCache()
 	}
 
@@ -453,7 +453,7 @@ class QAFragment : Fragment() {
 
 	private fun View.setWidth() {
 		val point = Point()
-		activity.windowManager.defaultDisplay.getSize(point)
+		activity?.windowManager?.defaultDisplay?.getSize(point)
 		val width = (point.x - resources.getDimension(R.dimen.dp30)
 				- (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
 

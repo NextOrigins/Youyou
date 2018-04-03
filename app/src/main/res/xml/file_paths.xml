@@ -3,4 +3,10 @@
     <external-path
         name="images"
         path="image/"/>
+
+    <files-path name="cache_download" path="download"/>
+
+    <root-path
+        name="root_path"
+        path="." />
 </resource>

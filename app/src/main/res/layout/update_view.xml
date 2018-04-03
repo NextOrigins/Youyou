@@ -75,12 +75,12 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/dp15"
+        android:text="@string/now_download"
         android:textColor="@color/blue"
         android:textSize="@dimen/sp18"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/_line1"
-        tools:text="现在安装" />
+        app:layout_constraintTop_toBottomOf="@id/_line1" />
 
     <View
         android:id="@+id/_line2"
@@ -93,14 +93,14 @@
 
     <TextView
         android:id="@+id/_later"
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/dp15"
+        android:text="@string/later_talk"
         android:textColor="@color/blue"
         android:textSize="@dimen/sp18"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/_line2"
-        tools:text="下次再说" />
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="192dp"
+        tools:layout_editor_absoluteY="162dp" />
 </android.support.constraint.ConstraintLayout>

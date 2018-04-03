@@ -239,16 +239,16 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
 
         private var images = array
 
-        override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-            container?.removeView(images[position])
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeView(images[position])
         }
 
-        override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+        override fun isViewFromObject(view: View, `object`: Any) = view == `object`
 
         override fun getCount(): Int = images.size
 
-        override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-            container?.addView(images[position])
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            container.addView(images[position])
             return images[position]
         }
     }

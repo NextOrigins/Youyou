@@ -35,7 +35,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
     private val spanCount = 3
     private val width: Int by lazy {
         val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
+        activity?.windowManager?.defaultDisplay?.getSize(point)
         ((point.x - spacing * (spanCount - 1)) / spanCount).toInt() - 20
     }
 

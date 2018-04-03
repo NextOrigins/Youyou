@@ -29,6 +29,7 @@ import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.NetworkObs
 import com.neworld.youyou.utils.UpDate
+import com.neworld.youyou.utils.logE
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.comment.HProgress
@@ -86,9 +87,17 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var mUpProgress by Delegates.notNull<HProgress>()
     private var mUpProText by Delegates.notNull<TextView>()
 
+    private val mDialog by lazy {
+        val dialog = AlertDialog.Builder(this).create()
+        dialog.setCancelable(false)
+
+        dialog
+    }
+
     private val upDateView by lazy {
         val inflate = layoutInflater.inflate(R.layout.update_view,
-                (window.decorView as ViewGroup).getChildAt(1) as ViewGroup, false)
+                activity_main, false)
+
         mUpTitle = inflate.findViewById(R.id._title)
         mUpContent = inflate.findViewById(R.id._content)
         mUpNow = inflate.findViewById(R.id._now)
@@ -135,13 +144,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
             mUpProText.text = str
 
             mUpProgress.newProgress = it.toFloat()
-        }, {
+
+            if (it == 100) {
+                mDialog.dismiss()
+            }
+        }, { start ->
             // 强制更新 TODO : 返回键拦截
-            val dialog = AlertDialog.Builder(this).create()
-            dialog.setCancelable(false)
-            dialog.show()
-            dialog.window.setContentView(upDateView)
-            mUpLater.visibility = View.GONE
+            mDialog.show()
+            mDialog.window.setContentView(upDateView)
+//            mDialog.window.setBackgroundDrawableResource(R.drawable.update_bg)
 
             mUpNow.setOnClickListener {
                 mUpContent.visibility = View.INVISIBLE
@@ -149,13 +160,13 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
                 mUpProText.visibility = View.VISIBLE
                 mUpProgress.visibility = View.VISIBLE
+                start.invoke()
             }
-        }, {
+        }, { start ->
             // 提示更新
-            val dialog = AlertDialog.Builder(this).create()
-            dialog.setCancelable(false)
-            dialog.show()
-            dialog.window.setContentView(upDateView)
+            mDialog.show()
+            mDialog.window.setContentView(upDateView)
+            mUpLater.visibility = View.VISIBLE
 
             mUpNow.setOnClickListener {
                 mUpContent.visibility = View.INVISIBLE
@@ -164,12 +175,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
                 mUpProText.visibility = View.VISIBLE
                 mUpProgress.visibility = View.VISIBLE
+
+                start.invoke()
             }
             mUpLater.setOnClickListener {
-//                dialog.cancel()
-                dialog.dismiss()
+                //                dialog.cancel()
+                mDialog.dismiss()
             }
-        }).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
+        }, { mDialog.dismiss() }
+        ).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
     }
 
     private fun initBroadcast() {

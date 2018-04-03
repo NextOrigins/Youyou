@@ -151,14 +151,14 @@ class EBookDetailContent : Fragment() {
 			container.addView(it)
 		}
 		
-		override fun destroyItem(container: ViewGroup, position: Int, `object`: Any?)
+		override fun destroyItem(container: ViewGroup, position: Int, `object`: Any)
 				= with(container) { if (position < count) removeView(list[position]) }
 		
-		override fun isViewFromObject(view: View?, `object`: Any?) =
+		override fun isViewFromObject(view: View, `object`: Any) =
 				view == `object`
 		
 		override fun getCount() = list.size
 		
-		override fun getItemPosition(`object`: Any?) = POSITION_NONE
+		override fun getItemPosition(`object`: Any) = POSITION_NONE
 	}
 }

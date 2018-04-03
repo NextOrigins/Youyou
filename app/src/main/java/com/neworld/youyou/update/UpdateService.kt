@@ -4,7 +4,12 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
 import com.neworld.youyou.utils.Fields
+import com.neworld.youyou.utils.logE
+import com.neworld.youyou.utils.showToast
+import com.neworld.youyou.utils.uiThread
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -19,9 +24,12 @@ class UpdateService : IntentService("UpdateService") {
 
     companion object {
         private var onProgressUpDate: ((newProgress: Int) -> Unit)? = null
+        private var onFailed: (() -> Unit)? = null
 
-        fun openUpdate(onProgressUpDate: (newProgress: Int) -> Unit, c: Context) {
+        fun openUpdate(c: Context, onProgressUpDate: (newProgress: Int) -> Unit,
+                       onFailed: (() -> Unit)? = null) {
             this.onProgressUpDate = onProgressUpDate
+            this.onFailed = onFailed
             c.startService(Intent(c, UpdateService::class.java))
         }
     }
@@ -51,6 +59,19 @@ class UpdateService : IntentService("UpdateService") {
 
             val apkFile = File(StorageUtils.getCacheDirectory(this), "uujz.apk")
 
+            // 如果不存在则创建文件夹，如果出现未知错误则取消下载。
+            /*if (!apkFile.exists()) {
+                apkFile.parentFile.mkdirs()
+                try {
+                    apkFile.createNewFile()
+                } catch (e: Exception) {
+                    uiThread { showToast("创建文件失败，出现未知错误") }
+                    onFailed?.invoke()
+                    logE("未知错误：：：：：：：：：：$e")
+                    return
+                }
+            }*/
+
             input = urlConnection.inputStream
             out = BufferedOutputStream(FileOutputStream(apkFile))
 
@@ -62,7 +83,7 @@ class UpdateService : IntentService("UpdateService") {
 
                 if (progress != oldProgress) {
                     // 更新UI
-                    onProgressUpDate?.invoke(progress)
+                    uiThread { onProgressUpDate?.invoke(progress) }
                 }
                 oldProgress = progress
             }
@@ -90,14 +111,15 @@ class UpdateService : IntentService("UpdateService") {
      */
     private fun installAPK(file: File) {
         val intent = Intent(Intent.ACTION_VIEW)
-        try {
-            val array = listOf("chmod", "777", file.toString())
-            val builder = ProcessBuilder(array)
-            builder.start()
-        } catch (e: Exception) {
+
+        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(this, "com.neworld.youyou.fileprovider", file)
+        } else {
+            Uri.fromFile(file)
         }
-        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        intent.setDataAndType(data, "application/vnd.android.package-archive")
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 }

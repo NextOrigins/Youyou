@@ -13,14 +13,15 @@ import com.neworld.youyou.update.UpdateService
  */
 class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // 更新进度
              private val fUpdate: (start: () -> Unit) -> Unit,          // 强制更新的自定义Dialog
-             private val pUpdate: (start: () -> Unit) -> Unit           // 提示升级
+             private val pUpdate: (start: () -> Unit) -> Unit,          // 提示升级
+             private val onFailed: (() -> Unit)? = null                 // 出现未知错误关闭对话框让用户正常使用。
 ) {
 
     private var versionCode = 0
     private val context: Context = MyApplication.sContext
 
     private val startDownload: () -> Unit = {
-        UpdateService.openUpdate(onProgressUpDate, context)
+        UpdateService.openUpdate(context, onProgressUpDate)
     }
 
     fun checkUpdate(version: String) {
@@ -37,10 +38,10 @@ class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // 更�
 
                 if (versionCode < minimum) {
                     // 强制更新
-                    fUpdate.invoke(startDownload)
+                    uiThread { fUpdate.invoke(startDownload) }
                 } else if (versionCode < newVersion) {
                     // 提示更新
-                    pUpdate.invoke(startDownload)
+                    uiThread { pUpdate.invoke(startDownload) }
                 }
             } catch (e: Exception) {
                 return

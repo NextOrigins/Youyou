@@ -241,7 +241,7 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (Build.VERSION.SDK_INT >= 23) {
             val mPermissionList = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE, Manifest.permission.READ_LOGS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SET_DEBUG_APP, Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.GET_ACCOUNTS, Manifest.permission.WRITE_APN_SETTINGS)
-            ActivityCompat.requestPermissions(getActivity(), mPermissionList, 123)
+            ActivityCompat.requestPermissions(getActivity()!!, mPermissionList, 123)
         }
     }
 

@@ -21,6 +21,7 @@ import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
 import com.umeng.socialize.ShareAction
@@ -39,6 +40,12 @@ import kotlin.properties.Delegates
 class QuestionsAndAnswers : Fragment() {
 
 	// property
+    private val mContext by lazy {
+        context ?: MyApplication.sContext
+    }
+    private val mBundle by lazy {
+        arguments ?: Bundle()
+    }
     private val dp15 by lazy {
         resources.getDimensionPixelOffset(R.dimen.dp15)
     }
@@ -60,23 +67,23 @@ class QuestionsAndAnswers : Fragment() {
         return@vetoable true
     }
     private val selectedBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.push2).also {
-            it.setBounds(0, 0, dp15, dp15)
+        ContextCompat.getDrawable(mContext, R.drawable.push2).also {
+            it?.setBounds(0, 0, dp15, dp15)
         }
     }
     private val cancelBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.push).also {
-            it.setBounds(0, 0, dp15, dp15)
+        ContextCompat.getDrawable(mContext, R.drawable.push).also {
+            it?.setBounds(0, 0, dp15, dp15)
         }
     }
     private val reviewBg by lazy {
-        ContextCompat.getDrawable(context, R.drawable.qa_review).also {
-            it.setBounds(0, 0, dp15, dp15)
+        ContextCompat.getDrawable(mContext, R.drawable.qa_review).also {
+            it?.setBounds(0, 0, dp15, dp15)
         }
     }
     private val imgWideHigh by lazy {
         val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
+        activity?.windowManager?.defaultDisplay?.getSize(point)
         (point.x - (resources.getDimensionPixelOffset(R.dimen.dp10) - dp15 * 2)) / 3
     }
 
@@ -267,9 +274,9 @@ class QuestionsAndAnswers : Fragment() {
                     "服务器无数据, 可能此话题已被关闭, 如有疑问请到用户反馈处反馈此问题",
                     Toast.LENGTH_LONG).show()
             Handler().postDelayed({
-                val intent = activity.intent.putExtra("error", true)
-                activity.setResult(21, intent)
-                activity.finish()
+                val intent = activity?.intent?.putExtra("error", true)
+                activity?.setResult(21, intent)
+                activity?.finish()
             }, 500)
             return
         }
@@ -285,9 +292,9 @@ class QuestionsAndAnswers : Fragment() {
         else  "加载更多"
 
         result = t.result.also {
-            arguments.putString("uid", it.from_uid.toString())
-            arguments.putString("taskId", it.id.toString())
-            arguments.putString("answerTitle", it.title)
+            mBundle.putString("uid", it.from_uid.toString())
+            mBundle.putString("taskId", it.id.toString())
+            mBundle.putString("answerTitle", it.title)
         }
 
         answerCount.text = "${result.comment_count}个回答"
@@ -330,7 +337,7 @@ class QuestionsAndAnswers : Fragment() {
                 answerCountWidth = answerCount.measuredWidth
 
                 val point = Point()
-                activity.windowManager.defaultDisplay.getSize(point)
+                activity?.windowManager?.defaultDisplay?.getSize(point)
 
                 var width = point.x / 3
                 answer.layoutParams = answer.layoutParams.also {
@@ -404,11 +411,11 @@ class QuestionsAndAnswers : Fragment() {
         holder.find<View>(R.id.item_comment_c).setOnClickListener {
             if (data.comment_count > 0) {
                 newModel(mutableList, position)
-                arguments.putBoolean("review", data.comment_count > 0)
+                mBundle.putBoolean("review", data.comment_count > 0)
                 obs.invoke(it)
             } else {
                 newModel(mutableList, position)
-                arguments.putBoolean("review", false)
+                mBundle.putBoolean("review", false)
                 obs.invoke(it)
             }
         }
@@ -464,7 +471,7 @@ class QuestionsAndAnswers : Fragment() {
 
 		holder.find<View>(R.id._parent).setOnClickListener {
             newModel(mutableList, position)
-            arguments.putBoolean("review", false)
+            mBundle.putBoolean("review", false)
             obs.invoke(it)
 		}
 	}
@@ -495,7 +502,7 @@ class QuestionsAndAnswers : Fragment() {
         bundle.putString("fromUID", data.from_userId.toString())
         bundle.putString("minCreateDate", minDate)
         bundle.putStringArray("nextArray", array)
-        arguments.putAll(bundle)
+        mBundle.putAll(bundle)
     }
 
     /*fun refreshData() {
@@ -508,7 +515,7 @@ class QuestionsAndAnswers : Fragment() {
 
     fun resize() {
         val point = Point()
-        activity.windowManager.defaultDisplay.getSize(point)
+        activity?.windowManager?.defaultDisplay?.getSize(point)
 
         var width = point.x / 3
         answer.layoutParams = answer.layoutParams.also {
@@ -523,5 +530,10 @@ class QuestionsAndAnswers : Fragment() {
 
     private fun View.paddingSet(offset: Int) {
         setPadding(offset, 0, offset, 0)
+    }
+
+    override fun onStop() {
+        arguments?.putAll(mBundle)
+        super.onStop()
     }
 }
