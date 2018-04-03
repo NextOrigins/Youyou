@@ -64,6 +64,8 @@
 
         <service android:name=".update.DownloadService" />
 
+        <service android:name=".update.UpdateService" />
+
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

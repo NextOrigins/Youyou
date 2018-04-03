@@ -34,7 +34,7 @@
         </android.support.v7.widget.Toolbar>
     </android.support.v7.widget.CardView>
 
-    <com.neworld.youyou.view.mview.comment.WebProgress
+    <com.neworld.youyou.view.mview.comment.HProgress
         android:id="@+id/_progress"
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="0dp"

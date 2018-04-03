@@ -16,4 +16,5 @@
     <color name="light_gray">#F4F5F6</color>
     <color name="gray">#EAEAF0</color>
     <color name="line_bg">#dfdfdf</color>
+    <color name="blue">#0066EE</color>
 </resources>

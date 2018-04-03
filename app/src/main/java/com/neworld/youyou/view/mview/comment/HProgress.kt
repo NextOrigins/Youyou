@@ -11,7 +11,7 @@ import android.view.View
  * @author by hhhh on 2018/3/27.
  * 用作WebView的进度条;
  */
-class WebProgress
+class HProgress
 @JvmOverloads
 constructor(context: Context, attr: AttributeSet? = null, def: Int = 0)
     : View(context, attr, def) {

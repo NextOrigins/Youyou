@@ -4,6 +4,7 @@ package com.neworld.youyou
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 
 import android.support.design.widget.Snackbar
@@ -11,22 +12,26 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
+import android.view.View
 import android.view.ViewGroup
 
 import android.widget.FrameLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 
 import com.neworld.youyou.fragment.HotFragment
 import com.neworld.youyou.fragment.MyFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
-import com.neworld.youyou.update.UpdateChecker
 import com.neworld.youyou.utils.NetworkObs
+import com.neworld.youyou.utils.UpDate
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
+import com.neworld.youyou.view.mview.comment.HProgress
 import com.neworld.youyou.view.mview.parents.QAFragment
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
@@ -73,6 +78,28 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         }
     }
 
+    // update view
+    private var mUpTitle by Delegates.notNull<TextView>()
+    private var mUpContent by Delegates.notNull<TextView>()
+    private var mUpNow by Delegates.notNull<TextView>()
+    private var mUpLater by Delegates.notNull<TextView>()
+    private var mUpProgress by Delegates.notNull<HProgress>()
+    private var mUpProText by Delegates.notNull<TextView>()
+
+    private val upDateView by lazy {
+        val inflate = layoutInflater.inflate(R.layout.update_view,
+                (window.decorView as ViewGroup).getChildAt(1) as ViewGroup, false)
+        mUpTitle = inflate.findViewById(R.id._title)
+        mUpContent = inflate.findViewById(R.id._content)
+        mUpNow = inflate.findViewById(R.id._now)
+        mUpLater = inflate.findViewById(R.id._later)
+        mUpProgress = inflate.findViewById(R.id._progress)
+        mUpProText = inflate.findViewById(R.id._progress_text)
+
+        mUpProgress.setColor(Color.parseColor("#E78DAC"))
+        inflate
+    }
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //设置当前布局
@@ -96,7 +123,53 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         initBroadcast()
 
         //进行版本更新
-        UpdateChecker.checkForDialog(this)
+//        UpdateChecker.checkForDialog(this)
+
+        checkUpDate()
+    }
+
+    private fun checkUpDate() {
+        UpDate({
+            // 更新进度
+            val str = "$it%"
+            mUpProText.text = str
+
+            mUpProgress.newProgress = it.toFloat()
+        }, {
+            // 强制更新 TODO : 返回键拦截
+            val dialog = AlertDialog.Builder(this).create()
+            dialog.setCancelable(false)
+            dialog.show()
+            dialog.window.setContentView(upDateView)
+            mUpLater.visibility = View.GONE
+
+            mUpNow.setOnClickListener {
+                mUpContent.visibility = View.INVISIBLE
+                mUpNow.visibility = View.GONE
+
+                mUpProText.visibility = View.VISIBLE
+                mUpProgress.visibility = View.VISIBLE
+            }
+        }, {
+            // 提示更新
+            val dialog = AlertDialog.Builder(this).create()
+            dialog.setCancelable(false)
+            dialog.show()
+            dialog.window.setContentView(upDateView)
+
+            mUpNow.setOnClickListener {
+                mUpContent.visibility = View.INVISIBLE
+                mUpNow.visibility = View.GONE
+                mUpLater.visibility = View.GONE
+
+                mUpProText.visibility = View.VISIBLE
+                mUpProgress.visibility = View.VISIBLE
+            }
+            mUpLater.setOnClickListener {
+//                dialog.cancel()
+                dialog.dismiss()
+            }
+        }).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
     }
 
     private fun initBroadcast() {

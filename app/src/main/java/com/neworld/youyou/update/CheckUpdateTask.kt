@@ -115,6 +115,6 @@ internal class CheckUpdateTask(val context: Activity, private val mType: Int, sh
 
     companion object {
         // private boolean mShowProgressDialog;
-        private val url = Fields.APK_URL
+        private const val url = Fields.APK_URL
     }
 }

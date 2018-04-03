@@ -2,17 +2,28 @@ package com.neworld.youyou.utils
 
 import android.content.Context
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.manager.MyApplication
+import com.neworld.youyou.update.UpdateService
 
 /**
  * @author by hhhh on 2018/3/28.
+ * @property pUpdate ：提示更新
+ * @property fUpdate ：强制更新
+ * @property onProgressUpDate ：更新进度
  */
-class UpDate {
+class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // 更新进度
+             private val fUpdate: (start: () -> Unit) -> Unit,          // 强制更新的自定义Dialog
+             private val pUpdate: (start: () -> Unit) -> Unit           // 提示升级
+) {
 
     private var versionCode = 0
-    private lateinit var context: Context
+    private val context: Context = MyApplication.sContext
 
-    fun checkUpdate(version: String, context: Context) {
-        this.context = context
+    private val startDownload: () -> Unit = {
+        UpdateService.openUpdate(onProgressUpDate, context)
+    }
+
+    fun checkUpdate(version: String) {
         versionCode = version.replace(".", "").toInt()
         response(::onResponse, "171", "")
     }
@@ -26,11 +37,10 @@ class UpDate {
 
                 if (versionCode < minimum) {
                     // 强制更新
+                    fUpdate.invoke(startDownload)
                 } else if (versionCode < newVersion) {
                     // 提示更新
-                    displayDialog(context, res.msg ?: "", {
-                        // 升级逻辑
-                    }, "立刻升级")
+                    pUpdate.invoke(startDownload)
                 }
             } catch (e: Exception) {
                 return

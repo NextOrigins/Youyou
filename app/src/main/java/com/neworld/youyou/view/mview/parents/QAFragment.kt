@@ -157,6 +157,7 @@ class QAFragment : Fragment() {
 
             map["userId"] = userId
             map["token"] = token
+            map["typeStatus"] = "0"
 
             upData()
         }
