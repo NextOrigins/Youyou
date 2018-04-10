@@ -29,7 +29,7 @@ import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.NetworkObs
 import com.neworld.youyou.utils.UpDate
-import com.neworld.youyou.utils.logE
+import com.neworld.youyou.utils.showToast
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.comment.HProgress
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         setContentView(R.layout.activity_main)
 //        parentFragment = ParentPageFragment() // 原 家长圈
 	    parentsQA = QAFragment()
-        
+
         subjectFragment = SubjectFragment()
         hotFragment = HotFragment()
         myFragment = MyFragment()
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     }
 
     private fun checkUpDate() {
-        UpDate({
+        UpDate(onProgressUpDate = {
             // 更新进度
             val str = "$it%"
             mUpProText.text = str
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
             if (it == 100) {
                 mDialog.dismiss()
             }
-        }, { start ->
+        }, fUpdate = { start ->
             // 强制更新 TODO : 返回键拦截
             mDialog.show()
             mDialog.window.setContentView(upDateView)
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 mUpProgress.visibility = View.VISIBLE
                 start.invoke()
             }
-        }, { start ->
+        }, pUpdate = { start ->
             // 提示更新
             mDialog.show()
             mDialog.window.setContentView(upDateView)
@@ -182,8 +182,9 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 //                dialog.cancel()
                 mDialog.dismiss()
             }
-        }, { mDialog.dismiss() }
-        ).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
+        }, onFailed = { mDialog.dismiss()
+            showToast("出现位置错误，以为您取消下载；请到用户反馈处反馈此问题。")
+        }).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
     }
 
     private fun initBroadcast() {

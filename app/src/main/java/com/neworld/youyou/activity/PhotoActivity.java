@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.neworld.youyou.BuildConfig;
 import com.neworld.youyou.R;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.LogUtils;
@@ -302,13 +303,13 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void gotoCamera() {
-        tempFile = new File(checkDirPath(Environment.getExternalStorageDirectory().getPath() + "/image/"), System.currentTimeMillis() + "Youyou.jpg");
+        tempFile = new File(checkDirPath(Environment.getExternalStorageDirectory().getPath() + "/cache/"), System.currentTimeMillis() + "Youyou.jpg");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             //设置7.0中共享文件，分享路径定义在xml/file_paths.xml
 //            intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(PhotoActivity.this, "com.neworld.youyou.fileprovider", tempFile);
+            Uri contentUri = FileProvider.getUriForFile(PhotoActivity.this, BuildConfig.APPLICATION_ID + ".fileProvider", tempFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
         } else {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));

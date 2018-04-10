@@ -20,6 +20,9 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 
+import com.neworld.youyou.BuildConfig;
+import com.neworld.youyou.utils.LogUtils;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -49,7 +52,7 @@ final class StorageUtils {
     public static File getCacheDirectory(Context context) {
         File appCacheDir = null;
         if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && hasExternalStoragePermission(context)) {
-            appCacheDir = getExternalCacheDir(context);
+            appCacheDir = getExternalCacheDir();
         }
         if (appCacheDir == null) {
             appCacheDir = context.getCacheDir();
@@ -60,22 +63,17 @@ final class StorageUtils {
         return appCacheDir;
     }
 
+    private static File getExternalCacheDir() {
+//        String path = Environment.getExternalStorageDirectory().getPath() + "/Android/" + "data/" + BuildConfig.APPLICATION_ID + "/cache/" + "download/";
+        String path = Environment.getExternalStorageDirectory().getPath() + "/cache/";
+        File cacheDir = new File(path);
 
-    private static File getExternalCacheDir(Context context) {
-        File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
-        File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
-        if (!appCacheDir.exists()) {
-            if (!appCacheDir.mkdirs()) {
-                //Log.w(Constants.TAG, "Unable to create external cache directory");
-                return null;
-            }
-            try {
-                new File(appCacheDir, ".nomedia").createNewFile();
-            } catch (IOException e) {
-                //Log.i(Constants.TAG, "Can't create \".nomedia\" file in application external cache directory");
-            }
+        LogUtils.E("cacheDir file = " + cacheDir.toString());
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            return null;
+        } else {
+            return cacheDir;
         }
-        return appCacheDir;
     }
 
     private static boolean hasExternalStoragePermission(Context context) {

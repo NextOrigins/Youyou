@@ -21,7 +21,7 @@ class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // æ›´æ–
     private val context: Context = MyApplication.sContext
 
     private val startDownload: () -> Unit = {
-        UpdateService.openUpdate(context, onProgressUpDate)
+        UpdateService.openUpdate(context, onProgressUpDate, onFailed)
     }
 
     fun checkUpdate(version: String) {

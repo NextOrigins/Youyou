@@ -23,7 +23,8 @@ class SplashActivity : Activity() {
     override fun initWidget() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE),
                     2)
         } else {
             toHome()
@@ -31,7 +32,8 @@ class SplashActivity : Activity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED) {
+        if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED ||
+                grantResults[1] == PackageManager.PERMISSION_DENIED) {
             Toast.makeText(this, "无读写权限可能会导致部分功能不可用或报错，请尽快到软件管理处添加权限。",
                     Toast.LENGTH_LONG).show()
             Handler().postDelayed({

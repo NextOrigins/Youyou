@@ -86,6 +86,7 @@ class AnswerDetail : Fragment() {
     private var replyContent: String? = null
     private var onStart: (() -> Unit)? = null
     private var onLoading: ((new: Int) -> Unit)? = null
+    private var toPos = 1
 
     // by observer
     private var isShowSoftInput by Delegates.observable(false) { _, old, new ->
@@ -178,7 +179,10 @@ class AnswerDetail : Fragment() {
         mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
             // 滚动到第一条
             mReview = findViewById<ImageView>(R.id._review).apply {
-                setOnClickListener { mRecycle.toPosition(1) }
+                setOnClickListener { 
+                    mRecycle.toPosition(toPos)
+                    toPos = if (toPos == 1) 0 else 1
+                }
             }
             // 点赞
             mLike = findViewById<CheckBox>(R.id._like).apply {
@@ -202,13 +206,7 @@ class AnswerDetail : Fragment() {
             // Next Page
             mNext = findViewById<ImageView>(R.id._next_comment).apply {
                 setOnClickListener {
-                    if (nextArray != null && nextArray!!.size > index) {
-                        val id = nextArray!![index++]
-                        commentId = id
-                        initData()
-                    } else {
-                        showToast("最后一页啦")
-                    }
+                    toNext()
                 }
             }
 
@@ -333,7 +331,7 @@ class AnswerDetail : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun onResponse(t: ResponseBean.AnswersDetailBody) {
         if (t.status == 1) {
-            showToast("{数据错误, 请到用户反馈处反馈此问题: 错误代码[202]}")
+            toNext()
             return
         }
 
@@ -341,10 +339,12 @@ class AnswerDetail : Fragment() {
             mCommentCount.text = "评论 ${t.commentBean.commentCount}"
             mPraiseCount.text = "${t.commentBean.commentLike} 赞"
             t.menuList.forEach { lastCreateDate = it.createDate }
+            hintText.visibility = View.VISIBLE
         } else {
             mCommentCount.text = "评论 0"
             mPraiseCount.text = "0 赞"
             lastCreateDate = ""
+            hintText.visibility = View.GONE
         }
 
         mAdapter.addDataAndClear(t.menuList)
@@ -358,7 +358,7 @@ class AnswerDetail : Fragment() {
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
         if (t.status == 1) {
-            showToast("{数据异常, 请反馈此问题: 错误代码[202]}")
+            showToast("{数据异常, 请反馈此问题: 错误代码[202:360]}")
             return
         }
         mAdapter.addData(t.menuList)
@@ -505,6 +505,16 @@ class AnswerDetail : Fragment() {
                                          errorCode: Int, description: String?, failingUrl: String?) {
                 showToast("error : $errorCode")
             }
+        }
+    }
+
+    private fun toNext() {
+        if (nextArray != null && nextArray!!.size > index) {
+            val id = nextArray!![index++]
+            commentId = id
+            initData()
+        } else {
+            showToast("最后一页啦")
         }
     }
 

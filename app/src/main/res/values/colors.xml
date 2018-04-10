@@ -3,6 +3,7 @@
     <color name="colorPrimary">#238CF4</color>
     <!--<color name="colorPrimaryDark">#238CF4</color>-->
     <color name="colorPrimaryDark">#266FCF</color>
+    <color name="primaryDarkGray">#E0E0E0</color>
     <color name="colorAccent">#FF4081</color>
     <color name="navpage">#FFE1E8EB</color>
     <color name="black">#000</color>

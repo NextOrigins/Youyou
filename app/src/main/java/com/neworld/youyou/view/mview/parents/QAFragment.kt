@@ -304,7 +304,7 @@ class QAFragment : Fragment() {
             bean.forEach { savedList.add(it.id.toString()) }
         }
 
-        if (mAdapter.bean.size > 0 && cacheList.isNotEmpty()) {
+        if (mAdapter.bean.size < 7 && cacheList.isNotEmpty()) {
             downData()
         }
     }

@@ -89,11 +89,11 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit, id: Int, list: ArrayLis
         else -> TYPE_NORMAL
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) = when {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when {
         headView != null && viewType == TYPE_HEADER -> Holder(headView)
         footView != null && viewType == TYPE_FOOTER -> Holder(footView)
         else -> super.onCreateViewHolder(parent, viewType)
-    }!!
+    }
 
     override fun getItemCount() = when {
 	    headView != null && footView != null -> super.getItemCount() + 2

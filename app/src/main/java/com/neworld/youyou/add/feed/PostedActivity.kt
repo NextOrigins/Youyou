@@ -29,6 +29,7 @@ import android.widget.EditText
 import android.widget.ImageView
 
 import com.bumptech.glide.Glide
+import com.neworld.youyou.BuildConfig
 import com.neworld.youyou.R
 import com.neworld.youyou.activity.ClipImageActivity
 import com.neworld.youyou.activity.PublishDetailActivity
@@ -377,7 +378,7 @@ class PostedActivity : Activity(), PhotoView {
     }
 
     private fun openCamera() {
-        val path = Environment.getExternalStorageDirectory().path + "/image/"
+        val path = Environment.getExternalStorageDirectory().path + "/cache/"
         val file = File(path)
         if (!file.exists()) {
             if (!file.mkdirs())
@@ -389,7 +390,7 @@ class PostedActivity : Activity(), PhotoView {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "com.neworld.youyou.fileprovider", tempFile!!))
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.fileProvider", tempFile!!))
         } else {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile))
         }

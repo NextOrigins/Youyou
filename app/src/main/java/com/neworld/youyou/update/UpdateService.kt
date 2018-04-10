@@ -6,16 +6,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
-import com.neworld.youyou.utils.Fields
-import com.neworld.youyou.utils.logE
-import com.neworld.youyou.utils.showToast
-import com.neworld.youyou.utils.uiThread
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
+import com.neworld.youyou.BuildConfig
+import com.neworld.youyou.utils.*
 import java.net.HttpURLConnection
 import java.net.URL
+import java.io.*
+
 
 /**
  * @author by hhhh on 2018/4/2.
@@ -27,7 +23,7 @@ class UpdateService : IntentService("UpdateService") {
         private var onFailed: (() -> Unit)? = null
 
         fun openUpdate(c: Context, onProgressUpDate: (newProgress: Int) -> Unit,
-                       onFailed: (() -> Unit)? = null) {
+                       onFailed: (() -> Unit)?) {
             this.onProgressUpDate = onProgressUpDate
             this.onFailed = onFailed
             c.startService(Intent(c, UpdateService::class.java))
@@ -59,19 +55,6 @@ class UpdateService : IntentService("UpdateService") {
 
             val apkFile = File(StorageUtils.getCacheDirectory(this), "uujz.apk")
 
-            // 如果不存在则创建文件夹，如果出现未知错误则取消下载。
-            /*if (!apkFile.exists()) {
-                apkFile.parentFile.mkdirs()
-                try {
-                    apkFile.createNewFile()
-                } catch (e: Exception) {
-                    uiThread { showToast("创建文件失败，出现未知错误") }
-                    onFailed?.invoke()
-                    logE("未知错误：：：：：：：：：：$e")
-                    return
-                }
-            }*/
-
             input = urlConnection.inputStream
             out = BufferedOutputStream(FileOutputStream(apkFile))
 
@@ -89,9 +72,9 @@ class UpdateService : IntentService("UpdateService") {
             }
 
             // 下载完成
-            installAPK(apkFile)
+            uiThread { installAPK(apkFile) }
         } catch (e: Exception) {
-
+            onFailed?.invoke()
         } finally {
             try {
                 input?.close()
@@ -111,15 +94,17 @@ class UpdateService : IntentService("UpdateService") {
      */
     private fun installAPK(file: File) {
         val intent = Intent(Intent.ACTION_VIEW)
-
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(this, "com.neworld.youyou.fileprovider", file)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //判断是否是AndroidN以及更高的版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            val fileUri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.fileProvider", file)
+            intent.setDataAndType(fileUri, "application/vnd.android.package-archive")
         } else {
-            Uri.fromFile(file)
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive")
         }
 
-        intent.setDataAndType(data, "application/vnd.android.package-archive")
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 }

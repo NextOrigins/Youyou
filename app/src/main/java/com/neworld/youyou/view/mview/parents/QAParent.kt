@@ -2,7 +2,9 @@ package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.os.Build
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.view.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -28,14 +30,12 @@ class QAParent : Activity() {
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
-    /*@SuppressLint("PrivateApi")
     override fun initWindows() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.run {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            window.statusBarColor = ContextCompat.getColor(baseContext, R.color.status_bar)
+            window.statusBarColor = ContextCompat.getColor(this@QAParent, R.color.primaryDarkGray)
         }
-    }*/
+    }
 
     @SuppressLint("SetTextI18n")
     override fun initWidget() {
@@ -169,6 +169,15 @@ class QAParent : Activity() {
         } else {
             answersDetail?.resize()
         }
+    }
+
+    override fun onDestroy() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.run {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = ContextCompat.getColor(this@QAParent, R.color.colorPrimaryDark)
+        }
+
+        super.onDestroy()
     }
 //	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //		menuInflater.inflate(R.menu.menu_item, menu)
