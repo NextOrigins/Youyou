@@ -166,7 +166,7 @@ class AnswerDetail : Fragment() {
             layoutManager = LinearLayoutManager(context, 1, false)
             addItemDecoration(DividerItemDecoration(context, 1))
             adapter = AdapterK(this@AnswerDetail::itemBind,
-                    R.layout.item_answers_detail, arrayListOf()).also { mAdapter = it }
+                    arrayOf(R.layout.item_answers_detail), arrayListOf()).also { mAdapter = it }
             setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     isShowSoftInput = false

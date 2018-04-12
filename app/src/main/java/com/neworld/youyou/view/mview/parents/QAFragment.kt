@@ -10,10 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -91,13 +88,6 @@ class QAFragment : Fragment() {
         return@vetoable true
     }
 
-    // 图片等宽
-	/*private val imgWidth by lazy {
-		val point = Point()
-		activity.windowManager.defaultDisplay.getSize(point)
-		(point.x - resources.getDimension(R.dimen.dp30) - (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
-	}*/
-
     // cache
     private var cacheIndex = 0 // 读取缓存下标
     private var readLength = 6 // 每次读取缓存的个数
@@ -108,8 +98,10 @@ class QAFragment : Fragment() {
 	private var openCache = true // 是否开启缓存
 	private var isUpdate = false
 
+//    设置内容布局
 	override fun getContentLayoutId() = R.layout.fragment_parents_q
 
+//    初始化控件
 	override fun initWidget(root: View) {
 		mRecycle = root.findViewById(R.id._recycler)
 		mSwipe = root.findViewById(R.id._swipe)
@@ -121,7 +113,8 @@ class QAFragment : Fragment() {
 		mRecycle.layoutManager = LinearLayoutManager(context,
 				LinearLayoutManager.VERTICAL, false)
 		mRecycle.adapter = AdapterK(this::itemBind,
-				R.layout.item_qa_1, list).also { mAdapter = it }
+				arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
+                .also { mAdapter = it }
 
 		setScrollChangedListener()
 
@@ -138,6 +131,7 @@ class QAFragment : Fragment() {
 		}
 	}
 
+//    读取本地缓存或请求网络
 	override fun initData() {
         if (userId.isEmpty()) {
             startActivity(Intent(context, LoginActivity::class.java))
@@ -163,6 +157,7 @@ class QAFragment : Fragment() {
         }
 	}
 
+//    下拉加载
 	private fun downData() {
 		if (isUpdate) {
 			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
@@ -217,6 +212,7 @@ class QAFragment : Fragment() {
 		}, 1)
 	}
 
+//    上拉加载
 	private fun upData() {
         if (!b && cacheIndex >= cacheList.size) return
 
@@ -227,6 +223,7 @@ class QAFragment : Fragment() {
 		inRequest(::upReq, 2)
 	}
 
+//    上拉加载详细处理
     private fun upReq(it: ResponseBean.QABody) {
         // 判断是否多端登陆
         if (it.tokenStatus > 1) {
@@ -309,6 +306,7 @@ class QAFragment : Fragment() {
         }
     }
 
+//    网络请求
     private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
         when (type) {
             1 -> {
@@ -338,20 +336,47 @@ class QAFragment : Fragment() {
         if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
     }
 
+//    多type判断
+    private fun viewType(model: ResponseBean.QADetail) = with(model.imgs?.split('|')?.size) {
+        if (this == null || this >= 3) AdapterK.TYPE_NORMAL
+        else AdapterK.TYPE_ONE
+    }
+
+//    填充数据
 	@SuppressLint("SetTextI18n")
 	private fun itemBind(holder: Adapter.Holder,
 						 mutableList: MutableList<ResponseBean.QADetail>, position: Int) {
-		val parent = holder.find<ConstraintLayout>(R.id.item_parent)
-		val title = holder.find<TextView>(R.id.item_title)
-		val reply = holder.find<TextView>(R.id.item_reply)
-		val img1 = holder.find<ImageView>(R.id.item_img1)
-				.also { it.setWidth() }
-		val img2 = holder.find<ImageView>(R.id.item_img2)
-				.also { it.setWidth() }
-		val img3 = holder.find<ImageView>(R.id.item_img3)
-				.also { it.setWidth() }
 
-		val data = mutableList[position]
+        val data = mutableList[position]
+        val type = viewType(data)
+
+        val parent: ConstraintLayout
+        val title: TextView
+        val reply: TextView
+        val img1: ImageView
+        var img2: ImageView? = null
+        var img3: ImageView? = null
+
+        when (type) {
+            AdapterK.TYPE_NORMAL -> {
+                parent = holder.find(R.id.item_parent)
+                title = holder.find(R.id.item_title)
+                reply = holder.find(R.id.item_reply)
+                img1 = holder.find<ImageView>(R.id.item_img1)
+                        .also { it.setWidth() }
+                img2 = holder.find<ImageView>(R.id.item_img2)
+                        .also { it.setWidth() }
+                img3 = holder.find<ImageView>(R.id.item_img3)
+                        .also { it.setWidth() }
+            }
+            else -> {
+                parent = holder.find(R.id.item_parent)
+                title = holder.find(R.id.item_title)
+                reply = holder.find(R.id.item_reply)
+                img1 = holder.find<ImageView>(R.id.item_img1)
+                        .also { it.setWidth() }
+            }
+        }
 
 		parent.setOnClickListener {
 			startActivityForResult(Intent(context, QAParent::class.java)
@@ -371,45 +396,22 @@ class QAFragment : Fragment() {
         img1.visibility = View.VISIBLE
 
         val split = data.imgs.split('|')
-        when (split.size) {
-            1 -> {
+
+        when {
+            split.size >= 3 -> {
                 Glide.with(img1).load(split[0]).apply(options).into(img1)
-//					img1.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-//					}
-                img2.visibility = View.GONE
+                if (img2 != null && img3 != null) {
+                    Glide.with(img2).load(split[1]).apply(options).into(img2)
+                    Glide.with(img3).load(split[2]).apply(options).into(img3)
+                }
             }
-            2 -> {
+            else -> {
                 Glide.with(img1).load(split[0]).apply(options).into(img1)
-                Glide.with(img2).load(split[1]).apply(options).into(img2)
-//					img1.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-//					}
-//					img2.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-//					}
-                img2.visibility = View.VISIBLE
-                img3.visibility = View.GONE
-            }
-            3 -> {
-                Glide.with(img1).load(split[0]).apply(options).into(img1)
-                Glide.with(img2).load(split[1]).apply(options).into(img2)
-                Glide.with(img3).load(split[2]).apply(options).into(img3)
-//					img1.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img1, split[0])
-//					}
-//					img2.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img2, split[1])
-//					}
-//					img3.setOnClickListener {
-//						BigPicActivity.launch(activity as AppCompatActivity, img3, split[2])
-//					}
-                img2.visibility = View.VISIBLE
-                img3.visibility = View.VISIBLE
             }
         }
 	}
 
+//    加载更多的监听
 	private fun setScrollChangedListener() {
 		mRecycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
@@ -421,6 +423,7 @@ class QAFragment : Fragment() {
 		})
 	}
 
+//    拼接保存的id
     private fun spliceId(): String {
         var temp = 0
         var id = ""
@@ -431,15 +434,18 @@ class QAFragment : Fragment() {
         return id.trim('|')
     }
 
+//    意外关闭时做本地储存
 	override fun onSaveInstanceState(outState: Bundle) {
 		saveCache()
 	}
 
+//    正常关闭时做本地储存
 	override fun onDestroy() {
 		saveCache()
 		super.onDestroy()
 	}
 
+//    本地储存实现
 	private fun saveCache() {
         if (!openCache) return
 
@@ -451,6 +457,7 @@ class QAFragment : Fragment() {
         cacheJson = Gson().toJson(map)
 	}
 
+//    设置图片等宽
 	private fun View.setWidth() {
 		val point = Point()
 		activity?.windowManager?.defaultDisplay?.getSize(point)
@@ -460,6 +467,7 @@ class QAFragment : Fragment() {
         layoutParams = layoutParams.also { it.width = width.toInt() }
     }
 
+//    本地缓存的model
 	private data class ReadCache(val top: String = "",
 	                             val end: String = "",
 	                             val menu: Array<String> = arrayOf()) {
@@ -484,6 +492,7 @@ class QAFragment : Fragment() {
 		}
 	}
 
+//    如果有一条已删除的话题，打开后自动删除本地缓存id & 更新UI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 20) {
             data?.let {
@@ -518,8 +527,9 @@ class QAFragment : Fragment() {
         }
     }
 
-	override fun onResume() {
-		super.onResume()
+//    判断是不是管理员
+	override fun onStop() {
+		super.onStop()
 		if (role == 2) {
 			setHasOptionsMenu(true)
 			(activity as AppCompatActivity).setSupportActionBar(mToolBar)
@@ -551,15 +561,18 @@ class QAFragment : Fragment() {
 		return true
 	}
 
+//    对外提供刷新列表
 	fun resize() {
 		mAdapter.notifyDataSetChanged()
 	}
 
+//    对外提供加载更多
     fun rdRefresh() {
         mRecycle.scrollToPosition(0)
         downData()
     }
 
+//    对外提供清除缓存
     fun clearCache() {
         openCache = false
     }

@@ -94,7 +94,7 @@ class BooksOrderActivity : Activity() {
             Glide.with(icon).load(data.iconImg).into(icon)
         }
 
-        override fun layoutId(): Int = R.layout.item_books_order
+        override fun layoutId() = R.layout.item_books_order
     }
 
     override fun getContentLayoutId() = R.layout.activity_books_order

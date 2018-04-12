@@ -56,7 +56,7 @@ class QACollectActivity : Activity() {
             response(::refresh, 113, map)
         }
         _recycle.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        _recycle.adapter = AdapterK(::bind, R.layout.item_qa_collect, arrayListOf())
+        _recycle.adapter = AdapterK(::bind, arrayOf(R.layout.item_qa_collect), arrayListOf())
                 .also { mAdapter = it }
         _recycle.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 

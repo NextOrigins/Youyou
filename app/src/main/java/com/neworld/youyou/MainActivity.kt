@@ -27,9 +27,7 @@ import com.neworld.youyou.fragment.HotFragment
 import com.neworld.youyou.fragment.MyFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
-import com.neworld.youyou.utils.NetworkObs
-import com.neworld.youyou.utils.UpDate
-import com.neworld.youyou.utils.showToast
+import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.comment.HProgress
@@ -86,10 +84,12 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private var mUpLater by Delegates.notNull<TextView>()
     private var mUpProgress by Delegates.notNull<HProgress>()
     private var mUpProText by Delegates.notNull<TextView>()
+    private var mLine by Delegates.notNull<View>()
 
     private val mDialog by lazy {
         val dialog = AlertDialog.Builder(this).create()
-        dialog.setCancelable(false)
+        dialog.setView(upDateView)
+        dialog.window.setBackgroundDrawableResource(R.drawable.update_bg)
 
         dialog
     }
@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         mUpLater = inflate.findViewById(R.id._later)
         mUpProgress = inflate.findViewById(R.id._progress)
         mUpProText = inflate.findViewById(R.id._progress_text)
+        mLine = inflate.findViewById(R.id._line1)
 
         mUpProgress.setColor(Color.parseColor("#E78DAC"))
         inflate
@@ -140,6 +141,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     private fun checkUpDate() {
         UpDate(onProgressUpDate = {
             // 更新进度
+            // 设置禁止关闭、防止误触后看不到进度条。
+            mDialog.setCancelable(false)
+            mDialog.setOnKeyListener { _, keyCode, _ -> keyCode == KeyEvent.KEYCODE_BACK }
+
             val str = "$it%"
             mUpProText.text = str
 
@@ -148,25 +153,31 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
             if (it == 100) {
                 mDialog.dismiss()
             }
-        }, fUpdate = { start ->
-            // 强制更新 TODO : 返回键拦截
+        }, fUpdate = { start, msg ->
+            // 强制更新
+            // 返回键拦截
+            mDialog.setCancelable(false)
+            mDialog.setOnKeyListener { _, keyCode, _ -> keyCode == KeyEvent.KEYCODE_BACK }
+
             mDialog.show()
-            mDialog.window.setContentView(upDateView)
-//            mDialog.window.setBackgroundDrawableResource(R.drawable.update_bg)
+            mUpContent.text = msg ?: "不更新可能会出现不可预测的问题的噢。"
 
             mUpNow.setOnClickListener {
                 mUpContent.visibility = View.INVISIBLE
+                mLine.visibility = View.INVISIBLE
                 mUpNow.visibility = View.GONE
 
                 mUpProText.visibility = View.VISIBLE
                 mUpProgress.visibility = View.VISIBLE
                 start.invoke()
             }
-        }, pUpdate = { start ->
+        }, pUpdate = { start, msg ->
             // 提示更新
+            // 不拦截返回键、点击外部可关闭。
+            mDialog.setCancelable(true)
             mDialog.show()
-            mDialog.window.setContentView(upDateView)
             mUpLater.visibility = View.VISIBLE
+            mUpContent.text = msg ?: "有新版本更新啦，您也可以选择下次再说"
 
             mUpNow.setOnClickListener {
                 mUpContent.visibility = View.INVISIBLE
@@ -179,11 +190,11 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                 start.invoke()
             }
             mUpLater.setOnClickListener {
-                //                dialog.cancel()
                 mDialog.dismiss()
             }
-        }, onFailed = { mDialog.dismiss()
-            showToast("出现位置错误，以为您取消下载；请到用户反馈处反馈此问题。")
+        }, onFailed = {
+            mDialog.dismiss()
+            showToast("出现未知错误，以为您取消下载；请到用户反馈处反馈此问题。")
         }).checkUpdate(packageManager.getPackageInfo(packageName, 0).versionName)
     }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/dp15"
+    android:paddingRight="@dimen/dp15">
+
+    <ImageView
+        android:id="@+id/item_img1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp65"
+        android:layout_marginTop="@dimen/dp5"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/item_title" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp5"
+        android:lineSpacingExtra="@dimen/dp5"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp18"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/item_img1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="皇马惨败巴萨, 问题出在哪里？问题出在哪里？问题出在哪里？问题出在哪里？" />
+
+    <TextView
+        android:id="@+id/item_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp5"
+        android:textSize="@dimen/sp12"
+        app:layout_constraintTop_toBottomOf="@id/item_title"
+        tools:text="1402回答" />
+
+    <View
+        android:id="@+id/item_line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp10"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_reply" />
+</android.support.constraint.ConstraintLayout>

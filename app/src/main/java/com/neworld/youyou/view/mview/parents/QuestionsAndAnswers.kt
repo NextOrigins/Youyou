@@ -153,7 +153,8 @@ class QuestionsAndAnswers : Fragment() {
 	override fun initWidget(root: View) {
 		root.findViewById<RecyclerView>(R.id._recycle).apply {
 			layoutManager = LinearLayoutManager(DeviceConfig.context, LinearLayoutManager.VERTICAL, false)
-			adapter = AdapterK(this@QuestionsAndAnswers::bind, R.layout.item_answer, list).also { mAdapter = it }
+			adapter = AdapterK(this@QuestionsAndAnswers::bind,
+                    arrayOf(R.layout.item_answer), list).also { mAdapter = it }
 			addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
@@ -325,7 +326,8 @@ class QuestionsAndAnswers : Fragment() {
         } else {
             try {
                 Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
-                headIcon.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity, it, split.first()) }
+                headIcon.setOnClickListener { BigPicActivity
+                        .launch(activity as AppCompatActivity, it, split.first()) }
             } catch (e: Exception) {
                 return
             }
@@ -455,7 +457,6 @@ class QuestionsAndAnswers : Fragment() {
             val options = RequestOptions()
                     .placeholder(R.drawable.deftimg)
                     .error(R.drawable.deftimg)
-            logE("Q&A imgs : ${data.commentImg}")
             Glide.with(img).load(data.commentImg!!.split('|')[0]).apply(options).into(img)
             img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
                     img, data.commentImg) }

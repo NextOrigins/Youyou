@@ -12,8 +12,8 @@ import com.neworld.youyou.update.UpdateService
  * @property onProgressUpDate ：更新进度
  */
 class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // 更新进度
-             private val fUpdate: (start: () -> Unit) -> Unit,          // 强制更新的自定义Dialog
-             private val pUpdate: (start: () -> Unit) -> Unit,          // 提示升级
+             private val fUpdate: (start: () -> Unit, msg: String?) -> Unit,          // 强制更新的自定义Dialog
+             private val pUpdate: (start: () -> Unit, msg: String?) -> Unit,          // 提示升级
              private val onFailed: (() -> Unit)? = null                 // 出现未知错误关闭对话框让用户正常使用。
 ) {
 
@@ -38,12 +38,13 @@ class UpDate(private val onProgressUpDate: (newProgress: Int) -> Unit,  // 更�
 
                 if (versionCode < minimum) {
                     // 强制更新
-                    uiThread { fUpdate.invoke(startDownload) }
+                    uiThread { fUpdate.invoke(startDownload, res.msg) }
                 } else if (versionCode < newVersion) {
                     // 提示更新
-                    uiThread { pUpdate.invoke(startDownload) }
+                    uiThread { pUpdate.invoke(startDownload, res.msg) }
                 }
             } catch (e: Exception) {
+                logE("update exception : $e")
                 return
             }
         }

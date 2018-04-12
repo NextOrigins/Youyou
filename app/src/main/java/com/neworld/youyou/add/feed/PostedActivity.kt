@@ -147,9 +147,7 @@ class PostedActivity : Activity(), PhotoView {
             }
         }
 
-        override fun layoutId(): Int {
-            return R.layout.item_posted_img
-        }
+        override fun layoutId() = R.layout.item_posted_img
     }
 
     override fun getContentLayoutId(): Int {

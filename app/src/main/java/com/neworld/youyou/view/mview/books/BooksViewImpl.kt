@@ -118,7 +118,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
             }
         }
 
-        override fun layoutId(): Int = R.layout.item_books
+        override fun layoutId() = R.layout.item_books
     }
 
     private val scrollListener = object : RecyclerView.OnScrollListener() {

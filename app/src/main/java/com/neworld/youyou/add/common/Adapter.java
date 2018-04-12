@@ -1,5 +1,6 @@
 package com.neworld.youyou.add.common;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -34,14 +35,15 @@ public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
         this.obs = obs;
     }
 
+    @NonNull
     @Override
-    public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new Holder(LayoutInflater.from(parent.getContext())
                 .inflate(obs.layoutId(), parent, false));
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
+    public void onBindViewHolder(@NonNull Holder holder, int position) {
         obs.onBind(holder, bean, position);
     }
 
@@ -52,7 +54,7 @@ public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
 
     public static class Holder extends RecyclerView.ViewHolder {
 
-        Holder(View itemView) {
+        public Holder(View itemView) {
             super(itemView);
         }
 

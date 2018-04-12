@@ -26,6 +26,7 @@
         android:id="@+id/_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:paddingBottom="@dimen/dp15"
         android:paddingLeft="@dimen/dp15"
         android:paddingRight="@dimen/dp15"

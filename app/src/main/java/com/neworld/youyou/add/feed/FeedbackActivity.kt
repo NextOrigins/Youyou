@@ -50,7 +50,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 			layoutManager = LinearLayoutManager(this@FeedbackActivity,
 					LinearLayoutManager.VERTICAL, false)
 			adapter = AdapterK(this@FeedbackActivity::itemBind,
-					R.layout.item_feed_back, list).also { mAdapter = it }
+					arrayOf(R.layout.item_feed_back), list).also { mAdapter = it }
 			addItemDecoration(DividerItemDecoration(this@FeedbackActivity, DividerItemDecoration.VERTICAL))
 		}
 		

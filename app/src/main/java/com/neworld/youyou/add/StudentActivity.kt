@@ -50,9 +50,7 @@ class StudentActivity : AppCompatActivity() {
             tvName.text = data.name
         }
 
-        override fun layoutId(): Int {
-            return R.layout.item_student
-        }
+        override fun layoutId() = R.layout.item_student
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

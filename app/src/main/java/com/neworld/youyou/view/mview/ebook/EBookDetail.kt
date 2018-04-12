@@ -51,7 +51,7 @@ class EBookDetail : Activity() {
 				LinearLayoutManager.VERTICAL, false)
 		_recycler.setHasFixedSize(true)
 		_recycler.adapter = AdapterK(this::itemBind,
-				R.layout.item_ebook_list, list)
+				arrayOf(R.layout.item_ebook_list), list)
 				.also { mAdapter = it }
 		
 		if (detailContent == null)
