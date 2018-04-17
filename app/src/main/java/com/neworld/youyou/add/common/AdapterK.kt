@@ -95,7 +95,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit,
     override fun getItemViewType(position: Int) = when {
         position == 0 && headView != null -> TYPE_HEADER
         position == itemCount - 1 && footView != null -> TYPE_FOOTER
-        else -> type.invoke(bean[position])
+        else -> type.invoke(bean[if (headView != null) position - 1 else position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when {

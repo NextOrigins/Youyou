@@ -197,7 +197,7 @@ class QuestionsAndAnswers : Fragment() {
 			}
 		}.let { swipe = it }
 
-		layoutInflater.inflate(R.layout.footview_parents_qa, recycle, false).run {
+		layoutInflater.inflate(R.layout.footview_load_more, recycle, false).run {
 			footText = findViewById(R.id.foot_loading)
 			footPrg = findViewById(R.id.foot_progress)
 			mAdapter.footView = this
@@ -217,13 +217,17 @@ class QuestionsAndAnswers : Fragment() {
 		}
 
 		answerCount = root.findViewById(R.id._answer_count)
+
+        setHasOptionsMenu(false)
 	}
 
 	override fun initData() {
+        // 从其他页面切换过来之后防止多次加载 .
         if (list.isNotEmpty()) return
         requestData()
 	}
 
+    // 防止重复加载
     private fun requestData() {
         if (!swipe.isRefreshing) swipe.isRefreshing = true
 
@@ -235,6 +239,7 @@ class QuestionsAndAnswers : Fragment() {
         response(this@QuestionsAndAnswers::success, 200, map)
     }
 
+    // 上拉加载
 	private fun upData() {
 		if (list.isEmpty()) return
 
@@ -267,6 +272,7 @@ class QuestionsAndAnswers : Fragment() {
         }, 200, map)
 	}
 
+    // 数据返回
     @SuppressLint("SetTextI18n")
     private fun success(t: ResponseBean.AnswerBody) {
         swipe.isRefreshing = false
@@ -355,6 +361,7 @@ class QuestionsAndAnswers : Fragment() {
             }
     }
 
+    // 填充item数据
 	@SuppressLint("SetTextI18n")
 	private fun bind(holder: Adapter.Holder,
 	                 mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
@@ -477,6 +484,7 @@ class QuestionsAndAnswers : Fragment() {
 		}
 	}
 
+    // 回答后刷新页面
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 5) {
             requestData()
@@ -487,6 +495,7 @@ class QuestionsAndAnswers : Fragment() {
         return isEmpty() || size < 10
     }
 
+    // 打开新的activity筛选出已加载完的下一页id和最小时间
     private fun newModel(list: MutableList<ResponseBean.AnswerList>, position: Int) {
         val array = list
                 .drop(position + 1)
@@ -506,14 +515,11 @@ class QuestionsAndAnswers : Fragment() {
         mBundle.putAll(bundle)
     }
 
-    /*fun refreshData() {
-        requestData()
-    }*/
-
     fun setObserver(listener: View.() -> Unit) {
         this@QuestionsAndAnswers.obs = listener
     }
 
+    // 对外开放设置底部的宽度
     fun resize() {
         val point = Point()
         activity?.windowManager?.defaultDisplay?.getSize(point)
@@ -533,6 +539,7 @@ class QuestionsAndAnswers : Fragment() {
         setPadding(offset, 0, offset, 0)
     }
 
+    // 保存状态
     override fun onStop() {
         arguments?.putAll(mBundle)
         super.onStop()

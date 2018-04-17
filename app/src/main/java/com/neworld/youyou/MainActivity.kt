@@ -1,11 +1,13 @@
 package com.neworld.youyou
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.internal.SnackbarContentLayout
 
 import android.support.design.widget.Snackbar
 
@@ -23,7 +25,6 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 
-import com.neworld.youyou.fragment.HotFragment
 import com.neworld.youyou.fragment.MyFragment
 import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
@@ -31,6 +32,7 @@ import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.comment.HProgress
+import com.neworld.youyou.view.mview.hot.HotFragment
 import com.neworld.youyou.view.mview.parents.QAFragment
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //    private var parentFragment: ParentPageFragment? = null
 	private var parentsQA: QAFragment by Delegates.notNull()
     private var subjectFragment: SubjectFragment? = null
+//    private var hotFragment: HotFragment? = null
     private var hotFragment: HotFragment? = null
     private var myFragment: MyFragment? = null
     private var fragmentManager: FragmentManager by Delegates.notNull()
@@ -247,7 +250,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
                     hotNewsEnable = true
                     return@setOnClickListener
                 }
-                hotFragment?.rdRefresh() // 缺少动画效果
+//                hotFragment?.rdRefresh() // 缺少动画效果
             }
         }
         myFragment?.setOnCacheRemoved {

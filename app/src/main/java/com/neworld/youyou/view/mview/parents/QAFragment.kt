@@ -38,30 +38,30 @@ import kotlin.properties.Delegates
 class QAFragment : Fragment() {
 
     // view
-	private var mRecycle by notNullSingleValue<RecyclerView>()
-	private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
-	private var mFootText by notNullSingleValue<TextView>()
-	private var mFootPrg by notNullSingleValue<ProgressBar>()
-	private var mToolBar by notNullSingleValue<Toolbar>()
+    private var mRecycle by notNullSingleValue<RecyclerView>()
+    private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
+    private var mFootText by notNullSingleValue<TextView>()
+    private var mFootPrg by notNullSingleValue<ProgressBar>()
+    private var mToolBar by notNullSingleValue<Toolbar>()
 
-	private var admMenu: MenuItem? = null
+    private var admMenu: MenuItem? = null
 
     // fields
-	private var userId by preference("userId", "")
-	private var token by preference("token", "")
+    private var userId by preference("userId", "")
+    private var token by preference("token", "")
     // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
-	private var cacheJson by preference("cacheJson", "")
-	private val role by preference("role", 1) // role = 2 为管理员
+    private var cacheJson by preference("cacheJson", "")
+    private val role by preference("role", 1) // role = 2 为管理员
 
     // RecyclerView适配器 (HeaderView FooterView)
-	private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue()
+    private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue()
 
     // property & cacheList
-	private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
-	private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
+    private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
+    private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
     private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
     private var savedList = arrayListOf<String>() // 避免cacheList读取冲突
-	private val options by lazy {
+    private val options by lazy {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
@@ -93,51 +93,51 @@ class QAFragment : Fragment() {
     private var readLength = 6 // 每次读取缓存的个数
 
     // status
-	private var b = true // 加载完成提示 只显示一次
-	private var over = false // 是否读取完缓存列表
-	private var openCache = true // 是否开启缓存
-	private var isUpdate = false
+    private var b = true // 加载完成提示 只显示一次
+    private var over = false // 是否读取完缓存列表
+    private var openCache = true // 是否开启缓存
+    private var isUpdate = false
 
-//    设置内容布局
-	override fun getContentLayoutId() = R.layout.fragment_parents_q
+    //    设置内容布局
+    override fun getContentLayoutId() = R.layout.fragment_parents_q
 
-//    初始化控件
-	override fun initWidget(root: View) {
-		mRecycle = root.findViewById(R.id._recycler)
-		mSwipe = root.findViewById(R.id._swipe)
-		mToolBar = root.findViewById(R.id._toolbar)
+    //    初始化控件
+    override fun initWidget(root: View) {
+        mRecycle = root.findViewById(R.id._recycler)
+        mSwipe = root.findViewById(R.id._swipe)
+        mToolBar = root.findViewById(R.id._toolbar)
 
-		root.findViewById<ConstraintLayout>(R.id._parent)
-				.setOnClickListener { startActivity(Intent(context, QAParent::class.java)) }
+        root.findViewById<ConstraintLayout>(R.id._parent)
+                .setOnClickListener { startActivity(Intent(context, QAParent::class.java)) }
 
-		mRecycle.layoutManager = LinearLayoutManager(context,
-				LinearLayoutManager.VERTICAL, false)
-		mRecycle.adapter = AdapterK(this::itemBind,
-				arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
+        mRecycle.layoutManager = LinearLayoutManager(context,
+                LinearLayoutManager.VERTICAL, false)
+        mRecycle.adapter = AdapterK(this::itemBind,
+                arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
                 .also { mAdapter = it }
 
-		setScrollChangedListener()
+        setScrollChangedListener()
 
-		mSwipe.setOnRefreshListener {
-			downData()
-		}
+        mSwipe.setOnRefreshListener {
+            downData()
+        }
 
-		mToolBar.title = ""
+        mToolBar.title = ""
 
-		layoutInflater.inflate(R.layout.footview_parents_qa, mRecycle, false).run {
-			mFootText = findViewById(R.id.foot_loading)
-			mFootPrg = findViewById(R.id.foot_progress)
-			mAdapter.footView = this
-		}
-	}
+        layoutInflater.inflate(R.layout.footview_load_more, mRecycle, false).run {
+            mFootText = findViewById(R.id.foot_loading)
+            mFootPrg = findViewById(R.id.foot_progress)
+            mAdapter.footView = this
+        }
+    }
 
-//    读取本地缓存或请求网络
-	override fun initData() {
+    //    读取本地缓存或请求网络
+    override fun initData() {
         if (userId.isEmpty()) {
             startActivity(Intent(context, LoginActivity::class.java))
             return
         }
-		if (mAdapter.bean.isEmpty()) {
+        if (mAdapter.bean.isEmpty()) {
             if (cacheJson.isNotEmpty()) {
                 val readCache = Gson()
                         .fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
@@ -155,19 +155,20 @@ class QAFragment : Fragment() {
 
             upData()
         }
-	}
+    }
 
-//    下拉加载
-	private fun downData() {
-		if (isUpdate) {
-			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
-			return
-		}
-		if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
-		inRequest({
+    //    下拉加载
+    private fun downData() {
+        if (isUpdate) {
+            if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+            return
+        }
+        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
+        inRequest({
             if (it.tokenStatus > 1) {
                 doAsync {
-                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
+                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152)
+                            ?: return@doAsync
                     if ("0" in response) {
                         userId = ""
                         uiThread {
@@ -184,51 +185,53 @@ class QAFragment : Fragment() {
                 showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
                 return@inRequest
             }
-			val bean = it.menuList
+            val bean = it.menuList
 
-            bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
+            bean.forEach {
+                // ForEach 循环过滤最大 & 最小 createDate
                 maxDate = it.createDate
                 minDate = it.createDate
             }
 
-			if (bean.isEmpty()) {
-				showSnackBar(mRecycle, "暂时没有新的话题_(:з」∠)_")
-				b = false
-				mFootText.text = "—我是有底线的—"
-				mFootPrg.visibility = View.GONE
+            if (bean.isEmpty()) {
+                showSnackBar(mRecycle, "暂时没有新的话题_(:з」∠)_")
+                b = false
+                mFootText.text = "—我是有底线的—"
+                mFootPrg.visibility = View.GONE
 
-				if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
-				return@inRequest
-			}
-			mAdapter.addDataToTop(ArrayList(bean))
-			mAdapter.notifyDataSetChanged()
+                if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+                return@inRequest
+            }
+            mAdapter.addDataToTop(ArrayList(bean))
+            mAdapter.notifyDataSetChanged()
 
-			if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+            if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
             b = true
 
             val temp = arrayListOf<String>()
             bean.forEach { temp.add(it.id.toString()) }
             savedList.addAll(0, temp)
-		}, 1)
-	}
+        }, 1)
+    }
 
-//    上拉加载
-	private fun upData() {
+    //    上拉加载
+    private fun upData() {
         if (!b && cacheIndex >= cacheList.size) return
 
-		mFootPrg.visibility = View.VISIBLE
-		mFootText.text = "加载中"
-		isUpdate = true
+        mFootPrg.visibility = View.VISIBLE
+        mFootText.text = "加载中"
+        isUpdate = true
 
-		inRequest(::upReq, 2)
-	}
+        inRequest(::upReq, 2)
+    }
 
-//    上拉加载详细处理
+    //    上拉加载详细处理
     private fun upReq(it: ResponseBean.QABody) {
         // 判断是否多端登陆
         if (it.tokenStatus > 1) {
             doAsync {
-                val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152) ?: return@doAsync
+                val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152)
+                        ?: return@doAsync
                 if ("0" in response) {
                     userId = ""
                     uiThread {
@@ -247,7 +250,8 @@ class QAFragment : Fragment() {
         }
         val bean = it.menuList
 
-        bean.forEach { // ForEach 循环过滤最大 & 最小 createDate
+        bean.forEach {
+            // ForEach 循环过滤最大 & 最小 createDate
             maxDate = it.createDate
             minDate = it.createDate
         }
@@ -306,7 +310,7 @@ class QAFragment : Fragment() {
         }
     }
 
-//    网络请求
+    //    网络请求
     private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
         when (type) {
             1 -> {
@@ -336,16 +340,16 @@ class QAFragment : Fragment() {
         if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
     }
 
-//    多type判断
+    //    多type判断
     private fun viewType(model: ResponseBean.QADetail) = with(model.imgs?.split('|')?.size) {
         if (this == null || this >= 3) AdapterK.TYPE_NORMAL
         else AdapterK.TYPE_ONE
     }
 
-//    填充数据
-	@SuppressLint("SetTextI18n")
-	private fun itemBind(holder: Adapter.Holder,
-						 mutableList: MutableList<ResponseBean.QADetail>, position: Int) {
+    //    填充数据
+    @SuppressLint("SetTextI18n")
+    private fun itemBind(holder: Adapter.Holder,
+                         mutableList: MutableList<ResponseBean.QADetail>, position: Int) {
 
         val data = mutableList[position]
         val type = viewType(data)
@@ -378,52 +382,49 @@ class QAFragment : Fragment() {
             }
         }
 
-		parent.setOnClickListener {
-			startActivityForResult(Intent(context, QAParent::class.java)
+        parent.setOnClickListener {
+            startActivityForResult(Intent(context, QAParent::class.java)
                     .putExtra("position", position)
-					.putExtra("taskId", data.id.toString())
-					.putExtra("commentId", data.id.toString()), 20)
-		}
+                    .putExtra("taskId", data.id.toString())
+                    .putExtra("commentId", data.id.toString()), 20)
+        }
 
-		title.text = data.title
-		reply.text = "${data.comment_count}回答"
+        title.text = data.title
+        reply.text = "${data.comment_count}回答"
 
-		if (data.imgs == null || data.imgs.isEmpty()) {
-			img1.visibility = View.GONE
-			return
-		}
+        if (data.imgs == null || data.imgs.isEmpty()) {
+            img1.visibility = View.GONE
+            return
+        }
 
         img1.visibility = View.VISIBLE
 
         val split = data.imgs.split('|')
 
-        when {
-            split.size >= 3 -> {
-                Glide.with(img1).load(split[0]).apply(options).into(img1)
-                if (img2 != null && img3 != null) {
-                    Glide.with(img2).load(split[1]).apply(options).into(img2)
-                    Glide.with(img3).load(split[2]).apply(options).into(img3)
+        if (split.size >= 3) {
+            Glide.with(img1).load(split[0]).apply(options).into(img1)
+            if (img2 != null && img3 != null) {
+                Glide.with(img2).load(split[1]).apply(options).into(img2)
+                Glide.with(img3).load(split[2]).apply(options).into(img3)
+            }
+        } else {
+            Glide.with(img1).load(split[0]).apply(options).into(img1)
+        }
+    }
+
+    //    加载更多的监听
+    private fun setScrollChangedListener() {
+        mRecycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (!mRecycle.canScrollVertically(1))
+                        upData()
                 }
             }
-            else -> {
-                Glide.with(img1).load(split[0]).apply(options).into(img1)
-            }
-        }
-	}
+        })
+    }
 
-//    加载更多的监听
-	private fun setScrollChangedListener() {
-		mRecycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-			override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-					if (!mRecycle.canScrollVertically(1))
-						upData()
-				}
-			}
-		})
-	}
-
-//    拼接保存的id
+    //    拼接保存的id
     private fun spliceId(): String {
         var temp = 0
         var id = ""
@@ -434,19 +435,19 @@ class QAFragment : Fragment() {
         return id.trim('|')
     }
 
-//    意外关闭时做本地储存
-	override fun onSaveInstanceState(outState: Bundle) {
-		saveCache()
-	}
+    //    意外关闭时做本地储存
+    override fun onSaveInstanceState(outState: Bundle) {
+        saveCache()
+    }
 
-//    正常关闭时做本地储存
-	override fun onDestroy() {
-		saveCache()
-		super.onDestroy()
-	}
+    //    正常关闭时做本地储存
+    override fun onDestroy() {
+        saveCache()
+        super.onDestroy()
+    }
 
-//    本地储存实现
-	private fun saveCache() {
+    //    本地储存实现
+    private fun saveCache() {
         if (!openCache) return
 
         val map = hashMapOf<String, Any>()
@@ -455,44 +456,44 @@ class QAFragment : Fragment() {
         map["menu"] = savedList
 
         cacheJson = Gson().toJson(map)
-	}
+    }
 
-//    设置图片等宽
-	private fun View.setWidth() {
-		val point = Point()
-		activity?.windowManager?.defaultDisplay?.getSize(point)
-		val width = (point.x - resources.getDimension(R.dimen.dp30)
-				- (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
+    //    设置图片等宽
+    private fun View.setWidth() {
+        val point = Point()
+        activity?.windowManager?.defaultDisplay?.getSize(point)
+        val width = (point.x - resources.getDimension(R.dimen.dp30)
+                - (resources.getDimensionPixelSize(R.dimen.dp5) * 2)) / 3
 
         layoutParams = layoutParams.also { it.width = width.toInt() }
     }
 
-//    本地缓存的model
-	private data class ReadCache(val top: String = "",
-	                             val end: String = "",
-	                             val menu: Array<String> = arrayOf()) {
-		override fun equals(other: Any?): Boolean {
-			if (this === other) return true
-			if (javaClass != other?.javaClass) return false
+    //    本地缓存的model
+    private data class ReadCache(val top: String = "",
+                                 val end: String = "",
+                                 val menu: Array<String> = arrayOf()) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
 
-			other as ReadCache
+            other as ReadCache
 
-			if (top != other.top) return false
-			if (end != other.end) return false
-			if (!Arrays.equals(menu, other.menu)) return false
+            if (top != other.top) return false
+            if (end != other.end) return false
+            if (!Arrays.equals(menu, other.menu)) return false
 
-			return true
-		}
+            return true
+        }
 
-		override fun hashCode(): Int {
-			var result = top.hashCode()
-			result = 31 * result + end.hashCode()
-			result = 31 * result + Arrays.hashCode(menu)
-			return result
-		}
-	}
+        override fun hashCode(): Int {
+            var result = top.hashCode()
+            result = 31 * result + end.hashCode()
+            result = 31 * result + Arrays.hashCode(menu)
+            return result
+        }
+    }
 
-//    如果有一条已删除的话题，打开后自动删除本地缓存id & 更新UI
+    //    如果有一条已删除的话题，打开后自动删除本地缓存id & 更新UI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 20) {
             data?.let {
@@ -527,52 +528,52 @@ class QAFragment : Fragment() {
         }
     }
 
-//    判断是不是管理员
-	override fun onStop() {
-		super.onStop()
-		if (role == 2) {
-			setHasOptionsMenu(true)
-			(activity as AppCompatActivity).setSupportActionBar(mToolBar)
-		}
-	}
+    //    判断是不是管理员
+    override fun onStart() {
+        super.onStart()
+        if (role == 2) {
+            setHasOptionsMenu(true)
+            (activity as AppCompatActivity).setSupportActionBar(mToolBar)
+        }
+    }
 
-	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-		if (role == 2) {
-			inflater?.inflate(R.menu.menu_role_item, menu)
-			admMenu = menu?.findItem(R.id.menu_clear)
-		}
-	}
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        if (role == 2) {
+            inflater?.inflate(R.menu.menu_role_item, menu)
+            admMenu = menu?.findItem(R.id.menu_clear)
+        }
+    }
 
-	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-		if (role == 1) return false
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (role == 1) return false
 
-		when (item?.itemId) {
-			R.id.menu_clear -> {
-				openCache = if (openCache) {
-					admMenu?.title = "打开缓存"
-					cacheJson = ""
-					false
-				} else {
-					admMenu?.title = "清除缓存并关闭"
-					true
-				}
-			}
-		}
-		return true
-	}
+        when (item?.itemId) {
+            R.id.menu_clear -> {
+                openCache = if (openCache) {
+                    admMenu?.title = "打开缓存"
+                    cacheJson = ""
+                    false
+                } else {
+                    admMenu?.title = "清除缓存并关闭"
+                    true
+                }
+            }
+        }
+        return true
+    }
 
-//    对外提供刷新列表
-	fun resize() {
-		mAdapter.notifyDataSetChanged()
-	}
+    //    对外提供刷新列表
+    fun resize() {
+        mAdapter.notifyDataSetChanged()
+    }
 
-//    对外提供加载更多
+    //    对外提供加载更多
     fun rdRefresh() {
         mRecycle.scrollToPosition(0)
         downData()
     }
 
-//    对外提供清除缓存
+    //    对外提供清除缓存
     fun clearCache() {
         openCache = false
     }

@@ -92,14 +92,12 @@ class QAParent : Activity() {
 
                     begin.commit()
 
-                    answersDetail!!.loadingListener({
+                    answersDetail!!.loadingListener( onStart = {
                         _progress.visibility = View.VISIBLE
-                        _progress.newProgress = 1f
-                    }, {
+                    }, onLoading =  {
                         _progress.newProgress = it.toFloat()
-                        if (it >= 100) {
-                            _progress.visibility = View.INVISIBLE
-                        }
+                    }, onStop = {
+                        _progress.visibility = View.INVISIBLE
                     })
                 }
             }

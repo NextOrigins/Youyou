@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,6 +27,7 @@ import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
+import com.neworld.youyou.view.mview.comment.HProgress;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -55,13 +57,15 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
     private int taskId;
     private int from_uid;
     private TextView tvComment;
-    private ProgressDialog dialog = null;
+//    private ProgressDialog dialog = null;
     private String baseUrl;
     private String content;
     private String imgs;
     private String title;
     private String dianUrl;
     private RelativeLayout rlPage;
+
+    private HProgress mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,9 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
         ivShare = (ImageView) findViewById(R.id.iv_share);
         rlPage = (RelativeLayout) findViewById(R.id.page_tv);
         tvComment = (TextView) findViewById(R.id.detail_comment);
+
+        mProgress = findViewById(R.id._progress);
+
         tvComment.setOnClickListener(this);
         rlPage.setOnClickListener(this);
         ivCancel.setOnClickListener(this);
@@ -168,14 +175,16 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onPageFinished(WebView view, String url) {
                 //super.onPageFinished(view, url);
-                dialog.dismiss();
+//                dialog.dismiss();
+                mProgress.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //super.onPageStarted(view, url, favicon);
-                dialog = ProgressDialog.show(HotActivity.this, null, "页面加载中，请稍后..");
-                new Handler().postDelayed(() -> dialog.dismiss(), 1500);
+//                dialog = ProgressDialog.show(HotActivity.this, null, "页面加载中，请稍后..");
+//                new Handler().postDelayed(() -> dialog.dismiss(), 1500);
+                mProgress.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -186,6 +195,13 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
             }
         });
         //返回
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                mProgress.setNewProgress(newProgress);
+            }
+        });
     }
 
     //截取uid

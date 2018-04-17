@@ -32,6 +32,12 @@
                 android:text="正文"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
+
+            <com.neworld.youyou.view.mview.comment.HProgress
+                android:id="@+id/_progress"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentBottom="true" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

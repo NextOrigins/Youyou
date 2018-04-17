@@ -60,7 +60,7 @@ class QACollectActivity : Activity() {
                 .also { mAdapter = it }
         _recycle.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        layoutInflater.inflate(R.layout.footview_parents_qa, _recycle, false).run {
+        layoutInflater.inflate(R.layout.footview_load_more, _recycle, false).run {
             mFootProgress = findViewById(R.id.foot_progress)
             mFootText = findViewById(R.id.foot_loading)
             mAdapter.footView = this@run

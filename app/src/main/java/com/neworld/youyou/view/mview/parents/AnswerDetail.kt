@@ -3,6 +3,7 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Point
 import android.os.Bundle
@@ -13,9 +14,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.*
 import android.text.style.ForegroundColorSpan
-import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.webkit.*
 import android.widget.*
@@ -86,6 +85,7 @@ class AnswerDetail : Fragment() {
     private var replyContent: String? = null
     private var onStart: (() -> Unit)? = null
     private var onLoading: ((new: Int) -> Unit)? = null
+    private var onStop: (() -> Unit)? = null
     private var toPos = 1
 
     // by observer
@@ -179,7 +179,7 @@ class AnswerDetail : Fragment() {
         mPreview = root.findViewById<LinearLayout>(R.id._bottom_preview).apply {
             // 滚动到第一条
             mReview = findViewById<ImageView>(R.id._review).apply {
-                setOnClickListener { 
+                setOnClickListener {
                     mRecycle.toPosition(toPos)
                     toPos = if (toPos == 1) 0 else 1
                 }
@@ -235,6 +235,7 @@ class AnswerDetail : Fragment() {
 
         mPublish = root.findViewById(R.id._publish) // 回复按钮
 
+        // 发布评论
         mPublish.setOnClickListener {
             if (mComment.text.isEmpty()) {
                 showToast("请输入内容")
@@ -281,14 +282,16 @@ class AnswerDetail : Fragment() {
             }
         }
 
+        // webView和其他其他空间初始化
         mWeb = layoutInflater.inflate(R.layout.head_answers_detail, mRecycle, false)
                 .also { mAdapter.headView = it }
                 .run {
                     mCommentCount = findViewById(R.id.head_comment_count)
                     mPraiseCount = findViewById(R.id.head_praise_count)
-                    findViewById<WebView>(R.id.head_web)
-                }.apply(this@AnswerDetail::configWeb)
+                    findViewById(R.id.head_web)
+                }
 
+        // 加载更多控件初始化 & 事件处理
         layoutInflater.inflate(R.layout.foot_answers_detail, mRecycle, false).apply {
             hintText = findViewById(R.id._click_load_more)
             hintProgress = findViewById(R.id._click_load_progress)
@@ -311,11 +314,14 @@ class AnswerDetail : Fragment() {
                 })
             }
         }.let { mAdapter.footView = it }
+
+        setHasOptionsMenu(true)
     }
 
     override fun initData() {
 //        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "${Fields.BASEURL}201?userId=$userId&commentId=$commentId"
+        configWeb(mWeb)
         mWeb.loadUrl(url)
 
         val map = hashMapOf<CharSequence, CharSequence>()
@@ -324,8 +330,6 @@ class AnswerDetail : Fragment() {
         map["createDate"] = ""
 
         response(this@AnswerDetail::onResponse, 202, map)
-
-        onStart?.invoke()
     }
 
     @SuppressLint("SetTextI18n")
@@ -370,6 +374,7 @@ class AnswerDetail : Fragment() {
             lastCreateDate = ""
     }
 
+    // 设置控件数据
     private fun itemBind(holder: Adapter.Holder,
                          mutableList: MutableList<ResponseBean.AnswersDetailList>, position: Int) {
         val icon = holder.find<CircleImageView>(R.id.item_icon)
@@ -459,6 +464,7 @@ class AnswerDetail : Fragment() {
         }
     }
 
+    // 配置WebView
     @SuppressLint(value = ["SetJavaScriptEnabled"])
     private fun configWeb(it: WebView) = with(it) {
         isFocusable = false
@@ -487,6 +493,8 @@ class AnswerDetail : Fragment() {
                 }
                 onLoading?.invoke(newProgress)
             }
+
+
         }
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
@@ -505,9 +513,18 @@ class AnswerDetail : Fragment() {
                                          errorCode: Int, description: String?, failingUrl: String?) {
                 showToast("error : $errorCode")
             }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                onStart?.invoke()
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                onStop?.invoke()
+            }
         }
     }
 
+    // 下一个回答
     private fun toNext() {
         if (nextArray != null && nextArray!!.size > index) {
             val id = nextArray!![index++]
@@ -518,6 +535,7 @@ class AnswerDetail : Fragment() {
         }
     }
 
+    // 跳转到指定item
     private fun RecyclerView.toPosition(position: Int) {
         if (adapter.itemCount > position) {
             val layoutManager = layoutManager as LinearLayoutManager
@@ -543,6 +561,16 @@ class AnswerDetail : Fragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.menu_item, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        showToast("shared") // TODO : 分享
+
+        return true
+    }
+
     fun resize() {
         val point = Point()
         activity?.windowManager?.defaultDisplay?.getSize(point)
@@ -555,8 +583,9 @@ class AnswerDetail : Fragment() {
         mNext.layoutParamsWidth(x)
     }
 
-    fun loadingListener(onStart: () -> Unit, onLoading: (new: Int) -> Unit) {
+    fun loadingListener(onStart: () -> Unit, onLoading: (new: Int) -> Unit, onStop: () -> Unit) {
         this@AnswerDetail.onStart = onStart
         this@AnswerDetail.onLoading = onLoading
+        this@AnswerDetail.onStop = onStop
     }
 }

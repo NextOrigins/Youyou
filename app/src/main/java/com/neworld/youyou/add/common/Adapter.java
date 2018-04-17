@@ -81,6 +81,10 @@ public class Adapter<T> extends RecyclerView.Adapter<Adapter.Holder> {
         }
     }
 
+    public void clear() {
+        bean.clear();
+    }
+
     public interface AdapterObs<T> {
         void onBind(@NotNull Holder holder, @NotNull List<T> bean, int position);
         int layoutId();

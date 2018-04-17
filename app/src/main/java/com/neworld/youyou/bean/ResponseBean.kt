@@ -410,4 +410,33 @@ class ResponseBean {
             val status: Int, //0
             val transmit_count: Int //0
     )
+
+    data class HotTextBody(
+            val tokenStatus: Int,
+            val menuList: List<HotTextModel>,
+            val status: Int
+    )
+
+    data class HotTextModel(
+            val imgs: String,
+            val faceImg: String,
+            val nickName: String,
+            val attachedContent: String,
+            val id: Int,
+            val source: String,
+            val title: String,
+            val createDate: String,
+            val collectStatus: Int
+    )
+
+    data class HotTitleBody(
+            val menuList: List<HotTitleModel>,
+            val status: Int
+    )
+
+    data class HotTitleModel(
+            val typeName: String,
+            val id: Int,
+            val typeImg: String
+    )
 }

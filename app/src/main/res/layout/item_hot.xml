@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_selector"
+    android:paddingBottom="@dimen/dp15">
+
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="@dimen/dp15"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginRight="@dimen/dp15"
+        android:layout_marginTop="@dimen/dp5"
+        android:textColor="#000"
+        android:textSize="17sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/item_icon"
+        app:layout_constraintTop_toTopOf="@id/item_icon"
+        tools:text="啥？这么便宜？这种好事带今天天气好晴朗" />
+
+    <TextView
+        android:id="@+id/item_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp5"
+        android:textColor="#9f9f9f"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="@id/item_title"
+        app:layout_constraintTop_toBottomOf="@id/item_title"
+        tools:text="上海家长" />
+
+    <TextView
+        android:id="@+id/item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="#9f9f9f"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/item_author"
+        app:layout_constraintTop_toTopOf="@id/item_author"
+        tools:text="9分钟前" />
+
+    <!--<View-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_marginTop="@dimen/dp15"-->
+    <!--android:background="@color/line_bg"-->
+    <!--android:layout_height="1dp"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/item_time" />-->
+</android.support.constraint.ConstraintLayout>

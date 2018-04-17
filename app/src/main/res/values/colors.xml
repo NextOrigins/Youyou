@@ -18,4 +18,8 @@
     <color name="gray">#EAEAF0</color>
     <color name="line_bg">#dfdfdf</color>
     <color name="blue">#0066EE</color>
+
+    <color name="blueIndicator">#4FE9F4</color>
+    <color name="tab_normal">#161615</color>
+    <color name="tab_selected">#f85a5a</color>
 </resources>
