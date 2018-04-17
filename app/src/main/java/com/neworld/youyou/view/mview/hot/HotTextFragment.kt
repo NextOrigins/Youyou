@@ -53,6 +53,7 @@ class HotTextFragment : Fragment() {
         opt
     }
     private var loading = true
+    private var empty = false
 
     override fun getContentLayoutId() = R.layout.fragment_hot_content
 
@@ -67,6 +68,11 @@ class HotTextFragment : Fragment() {
         mSwipe.setOnRefreshListener {
             if (loading) {
                 if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+                return@setOnRefreshListener
+            }
+            if (empty && mAdapter.getSize() == 0) {
+                if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+                showToast("该板块暂时没有文章…敬请期待")
                 return@setOnRefreshListener
             }
 
@@ -103,7 +109,10 @@ class HotTextFragment : Fragment() {
     }
 
     override fun initData() {
-        response(::onResponse, 131, mDict)
+        response(::onResponse, 131, mDict, {
+            if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+            showToast("服务器出错啦，请稍后再试")
+        })
     }
 
     private fun loadMore() {
@@ -132,7 +141,7 @@ class HotTextFragment : Fragment() {
         if (model.status == 1 || model.menuList.isEmpty()) {
             mFootText.text = "已全部加载"
             mRecycle.clearOnScrollListeners()
-//            loading = true
+            empty = true
             return
         }
 

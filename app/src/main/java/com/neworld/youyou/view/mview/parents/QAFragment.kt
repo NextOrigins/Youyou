@@ -450,10 +450,28 @@ class QAFragment : Fragment() {
     private fun saveCache() {
         if (!openCache) return
 
+        val filterArray = arrayListOf<String>()
+
+        logE("savedList = $savedList; len = ${savedList.size}")
+        var i = 0
+        while (i < savedList.size - 1) {
+            val temp = savedList[i]
+
+            logE("temp = $temp")
+            if (compare(temp, i + 1)) {
+                filterArray.add(temp)
+                logE("filter temp = $temp")
+            }
+            i++
+        }
+        if (savedList.isNotEmpty()) filterArray.add(filterArray.size, savedList.last())
+
+        logE("filterArray = $filterArray; len = ${filterArray.size}")
+
         val map = hashMapOf<String, Any>()
         map["end"] = minDate
         map["top"] = maxDate
-        map["menu"] = savedList
+        map["menu"] = filterArray
 
         cacheJson = Gson().toJson(map)
     }
@@ -496,34 +514,17 @@ class QAFragment : Fragment() {
     //    如果有一条已删除的话题，打开后自动删除本地缓存id & 更新UI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 20) {
-            data?.let {
-                val er = it.getBooleanExtra("error", false)
-                if (er) {
-                    val position = it.getIntExtra("position", -1)
-                    if (position != -1) {
-                        val element = mAdapter.bean[position].id.toString()
-                        mAdapter.remove(position)
+            if (data == null) return
 
-                        val temp = arrayListOf<String>()
+            val position = data.getIntExtra("position", -1)
+            if (data.getBooleanExtra("error", false) && position != -1) {
+                val element = mAdapter.bean[position].id.toString()
+                mAdapter.remove(position)
 
-                        savedList.forEach {
-                            val split = it.split('|')
-                            var filter = ""
-                            if (split.size > 1) {
-                                split.filterNot { it == element }.forEach { filter = "$filter|$it" }
-                            } else if (split.size == 1 && split[0] != element) {
-                                filter = split[0]
-                            }
+                val temp = savedList.filterNot { it == element }
 
-                            if (filter.isNotEmpty())
-                                temp.add(filter.trim('|'))
-                        }
-
-                        savedList.clear()
-                        savedList.addAll(temp)
-//                        logE("filtered temp = $temp")
-                    }
-                }
+                savedList.clear()
+                savedList.addAll(temp)
             }
         }
     }
@@ -558,6 +559,13 @@ class QAFragment : Fragment() {
                     true
                 }
             }
+        }
+        return true
+    }
+
+    private fun compare(p0: String, start: Int):Boolean {
+        for (i in start until savedList.size) {
+            if (p0 == savedList[i]) return false
         }
         return true
     }

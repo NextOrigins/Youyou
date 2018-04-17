@@ -20,11 +20,13 @@
         tools:text="加载更多" />
 
     <ProgressBar
+        android:paddingTop="@dimen/dp10"
+        android:paddingBottom="@dimen/dp10"
         android:id="@+id/foot_progress"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/foot_loading"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/foot_loading" />
 </android.support.constraint.ConstraintLayout>

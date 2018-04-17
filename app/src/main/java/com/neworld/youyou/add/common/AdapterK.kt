@@ -75,7 +75,7 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit,
             notifyItemRangeChanged(index, count)
     }
 
-    fun getSize(): Int = bean.size
+    fun getSize() = bean.size
 
     override fun remove(position: Int) {
         if (headView == null) {
