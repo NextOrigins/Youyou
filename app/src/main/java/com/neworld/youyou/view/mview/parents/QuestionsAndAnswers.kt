@@ -259,7 +259,7 @@ class QuestionsAndAnswers : Fragment() {
         response<ResponseBean.AnswerBody>({
             if (it.menuList == null || it.menuList.isEmpty()){
                 if (b) {
-                    footText.text = "还没有人回答_(:з」∠)_"
+                    footText.text = if (mAdapter.bean.isEmpty()) "还没有人回答_(:з」∠)_" else "全部加载完成啦"
                     footPrg.visibility = View.GONE
                     b = false
                 }

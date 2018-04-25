@@ -10,20 +10,30 @@ import com.neworld.youyou.bean.ReturnStatus
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.parents.Topics
 import kotlinx.android.synthetic.main.activity_me_settings.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class SettingActivity : Activity(), View.OnClickListener {
 	
 	private var userId by preference("userId", "")
 	private var mApplication: MyApplication? = null
-	private var homeCache by preference("cacheJson", "")
+	private var homeCache  = ""
+	private var cacheArray: Array<String>? = null
 
     override fun getContentLayoutId() = R.layout.activity_me_settings
 
     override fun initArgs(bundle: Bundle?): Boolean {
         if (mApplication == null) mApplication = application as MyApplication
+		cacheArray = bundle?.getStringArray("typeArray")
+		if (cacheArray != null && cacheArray!!.isNotEmpty()) {
+			val edit = getPefStorage()
+			cacheArray!!.forEach {
+				val key = "${Topics.CACHE_KEY}$it"
+				homeCache += edit.getString(key, "")
+			}
+		}
+        homeCache = MyEventBus.INSTANCE.postEvent(Topics.CACHE_LENGTH, "")
+                .fold("") { total, next -> total + (next ?: "") }
         return super.initArgs(bundle)
     }
 
@@ -43,12 +53,19 @@ class SettingActivity : Activity(), View.OnClickListener {
 				return@setOnClickListener
 			}
 			try {
-				homeCache = ""
-				cache_size.text = convertSize()
-				setResult(6)
-				showToast("清理成功！")
+                val array = MyEventBus.INSTANCE.postEvent(Topics.CLEAR_CACHE)
+                if ("1" !in array) {
+                    homeCache = MyEventBus.INSTANCE.postEvent(Topics.CACHE_LENGTH, "")
+                            .fold("") { total, next -> total + (next ?: "") }
+                    cache_size.text = convertSize()
+                    showToast("出现未知错误…")
+                } else {
+                    homeCache = ""
+                    cache_size.text = convertSize()
+                    showToast("清理成功！")
+                }
 			} catch (e: Exception) {
-				showToast("清理失败！如多次出现请到用户反馈处反馈此问题")
+				showToast("清理失败！如多次出现请到用户反馈处反馈此问题 : $e")
 			}
 		}
     }
@@ -81,13 +98,13 @@ class SettingActivity : Activity(), View.OnClickListener {
 		}
 	}
 
-	override fun onStart() {
+	/*override fun onStart() {
 		super.onStart()
-        doAsync {
+        *//*doAsync { // 消息提示
             val response = NetBuild.getResponse("\"userId\":\"$userId\"", 194) ?: "null"
             uiThread { _hint.visibility = if ("1" in response) View.VISIBLE else View.GONE }
-        }
-	}
+        }*//*
+	}*/
 
 	private fun convertSize(): CharSequence {
 		val p0 = (homeCache.toByteArray().size.toFloat() / 1024f / 1024f).toString()

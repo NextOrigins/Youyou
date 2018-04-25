@@ -20,6 +20,7 @@ import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.preference
 import com.neworld.youyou.utils.response
 import com.neworld.youyou.utils.showToast
+import com.neworld.youyou.view.mview.common.HorizontalDecoration
 
 /**
  * @author by hhhh on 2018/4/13.
@@ -85,7 +86,7 @@ class HotTextFragment : Fragment() {
         // 配置recycle
         mRecycle.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false)
-        mRecycle.addItemDecoration(HotItemDecoration(context!!, 2))
+        mRecycle.addItemDecoration(HorizontalDecoration(context!!, 2))
         mRecycle.adapter = AdapterK(::itemBind,
                 arrayOf(R.layout.item_hot), arrayListOf()).also { mAdapter = it }
 

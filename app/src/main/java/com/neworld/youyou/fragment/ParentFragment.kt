@@ -28,7 +28,6 @@ import com.neworld.youyou.bean.PersonDataBean
 import com.neworld.youyou.manager.DataTransmissionManager
 import com.neworld.youyou.pulltorefresh.PullToRefreshBase
 import com.neworld.youyou.pulltorefresh.PullToRefreshListView
-import com.neworld.youyou.update.UpdateChecker
 import com.neworld.youyou.utils.*
 import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareAPI
@@ -119,9 +118,6 @@ class ParentFragment : BaseFragment(), View.OnClickListener {
         ptlv.isPullLoadEnabled = true
         ptlv.isScrollLoadEnabled = false
         lvParent = ptlv.refreshableView
-        //进行版本更新
-        UpdateChecker.checkForDialog(mActivity)
-
         if (parentAdapter == null) {
             parentAdapter = ParentAdapter(context, bean)
             lvParent.adapter = parentAdapter

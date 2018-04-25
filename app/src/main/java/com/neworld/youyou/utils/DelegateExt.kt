@@ -14,6 +14,11 @@ import kotlin.reflect.KProperty
  */
 
 /**
+ * shared preference
+ */
+fun getPefStorage() = MyApplication.sContext.getSharedPreferences("config", Context.MODE_PRIVATE)!!
+
+/**
  * SharedPreference 自动存取
  */
 @JvmOverloads

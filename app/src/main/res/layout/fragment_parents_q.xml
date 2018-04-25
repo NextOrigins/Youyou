@@ -6,16 +6,16 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="@color/colorPrimary">-->
 
-        <TextView
-            style="@style/style_text_all_title"
-            android:text="@string/QA" />
-    </android.support.v7.widget.Toolbar>
+        <!--<TextView-->
+            <!--style="@style/style_text_all_title"-->
+            <!--android:text="@string/QA" />-->
+    <!--</android.support.v7.widget.Toolbar>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/_swipe"

@@ -3,6 +3,7 @@ package com.neworld.youyou.view.mview.parents
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.view.*
@@ -11,41 +12,68 @@ import com.google.gson.reflect.TypeToken
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
-import com.neworld.youyou.utils.NetBuild
-import com.neworld.youyou.utils.preference
+import com.neworld.youyou.utils.*
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * @author by user on 2018/1/4.
  */
-class QAParent : Activity() {
+class QAController : Activity() {
 
-    private var questionsAndAnswers: QuestionsAndAnswers? = null
-    private var answersDetail: AnswerDetail? = null
+    private val questionsAndAnswers by lazy {
+        QuestionsAndAnswers()
+    }
+    private val answersDetail by lazy {
+        AnswerDetail()
+    }
+    private var toDetail = false
+    private lateinit var eTaskId: String // 第三层
+    private lateinit var eCommentId: String // 第二层
+    private lateinit var eDate: String
 
     private var userId by preference("userId", "")
+
+    /*companion object {
+        const val TO_ANSWERS_DETAIL = 233
+    }*/
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
     override fun initWindows() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.run {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(this@QAParent, R.color.primaryDarkGray)
+            window.statusBarColor = ContextCompat.getColor(this@QAController, R.color.primaryDarkGray)
         }
+    }
+
+    override fun initArgs(bundle: Bundle?): Boolean {
+        if (bundle != null) {
+            toDetail = bundle.getBoolean("toDetail", false)
+            if (toDetail) {
+                eTaskId = bundle.getString("taskId")
+                eCommentId = bundle.getString("commentId")
+                eDate = bundle.getString("date")
+            }
+        }
+        return super.initArgs(bundle)
     }
 
     @SuppressLint("SetTextI18n")
     override fun initWidget() {
         supportFragmentManager.beginTransaction().also {
-            it.replace(questionsAndAnswers ?: QuestionsAndAnswers()
-                    .also { questionsAndAnswers = it }, "fragment1")
+            it.replace(questionsAndAnswers, "fragment1")
             it.addToBackStack("fragment1")
         }.commit()
 
-        questionsAndAnswers?.setObserver {
+        questionsAndAnswers.setObserver {
+            startAnswersDetail()
+        }
+
+        if (toDetail) {
             startAnswersDetail()
         }
 
@@ -56,53 +84,69 @@ class QAParent : Activity() {
     }
 
     private fun startAnswersDetail() {
-        questionsAndAnswers?.arguments?.let { args ->
-            val taskId = args.getString("taskId")
-            val minDate = args.getString("minCreateDate")
-            val array1 = args.getStringArray("nextArray")
+        if (questionsAndAnswers.arguments == null && !toDetail) {
+            showToast("出现未知错误！！请反馈此问题！")
+            return
+        }
 
-            val map = hashMapOf<String, String>()
-            map["userId"] = userId
-            map["taskId"] = taskId
-            map["createDate"] = minDate ?: ""
-            doAsync {
-                val response = NetBuild.getResponse(map, 208)
-                val menu = Gson().fromJson<CommentIdCollection>(response,
-                        object : TypeToken<CommentIdCollection>() {}.type).menuList
+        val args = if (toDetail) {
+            Bundle().also {
+                /*it.putString("taskId", eTaskId)
+                it.putString("cId", eCommentId)*/
+                it.putString("cId", eTaskId)
+                logE("Controller taskId = $eTaskId")
+            }
+        } else {
+            questionsAndAnswers.arguments!!
+        }
 
-                if (menu.isNotEmpty()) {
-                    menu.flatMap { arrayListOf(it["commentId"]!!) }.toTypedArray().let { array2 ->
-                        val strLen1 = array1?.size ?: 0
-                        val strLen2 = array2.size
-                        val newLength = strLen1 + strLen2
-                        val nextArray = Arrays.copyOf(array1, newLength)
-                        System.arraycopy(array2, 0, nextArray, strLen1, strLen2)
-                        args.putStringArray("nextArray", nextArray)
-                    }
-                }
+        val taskId: String
+        val minDate: String
+        val array1 = args.getStringArray("nextArray") ?: arrayOf()
 
-                uiThread {
-                    val begin = supportFragmentManager.beginTransaction()
-                    begin.replace(answersDetail?.also { it.arguments = args }
-                            ?: AnswerDetail().also {
-                                it.arguments = args
-                                answersDetail = it
-                            }, "fragment2")
-                    begin.addToBackStack("fragment2")
+        if (toDetail) {
+            taskId = eTaskId
+            minDate = eDate
+        } else {
+            taskId = args.getString("taskId")
+            minDate = args.getString("minCreateDate") ?: ""
+        }
 
-                    begin.commit()
+        val map = hashMapOf<String, String>()
+        map["userId"] = userId
+        map["taskId"] = taskId
+        map["createDate"] = minDate
+        doAsync {
+            val response = NetBuild.getResponse(map, 208)
+            val menu = Gson().fromJson<CommentIdCollection>(response,
+                    object : TypeToken<CommentIdCollection>() {}.type).menuList
 
-                    answersDetail!!.loadingListener( onStart = {
-                        _progress.visibility = View.VISIBLE
-                    }, onLoading =  {
-                        _progress.newProgress = it.toFloat()
-                    }, onStop = {
-                        _progress.visibility = View.INVISIBLE
-                    })
+            if (menu != null && menu.isNotEmpty()) {
+                menu.flatMap { arrayListOf(it["commentId"]!!) }.toTypedArray().let { array2 ->
+                    val strLen1 = array1.size
+                    val strLen2 = array2.size
+                    val newLength = strLen1 + strLen2
+                    val nextArray = Arrays.copyOf(array1, newLength)
+                    System.arraycopy(array2, 0, nextArray, strLen1, strLen2)
+                    args.putStringArray("nextArray", nextArray)
                 }
             }
 
-            Unit
+            uiThread {
+                val begin = supportFragmentManager.beginTransaction()
+                begin.replace(answersDetail.also { it.arguments = args }, "fragment2")
+                begin.addToBackStack("fragment2")
+
+                begin.commit()
+
+                answersDetail.loadingListener(onStart = {
+                    _progress.visibility = View.VISIBLE
+                }, onLoading = {
+                    _progress.newProgress = it.toFloat()
+                }, onStop = {
+                    _progress.visibility = View.INVISIBLE
+                })
+            }
         }
     }
 
@@ -119,10 +163,10 @@ class QAParent : Activity() {
     }
 
     private fun hideAll() = supportFragmentManager.beginTransaction().also {
-        if (questionsAndAnswers != null && questionsAndAnswers!!.isAdded)
+        if (questionsAndAnswers.isAdded)
             it.hide(questionsAndAnswers)
 
-        if (answersDetail != null && answersDetail!!.isAdded)
+        if (answersDetail.isAdded)
             it.hide(answersDetail)
     }.commit()
 
@@ -136,13 +180,11 @@ class QAParent : Activity() {
                 val bt = fm.beginTransaction()
                 when (tag) {
                     "fragment1" -> bt.also {
-                        it.replace(questionsAndAnswers
-                                ?: QuestionsAndAnswers().also { questionsAndAnswers = it }, "fragment1")
+                        it.replace(questionsAndAnswers, "fragment1")
 //                        questionsAndAnswers?.refreshData()
                     }
                     "fragment2" -> bt.also {
-                        it.replace(answersDetail
-                                ?: AnswerDetail().also { answersDetail = it }, "fragment2")
+                        it.replace(answersDetail, "fragment2")
                     }
                 }
                 bt.commit()
@@ -155,24 +197,23 @@ class QAParent : Activity() {
     }
 
     private data class CommentIdCollection(
-            val menuList: MutableList<HashMap<String, String>>
+            val menuList: MutableList<HashMap<String, String>>?
     )
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        if (questionsAndAnswers == null) return
 
-        if (questionsAndAnswers!!.isVisible) {
-            questionsAndAnswers?.resize()
+        if (questionsAndAnswers.isVisible) {
+            questionsAndAnswers.resize()
         } else {
-            answersDetail?.resize()
+            answersDetail.resize()
         }
     }
 
     override fun onDestroy() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.run {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            statusBarColor = ContextCompat.getColor(this@QAParent, R.color.colorPrimaryDark)
+            statusBarColor = ContextCompat.getColor(this@QAController, R.color.colorPrimaryDark)
         }
 
         super.onDestroy()
@@ -194,7 +235,7 @@ class QAParent : Activity() {
 //			UMWeb(url).run {
 //				title = headTitle.text.toString()
 //				description = headContent.text.toString()
-//				ShareAction(this@QAParent)
+//				ShareAction(this@QAController)
 //						.withMedia(this)
 //						.setDisplayList(SHARE_MEDIA.QZONE, SHARE_MEDIA.QQ,
 //								SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)

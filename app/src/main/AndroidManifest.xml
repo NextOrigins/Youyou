@@ -63,8 +63,6 @@
         <activity android:name=".activity.HotActivity" />
         <activity android:name=".activity.AllStudentActivity" />
 
-        <service android:name=".update.DownloadService" />
-
         <service android:name=".update.UpdateService" />
 
         <activity
@@ -123,11 +121,14 @@
         <activity android:name=".view.mview.ebook.EBookDetail"
             android:launchMode="singleTop" />
 
-        <activity android:name=".view.mview.parents.QAParent"
+        <activity android:name=".view.mview.parents.QAController"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
 
         <activity android:name=".view.mview.common.QACollectActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".view.mview.my.DynamicActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

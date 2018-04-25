@@ -1,5 +1,6 @@
 package com.neworld.youyou.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,6 +34,7 @@ import com.neworld.youyou.utils.GsonUtil;
 import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
+import com.neworld.youyou.view.mview.my.DynamicActivity;
 import com.neworld.youyou.view.nine.CircleImageView;
 
 import java.util.List;
@@ -50,6 +52,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout rlChild;
     private RelativeLayout rlFav;
     private RelativeLayout rlSetting;
+    private RelativeLayout rlMoving;
     private CircleImageView circleImageView;
 
     private String imageUrl;
@@ -65,7 +68,16 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private View msgHint;
 
     private int newMsg;
-    private OnCacheRemoved l;
+    private String[] typeArrays;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            typeArrays = arguments.getStringArray("typeArray");
+        }
+    }
 
     @Override
     public View createView() {
@@ -147,8 +159,6 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                     }
                 }
             }
-        } else if (resultCode == 6) {
-            if (l != null) l.onRemoved();
         }
     }
 
@@ -161,6 +171,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlSetting = (RelativeLayout) view.findViewById(R.id.my_setting);
         circleImageView = (CircleImageView) view.findViewById(R.id.iv_my_cicle);
         msgHint = view.findViewById(R.id._msg_hint);
+        rlMoving = view.findViewById(R.id.my_moving);
         //mTv_name = (TextView) view.findViewById(R.id.tv_name);
         $(view, R.id.feed_back).setOnClickListener(this);
         ivTitle.setOnClickListener(this);
@@ -169,6 +180,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlSubject.setOnClickListener(this);
         rlFav.setOnClickListener(this);
         rlSetting.setOnClickListener(this);
+        rlMoving.setOnClickListener(this);
 
 //        view.findViewById(R.id.chengji) // TODO : 成绩查询暂时去掉
 //                .setOnClickListener(v -> startActivity(new Intent(getContext(), AchievementActivity.class)));
@@ -202,7 +214,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                         } else if (!TextUtils.isEmpty(menuList.getUserName())) {
                             tvName.setText(menuList.getUserName());
                         } else {
-                            tvName.setText("fjhjh");
+                            tvName.setText("Nil");
                         }
                     });
                 }
@@ -294,10 +306,13 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(context, MyCollectActivity.class));
                 break;
             case R.id.my_setting:
-	            startActivityForResult(new Intent(context, SettingActivity.class), 20);
+	            startActivity(new Intent(context, SettingActivity.class));
                 break;
             case R.id.feed_back:
                 startActivity(new Intent(context, FeedbackActivity.class));
+                break;
+            case R.id.my_moving:
+                startActivity(new Intent(context, DynamicActivity.class));
                 break;
         }
     }
@@ -313,13 +328,5 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private static class NewStatusBody {
     	int newMeStatus;
     	int status;
-    }
-
-    public void setOnCacheRemoved(OnCacheRemoved l) {
-        this.l = l;
-    }
-
-    private interface OnCacheRemoved {
-        void onRemoved();
     }
 }

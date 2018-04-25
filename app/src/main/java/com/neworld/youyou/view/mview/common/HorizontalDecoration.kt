@@ -1,4 +1,4 @@
-package com.neworld.youyou.view.mview.hot
+package com.neworld.youyou.view.mview.common
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,7 +11,7 @@ import com.neworld.youyou.R
 /**
  * @author by hhhh on 2018/4/16.
  */
-class HotItemDecoration(context: Context, height: Int) : RecyclerView.ItemDecoration() {
+class HorizontalDecoration(context: Context, height: Int) : RecyclerView.ItemDecoration() {
 
     private val mPaint: Paint
     private var mDividerHeight = 0

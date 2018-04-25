@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_parent"
+    android:layout_width="match_parent"
+    android:paddingBottom="@dimen/dp15"
+    android:layout_height="wrap_content">
+
+    <com.neworld.youyou.view.nine.CircleImageView
+        android:id="@+id/item_icon"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="@dimen/dp15"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:src="@drawable/bigimage" />
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginStart="@dimen/dp15"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/item_icon"
+        app:layout_constraintLeft_toRightOf="@id/item_icon"
+        app:layout_constraintTop_toTopOf="@id/item_icon"
+        tools:text="名字" />
+
+    <TextView
+        android:id="@+id/item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp15"
+        android:layout_marginStart="@dimen/dp15"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/item_name"
+        app:layout_constraintLeft_toRightOf="@id/item_name"
+        app:layout_constraintTop_toTopOf="@id/item_name"
+        tools:text="04-23 19:44:55" />
+
+    <ImageView
+        android:id="@+id/item_other"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/pull_down"
+        app:layout_constraintBottom_toBottomOf="@id/item_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/item_icon" />
+
+    <TextView
+        android:id="@+id/item_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp15"
+        android:layout_marginRight="@dimen/dp15"
+        android:layout_marginTop="@dimen/dp10"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:layout_constraintLeft_toLeftOf="@id/item_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_icon"
+        tools:text="我是内容内容内容内容" />
+
+    <ImageView
+        android:id="@+id/item_big"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/dp10"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/deftimg"
+        app:layout_constraintLeft_toLeftOf="@id/item_icon"
+        app:layout_constraintTop_toBottomOf="@id/item_content" />
+
+    <TextView
+        android:id="@+id/item_reply"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/dp15"
+        android:layout_marginRight="@dimen/dp15"
+        android:background="#F0F4F3"
+        android:maxLines="3"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp15"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="@id/item_big"
+        app:layout_constraintLeft_toRightOf="@id/item_big"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/item_big"
+        tools:text="测试测试测" />
+</android.support.constraint.ConstraintLayout>

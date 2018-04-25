@@ -131,5 +131,7 @@
     <string name="later_talk">下次再说</string>
     <string name="waiting">waiting...</string>
     <string name="hot">热文</string>
+    <string name="error">加载失败，轻触重试。</string>
+    <string name="my_dynamic">我的动态</string>
 
 </resources>

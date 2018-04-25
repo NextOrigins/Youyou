@@ -16,8 +16,7 @@ import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.utils.*
-import com.neworld.youyou.view.mview.parents.QAParent
-import com.umeng.socialize.utils.DeviceConfig.context
+import com.neworld.youyou.view.mview.parents.QAController
 import kotlinx.android.synthetic.main.activity_collect_qa.*
 
 /**
@@ -155,7 +154,7 @@ class QACollectActivity : Activity() {
         Glide.with(icon).load(data.imgs.split('|').first()).into(icon)
 
         holder.find<View>(R.id.item_parent).setOnClickListener {
-            startActivity(Intent(baseContext, QAParent::class.java)
+            startActivity(Intent(baseContext, QAController::class.java)
                     .putExtra("position", position)
                     .putExtra("taskId", data.id.toString())
                     .putExtra("commentId", data.id.toString()))

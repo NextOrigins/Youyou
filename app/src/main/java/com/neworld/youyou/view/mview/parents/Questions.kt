@@ -6,10 +6,8 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.*
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -26,8 +24,6 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
@@ -35,29 +31,30 @@ import kotlin.properties.Delegates
 /**
  * @author by user on 2018/1/2.
  */
-class QAFragment : Fragment() {
+class Questions : Fragment() {
 
     // view
     private var mRecycle by notNullSingleValue<RecyclerView>()
     private var mSwipe by notNullSingleValue<SwipeRefreshLayout>()
     private var mFootText by notNullSingleValue<TextView>()
     private var mFootPrg by notNullSingleValue<ProgressBar>()
-    private var mToolBar by notNullSingleValue<Toolbar>()
+//    private var mToolBar by notNullSingleValue<Toolbar>()
 
-    private var admMenu: MenuItem? = null
+//    private var admMenu: MenuItem? = null
 
     // fields
     private var userId by preference("userId", "")
     private var token by preference("token", "")
     // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
-    private var cacheJson by preference("cacheJson", "")
-    private val role by preference("role", 1) // role = 2 为管理员
+    private val prefs = getPefStorage()
+    private lateinit var cacheJson: String
+    private lateinit var cacheKey: String
 
     // RecyclerView适配器 (HeaderView FooterView)
     private var mAdapter: AdapterK<ResponseBean.QADetail> by notNullSingleValue()
 
     // property & cacheList
-    private val map = hashMapOf<CharSequence, CharSequence>() // 网络请求map
+    private val mDict = hashMapOf<CharSequence, CharSequence>() // 网络请求map
     private val list = arrayListOf<ResponseBean.QADetail>() // 返回数据集合
     private val cacheList = arrayListOf<String>() // 缓存列表, 保存createDate
     private var savedList = arrayListOf<String>() // 避免cacheList读取冲突
@@ -93,22 +90,36 @@ class QAFragment : Fragment() {
     private var readLength = 6 // 每次读取缓存的个数
 
     // status
-    private var b = true // 加载完成提示 只显示一次
-    private var over = false // 是否读取完缓存列表
-    private var openCache = true // 是否开启缓存
+    private var nEnd = true // 加载完成提示 只显示一次
+    private var cacheCompleted = false // 是否读取完缓存列表
     private var isUpdate = false
+    private lateinit var mType: String
 
     //    设置内容布局
     override fun getContentLayoutId() = R.layout.fragment_parents_q
+
+    override fun initArgs(bundle: Bundle?) {
+        mType = bundle?.getString("type") ?: "0"
+        cacheKey = "${Topics.CACHE_KEY}$mType"
+        mDict["typeStatus"] = mType
+        cacheJson = prefs.getString(cacheKey, "")
+
+        // 相应刷新event
+        val obtain = MyEventBus.INSTANCE.obtain(mType.toInt(), {
+            downData()
+            null
+        })
+        registerStation(obtain, this@Questions.hashCode())
+    }
 
     //    初始化控件
     override fun initWidget(root: View) {
         mRecycle = root.findViewById(R.id._recycler)
         mSwipe = root.findViewById(R.id._swipe)
-        mToolBar = root.findViewById(R.id._toolbar)
+//        mToolBar = root.findViewById(R.id._toolbar)
 
         root.findViewById<ConstraintLayout>(R.id._parent)
-                .setOnClickListener { startActivity(Intent(context, QAParent::class.java)) }
+                .setOnClickListener { startActivity(Intent(context, QAController::class.java)) }
 
         mRecycle.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false)
@@ -118,11 +129,9 @@ class QAFragment : Fragment() {
 
         setScrollChangedListener()
 
-        mSwipe.setOnRefreshListener {
-            downData()
-        }
+        mSwipe.setOnRefreshListener(::downData)
 
-        mToolBar.title = ""
+//        mToolBar.title = ""
 
         layoutInflater.inflate(R.layout.footview_load_more, mRecycle, false).run {
             mFootText = findViewById(R.id.foot_loading)
@@ -138,6 +147,7 @@ class QAFragment : Fragment() {
             return
         }
         if (mAdapter.bean.isEmpty()) {
+
             if (cacheJson.isNotEmpty()) {
                 val readCache = Gson()
                         .fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
@@ -146,12 +156,10 @@ class QAFragment : Fragment() {
                 cacheList.addAll(readCache.menu)
                 savedList.addAll(cacheList)
 
-                logE("cacheList = $cacheList")
             }
 
-            map["userId"] = userId
-            map["token"] = token
-            map["typeStatus"] = "0"
+            mDict["userId"] = userId
+            mDict["token"] = token
 
             upData()
         }
@@ -165,48 +173,23 @@ class QAFragment : Fragment() {
         }
         if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         inRequest({
-            if (it.tokenStatus > 1) {
-                doAsync {
-                    val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152)
-                            ?: return@doAsync
-                    if ("0" in response) {
-                        userId = ""
-                        uiThread {
-                            startActivity(Intent(context, LoginActivity::class.java)
-                                    .putExtra("login2", true))
-                            mAdapter.bean.clear()
-                            cacheJson = ""
-                        }
-                    }
-                }
-                return@inRequest
-            }
-            if (it.menuList == null) {
-                showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
-                return@inRequest
-            }
-            val bean = it.menuList
-
-            bean.forEach {
-                // ForEach 循环过滤最大 & 最小 createDate
-                maxDate = it.createDate
-                minDate = it.createDate
-            }
+            val bean = it.menuList!!
 
             if (bean.isEmpty()) {
                 showSnackBar(mRecycle, "暂时没有新的话题_(:з」∠)_")
-                b = false
+                nEnd = false
                 mFootText.text = "—我是有底线的—"
                 mFootPrg.visibility = View.GONE
 
                 if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
                 return@inRequest
             }
+
             mAdapter.addDataToTop(ArrayList(bean))
             mAdapter.notifyDataSetChanged()
 
             if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
-            b = true
+            nEnd = true
 
             val temp = arrayListOf<String>()
             bean.forEach { temp.add(it.id.toString()) }
@@ -216,10 +199,10 @@ class QAFragment : Fragment() {
 
     //    上拉加载
     private fun upData() {
-        if (!b && cacheIndex >= cacheList.size) return
+        if (!nEnd && cacheIndex >= cacheList.size || isUpdate) return
 
         mFootPrg.visibility = View.VISIBLE
-        mFootText.text = "加载中"
+        mFootText.text = "加载中...."
         isUpdate = true
 
         inRequest(::upReq, 2)
@@ -227,47 +210,20 @@ class QAFragment : Fragment() {
 
     //    上拉加载详细处理
     private fun upReq(it: ResponseBean.QABody) {
-        // 判断是否多端登陆
-        if (it.tokenStatus > 1) {
-            doAsync {
-                val response = NetBuild.getResponse("{\"userId\":\"$userId\"}", 152)
-                        ?: return@doAsync
-                if ("0" in response) {
-                    userId = ""
-                    uiThread {
-                        startActivity(Intent(context, LoginActivity::class.java)
-                                .putExtra("login2", true))
-                        mAdapter.bean.clear()
-                        cacheJson = ""
-                    }
-                }
-            }
-            return
-        }
-        if (it.menuList == null) {
-            showToast("{错误代码[940], 请到用户反馈处反馈此问题}")
-            return
-        }
-        val bean = it.menuList
+        val bean = it.menuList!!
+        isUpdate = false
 
-        bean.forEach {
-            // ForEach 循环过滤最大 & 最小 createDate
-            maxDate = it.createDate
-            minDate = it.createDate
-        }
-
-        if (bean.isEmpty() && over) {
-            if (b) {
+        if (bean.isEmpty() && cacheCompleted) {
+            if (nEnd) {
                 mFootText.text = "—我是有底线的—"
                 mFootPrg.visibility = View.GONE
-                b = false
+                nEnd = false
             }
-            isUpdate = false
             return
         }
 
         //  判断如果有已删除的item则略继续取id。
-        if (bean.size < readLength && !over) {
+        if (bean.size < readLength && !cacheCompleted) {
             mAdapter.addData(bean)
             val l = bean.size - 1
             val r = mAdapter.bean.size
@@ -285,7 +241,7 @@ class QAFragment : Fragment() {
             readLength -= bean.size
             upData()
             return
-        } else if (!over) {
+        } else if (!cacheCompleted) {
 //            val count = cacheList.size - cacheIndex // 如果需要加载缓存的时候不混合加载新数据 就启用这段代码。
 //            readLength = if (count > 6) 6 else count
             readLength = 6
@@ -297,47 +253,90 @@ class QAFragment : Fragment() {
         // 改变FooterView状态
         mFootText.text = "加载更多"
         mFootPrg.visibility = View.GONE
-        isUpdate = false
-        b = true
+        nEnd = true
 
         // 缓存
-        if (over) {
+        if (cacheCompleted) {
             bean.forEach { savedList.add(it.id.toString()) }
         }
 
         if (mAdapter.bean.size < 7 && cacheList.isNotEmpty()) {
             downData()
+        } else if (mAdapter.getSize() < 6 && cacheCompleted) {
+            mFootText.text = "—我是有底线的—"
+            mFootPrg.visibility = View.GONE
+            nEnd = false
         }
+    }
+
+    /**
+     * 发送消息到Topics处理登录事件
+     */
+    private fun toLogin() {
+        MyEventBus.INSTANCE.postEvent(Topics.TO_LOGIN)
     }
 
     //    网络请求
     private fun inRequest(s: (ResponseBean.QABody) -> Unit, type: Int) {
         when (type) {
             1 -> {
-                map["createDate"] = maxDate ?: ""
-                map["endDate"] = minDate
-                map["type"] = type.toString()
+                mDict["createDate"] = maxDate ?: ""
+                mDict["endDate"] = minDate
+                mDict["type"] = type.toString()
 
-                response(s, 199, map)
+                response<ResponseBean.QABody>({ onResponse(s, it) }, 199, mDict, ::onFailed)
             }
             2 -> {
                 if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
-                    map["id"] = spliceId()
+                    mDict["id"] = spliceId()
 
-                    response(s, "199_1", map)
+                    response<ResponseBean.QABody>({ onResponse(s, it) }, "199_1", mDict, ::onFailed)
                 } else {
-                    over = true
+                    cacheCompleted = true
 
-                    map["createDate"] = maxDate ?: ""
-                    map["endDate"] = minDate
-                    map["type"] = type.toString()
+                    mDict["createDate"] = maxDate ?: ""
+                    mDict["endDate"] = minDate
+                    mDict["type"] = type.toString()
 
-                    response(s, 199, map)
+                    response<ResponseBean.QABody>({ onResponse(s, it) }, 199, mDict, ::onFailed)
                 }
             }
         }
 
         if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+    }
+
+    // 统一处理后分发
+    private fun onResponse(s: (ResponseBean.QABody) -> Unit, model: ResponseBean.QABody) {
+        // 判断是否多端登录
+        if (model.tokenStatus > 1) {
+            toLogin()
+            return
+        }
+        if (model.menuList == null) {
+            // TODO : 这里可以调用用户反馈接口
+            showToast("出错啦，如果多次出现此问题请重新登录账号[0b-327]")
+            return
+        }
+        model.menuList.forEach {
+            // ForEach 循环过滤最大 & 最小 createDate
+            maxDate = it.createDate
+            minDate = it.createDate
+        }
+
+        s.invoke(model)
+    }
+
+    private fun onFailed(e: String) {
+        logE(e)
+        isUpdate = false
+        cacheIndex -= readLength
+        if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
+        if (mFootPrg.visibility == View.VISIBLE) {
+            mFootPrg.visibility = View.GONE
+            mFootText.text = "请检查网络后重试"
+        }
+        showToast("请检查您的网络")
     }
 
     //    多type判断
@@ -383,7 +382,7 @@ class QAFragment : Fragment() {
         }
 
         parent.setOnClickListener {
-            startActivityForResult(Intent(context, QAParent::class.java)
+            startActivityForResult(Intent(context, QAController::class.java)
                     .putExtra("position", position)
                     .putExtra("taskId", data.id.toString())
                     .putExtra("commentId", data.id.toString()), 20)
@@ -443,37 +442,37 @@ class QAFragment : Fragment() {
     //    正常关闭时做本地储存
     override fun onDestroy() {
         saveCache()
+        unregisterStation()
         super.onDestroy()
     }
 
     //    本地储存实现
     private fun saveCache() {
-        if (!openCache) return
+        if (!Topics.OPEN_CACHE) return
 
         val filterArray = arrayListOf<String>()
 
-        logE("savedList = $savedList; len = ${savedList.size}")
         var i = 0
         while (i < savedList.size - 1) {
             val temp = savedList[i]
 
-            logE("temp = $temp")
             if (compare(temp, i + 1)) {
                 filterArray.add(temp)
-                logE("filter temp = $temp")
             }
             i++
         }
         if (savedList.isNotEmpty()) filterArray.add(filterArray.size, savedList.last())
 
-        logE("filterArray = $filterArray; len = ${filterArray.size}")
-
         val map = hashMapOf<String, Any>()
-        map["end"] = minDate
+        map["nEnd"] = minDate
         map["top"] = maxDate
         map["menu"] = filterArray
 
         cacheJson = Gson().toJson(map)
+        // 存入本地
+        prefs.edit().apply {
+            putString(cacheKey, cacheJson)
+        }.apply()
     }
 
     //    设置图片等宽
@@ -529,49 +528,14 @@ class QAFragment : Fragment() {
         }
     }
 
-    //    判断是不是管理员
-    override fun onStart() {
-        super.onStart()
-        if (role == 2) {
-            setHasOptionsMenu(true)
-            (activity as AppCompatActivity).setSupportActionBar(mToolBar)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        if (role == 2) {
-            inflater?.inflate(R.menu.menu_role_item, menu)
-            admMenu = menu?.findItem(R.id.menu_clear)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (role == 1) return false
-
-        when (item?.itemId) {
-            R.id.menu_clear -> {
-                openCache = if (openCache) {
-                    admMenu?.title = "打开缓存"
-                    cacheJson = ""
-                    false
-                } else {
-                    admMenu?.title = "清除缓存并关闭"
-                    true
-                }
-            }
-        }
-        return true
-    }
-
-    private fun compare(p0: String, start: Int):Boolean {
+    private fun compare(p0: String, start: Int): Boolean {
         for (i in start until savedList.size) {
             if (p0 == savedList[i]) return false
         }
         return true
     }
-
     //    对外提供刷新列表
-    fun resize() {
+    /*fun resize() {
         mAdapter.notifyDataSetChanged()
     }
 
@@ -581,8 +545,8 @@ class QAFragment : Fragment() {
         downData()
     }
 
-    //    对外提供清除缓存
+    //    对外提供关闭缓存
     fun clearCache() {
         openCache = false
-    }
+    }*/
 }

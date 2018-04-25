@@ -1,15 +1,16 @@
 package com.neworld.youyou.view.mview.hot
 
-import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.View
+import android.widget.TextView
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.utils.logE
 import com.neworld.youyou.utils.response
+import com.neworld.youyou.utils.showToast
+import com.neworld.youyou.view.mview.common.MyPagerAdapter
 
 /**
  * @author by hhhh on 2018/4/12.
@@ -19,6 +20,8 @@ class HotFragment : Fragment() {
     // view
     private lateinit var mTab: TabLayout
     private lateinit var mPager: ViewPager
+    private lateinit var mAdapter: MyPagerAdapter
+    private lateinit var mErrorPage: TextView
 
     override fun getContentLayoutId() = R.layout.fragment_hot_parent
 
@@ -27,33 +30,32 @@ class HotFragment : Fragment() {
         mPager = root.findViewById(R.id._pager)
 
         mTab.setupWithViewPager(mPager)
+        mPager.adapter = MyPagerAdapter(arrayOf(),
+                childFragmentManager, ::HotTextFragment).also { mAdapter = it }
+
+        mErrorPage = root.findViewById(R.id._error)
+        mErrorPage.setOnClickListener {
+            showToast("please wait....")
+            initData()
+            mErrorPage.visibility = View.GONE
+        }
     }
 
-    override fun initData() {
-        response(::onResponse, "132", "")
-    }
+    override fun initData() = response(::onResponse, "132", "", ::onFailed)
 
     private fun onResponse(body: ResponseBean.HotTitleBody) {
+        logE("menuList size = ${body.menuList.size}")
         val temp = body.menuList
                 .sortedBy { it.id }
                 .flatMap { arrayListOf(it.typeName) }
 
-        mPager.adapter = PagerAdapter(temp.toTypedArray(), fragmentManager)
+        mAdapter.setArray(temp.toTypedArray())
+        mAdapter.notifyDataSetChanged()
     }
 
-    private class PagerAdapter
-    (private val titles: Array<String>, fm: FragmentManager?) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(position: Int): Fragment {
-            val content = HotTextFragment()
-            val bundle = Bundle()
-            bundle.putString("type", position.toString())
-            content.arguments = bundle
-            return content
-        } // TODO : 写一个复用fragment
-
-        override fun getCount() = titles.size
-
-        override fun getPageTitle(position: Int) = titles[position]
+    private fun onFailed(e: String) {
+        logE(e)
+        showToast("网络请求失败了，请检查网络~")
+        mErrorPage.visibility = View.VISIBLE
     }
 }

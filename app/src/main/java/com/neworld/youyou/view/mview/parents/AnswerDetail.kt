@@ -55,7 +55,6 @@ class AnswerDetail : Fragment() {
                 .error(R.drawable.deftimg)
     }
     private lateinit var user: ResponseBean.Userbean
-    private lateinit var taskId: String
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -122,8 +121,8 @@ class AnswerDetail : Fragment() {
     override fun initArgs(bundle: Bundle?) {
         bundle?.let {
             index = 0
-            taskId = it.getString("taskId")
             commentId = it.getString("cId")
+            logE("Detail taskId = $commentId")
         }
     }
 

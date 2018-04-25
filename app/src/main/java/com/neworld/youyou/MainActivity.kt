@@ -1,17 +1,13 @@
 package com.neworld.youyou
 
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.internal.SnackbarContentLayout
 
 import android.support.design.widget.Snackbar
 
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -26,52 +22,60 @@ import android.widget.RadioGroup
 import android.widget.TextView
 
 import com.neworld.youyou.fragment.MyFragment
-import com.neworld.youyou.fragment.SubjectFragment
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.ParentView
 import com.neworld.youyou.view.mview.books.BooksViewImpl
 import com.neworld.youyou.view.mview.comment.HProgress
 import com.neworld.youyou.view.mview.hot.HotFragment
-import com.neworld.youyou.view.mview.parents.QAFragment
+import com.neworld.youyou.view.mview.parents.Topics
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 
-fun showSnackBar(viewGroup: ViewGroup, text: String, duration: Int = 1000)
-		= Snackbar.make(viewGroup, text, duration).apply {
-    view.setBackgroundColor(ContextCompat.getColor(viewGroup.context, R.color.colorPrimary))
-    show()
-}
+fun showSnackBar(viewGroup: ViewGroup, text: String, duration: Int = 1000) =
+        Snackbar.make(viewGroup, text, duration).apply {
+            view.setBackgroundColor(ContextCompat.getColor(viewGroup.context, R.color.colorPrimary))
+            show()
+        }
 
 class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, ParentView {
 
     private var frameLayout: FrameLayout? = null
 
     private var radioGroup: RadioGroup? = null
-    private var rbParent: RadioButton? = null
-//    private var rbSubject: RadioButton? = null
+    private lateinit var rbParent: RadioButton
+    //    private var rbSubject: RadioButton? = null
     private var rbHot: RadioButton? = null
     private var rbMy: RadioButton? = null
-//    private var parentFragment: ParentPageFragment? = null
-	private var parentsQA: QAFragment by Delegates.notNull()
-    private var subjectFragment: SubjectFragment? = null
-//    private var hotFragment: HotFragment? = null
-    private var hotFragment: HotFragment? = null
-    private var myFragment: MyFragment? = null
+    //    private var parentFragment: ParentPageFragment? = null
+    // -----
+    // 暂时关掉
+//	private var topics: Questions by Delegates.notNull()
+    // -----
+    private val topics by lazy {
+        Topics()
+    }
+    //    private var subjectFragment: SubjectFragment? = null
+    //    private var hotFragment: HotFragment? = null
+    private val hotFragment by lazy {
+        HotFragment()
+    }
+    private val myFragment by lazy {
+        MyFragment()
+    }
     private var fragmentManager: FragmentManager by Delegates.notNull()
     private var isSuccess = false
     private var homeEnable = true
     private var hotNewsEnable = false
     var mainApplication: MyApplication? = null
-//        private set
+        private set
     private var netObs: NetworkObs? = null
 
-//    private var booksFragment: EBooks? = null
+    //    private var booksFragment: EBooks? = null
     private var booksFragment: BooksViewImpl? = null
 
-    private var mBackPressedTime by Delegates.observable(0L) {
-        _, old, new ->
+    private var mBackPressedTime by Delegates.observable(0L) { _, old, new ->
         if (new - old > 1000) {
             showSnackBar(activity_main, getString(R.string.exit_message))
         }
@@ -113,16 +117,17 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         inflate
     }
 
+    private var selectedId = R.id.rb_parent
+
+    // ------------------------------
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //设置当前布局
         setContentView(R.layout.activity_main)
 //        parentFragment = ParentPageFragment() // 原 家长圈
-	    parentsQA = QAFragment()
 
-        subjectFragment = SubjectFragment()
-        hotFragment = HotFragment()
-        myFragment = MyFragment()
+//        subjectFragment = SubjectFragment()
 
         booksFragment = BooksViewImpl()  // 出售图书
 //        booksFragment = EBooks() // 电子书
@@ -135,9 +140,7 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         initData()
         initBroadcast()
 
-        //进行版本更新
-//        UpdateChecker.checkForDialog(this)
-
+        // 版本更新
         checkUpDate()
     }
 
@@ -235,13 +238,15 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         rbHot = findViewById(R.id.rb_hot)
         rbMy = findViewById(R.id.rb_my)
 
-        rbParent!!.setOnClickListener { // 点击主页面刷新
-            if (rbParent!!.isChecked) {
+        rbParent.setOnClickListener {
+            logE("homeEnable = $homeEnable")
+            // 点击主页面刷新
+            if (rbParent.isChecked) {
                 if (!homeEnable) {
                     homeEnable = true
                     return@setOnClickListener
                 }
-                parentsQA.rdRefresh()
+                topics.refresh() // TODO : 点击刷新
             }
         }
         rbHot?.setOnClickListener {
@@ -253,9 +258,6 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //                hotFragment?.rdRefresh() // 缺少动画效果
             }
         }
-        myFragment?.setOnCacheRemoved {
-            parentsQA.clearCache()
-        }
     }
 
     private fun initData() {
@@ -266,14 +268,17 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 
         //默认显示首页
 //        changePage(parentFragment, null)
-        changePage(parentsQA, null)
+//        changePage(topics, null)
+        fragmentManager.beginTransaction().apply {
+            add(R.id.framelayout, topics)
+        }.commit()
     }
 
     //切换页面 并把上一个界面添加到退栈中
-    private fun changePage(fragment: Fragment?, tag: String?) {
+    /*private fun changePage(fragment: Fragment?, tag: String?) {
         fragmentManager.beginTransaction()
                 .replace(R.id.framelayout, fragment).addToBackStack(tag).commit()
-    }
+    }*/
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
         if (checkedId != R.id.rb_parent) {
@@ -283,11 +288,22 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
             hotNewsEnable = false
         }
 //        var b = false
+        if (checkedId != selectedId) {
+            hideAll()
+        }
+        selectedId = checkedId
+
+        val bt = fragmentManager.beginTransaction()
         when (checkedId) {
             R.id.rb_parent -> {
 //                b = false
 //                changePage(parentFragment, null)
-	            changePage(parentsQA, null)
+                if (topics.isAdded) {
+                    bt.show(topics)
+                } else {
+                    bt.add(R.id.framelayout, topics)
+                }
+//	            changePage(topics, null)
             }
 //            R.id.rb_subject -> {
 //                b = false
@@ -295,11 +311,21 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //            }
             R.id.rb_hot -> {
 //                b = false
-                changePage(hotFragment, null)
+//                changePage(hotFragment, null)
+                if (hotFragment.isAdded) {
+                    bt.show(hotFragment)
+                } else {
+                    bt.add(R.id.framelayout, hotFragment)
+                }
             }
             R.id.rb_my -> {
 //                b = false
-                changePage(myFragment, null)
+//                changePage(myFragment, null)
+                if (myFragment.isAdded) {
+                    bt.show(myFragment)
+                } else {
+                    bt.add(R.id.framelayout, myFragment)
+                }
             }
 //            R.id.rb_books -> { // TODO : 图书页面 hide
 ////                b = true
@@ -307,6 +333,16 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
 //            }
         }
 //        statusBar(b)
+
+        bt.commit()
+    }
+
+    private fun hideAll() {
+        fragmentManager.beginTransaction().apply {
+            if (topics.isAdded) hide(topics)
+            if (hotFragment.isAdded) hide(hotFragment)
+            if (myFragment.isAdded) hide(myFragment)
+        }.commit()
     }
 
     /*private fun statusBar(b: Boolean) {
@@ -355,10 +391,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         this.isSuccess = isSuccess
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    /*override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        if (parentsQA.isVisible) {
-            parentsQA.resize()
+        if (topics.isVisible) {
+            topics.resize()
         }
-    }
+    }*/
 }

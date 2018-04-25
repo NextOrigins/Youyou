@@ -212,6 +212,43 @@
                 android:background="#efeff4" />
 
             <RelativeLayout
+                android:id="@+id/my_moving"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="12dp"
+                    android:drawableLeft="@drawable/chengji"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="动态"
+                    android:textColor="#000"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@mipmap/jiantou"
+
+                    />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#efeff4" />
+
+            <RelativeLayout
                 android:id="@+id/feed_back"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

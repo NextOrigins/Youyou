@@ -46,14 +46,12 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 	override fun getContentLayoutId() = R.layout.activity_feed_back
 	
 	override fun initWidget() {
-		feed_back_recycler.run {
-			layoutManager = LinearLayoutManager(this@FeedbackActivity,
-					LinearLayoutManager.VERTICAL, false)
-			adapter = AdapterK(this@FeedbackActivity::itemBind,
-					arrayOf(R.layout.item_feed_back), list).also { mAdapter = it }
-			addItemDecoration(DividerItemDecoration(this@FeedbackActivity, DividerItemDecoration.VERTICAL))
-		}
-		
+        _recycle.layoutManager = LinearLayoutManager(this@FeedbackActivity,
+                LinearLayoutManager.VERTICAL, false)
+        _recycle.adapter = AdapterK(::itemBind,
+                arrayOf(R.layout.item_feed_back), list).also { mAdapter = it }
+        _recycle.addItemDecoration(DividerItemDecoration(this@FeedbackActivity, DividerItemDecoration.VERTICAL))
+
 		feed_close.setOnClickListener { finish() }
 		feed_posted.setOnClickListener(this)
 		_revert_btn.setOnClickListener(this)
@@ -97,11 +95,11 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 		}
 		_swipe.isRefreshing = false
 	}
-	
+
 	private fun itemBind(holder: Adapter.Holder,
-	                     data: MutableList<ReportBean.ResultsBean>,
-	                     position: Int) = with(data[position]) {
-		
+						 data: MutableList<ReportBean.ResultsBean>,
+						 position: Int) = with(data[position]) {
+
 		val mContent = holder.find<TextView>(R.id.back_content) // 反馈内容
 		val mDate = holder.find<TextView>(R.id.back_date) // 反馈日期
 		val mState = holder.find<TextView>(R.id.back_state) // 状态
@@ -109,11 +107,11 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 		val mLine = holder.find<View>(R.id.back_line) // 底线
 		val mAdmin = holder.find<TextView>(R.id.back_admin) // 管理员回复
 		val mDelete = holder.find<TextView>(R.id.back_delete) // 删除反馈
-		
+
 		mContent.text = content
 		mDate.text = createDate
 		mDelete.text = if (role == 1) "删除" else "回复"
-		
+
 		if (status == 1) {
 			mState.text = "待处理"
 			mState.setBackgroundResource(R.drawable.feed_back_bg)
@@ -133,13 +131,13 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 				}
 			}
 		}
-		
+
 		if (sumCount > 0) mIv.let { v ->
 			v.visibility = View.VISIBLE
 			Iconimgs.split("\\|".toRegex()).let { Glide.with(v).load(it[it.size - 1]).into(v) }
 		} else
 			mIv.visibility = View.GONE
-		
+
 		mIv.setOnClickListener {
 			Intent(applicationContext, PhotoDetailActivity::class.java).let { itt ->
 				val split = Iconimgs.split("\\|".toRegex())
@@ -154,7 +152,7 @@ class FeedbackActivity : Activity(), View.OnClickListener {
 				}
 			}
 		}
-		
+
 		// 删除按钮
 		mDelete.setOnClickListener {
 			if (role == 1) {

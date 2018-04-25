@@ -182,7 +182,7 @@ class ResponseBean {
             val imgSum: Int, //3
             val typeName: String, //升学
             val id: Int, //1
-            val typeImg: String //http://106.14.251.200:8082/olopicture/icon/y1.jpg|http://106.14.251.200:8082/olopicture/icon/rdht.png|http://106.14.251.200:8082/olopicture/icon/f1.jpg
+            val typeImg: String //http://106.14.251.200:8082/olopicture/icon/y1.jpg
     )
 
 
@@ -203,7 +203,7 @@ class ResponseBean {
             val type: Int, //10
             val title: String, //孩子越优秀，离我们就越远
             val from_uid: Int, //10854
-            val content: String, //我们父母那代家长，在和孩子分别时会有那种生离死别的哀伤，是因为他们那个时代的人，其时代特征是没有自己的人生。可我们不一样啊，我们退休后可能第一任务是和老伴一起全世界到处浪，哪有时间为娃不在身边伤春悲秋？不论娃在世界哪个角落，买张机票就去了啊！呆久了还嫌烦呢！所以，孩子和父母隔得远，这个问题到我们这辈应该就不是问题了，反而脓包娃在身边歪歪腻腻，时不时想啃个老，拜托带个孙啥的，可能搞得我们还火大呢！总之，成长是个跟孩子逐渐分离的过程，每个家长都必须理谨记这一点！
+            val content: String, //我们父母
             val collect_count: Int, //2
             val stickStatus: Int, //1
             val id: Int, //1843
@@ -274,7 +274,7 @@ class ResponseBean {
             val commentLike: Int, //1
             val type: Int, //5
             val from_uid: Int, //10851
-            val content: String, //<p>The new version </br>The game has </br></br></p><img src="http://106.14.251.200:8082/olopicture/answers/10851201801271802431517047363693.jpg"><p>iiii</br>Ghk</p>
+            val content: String, //<p>T
             val commentCount: Int, //22
             val commentImg: String, //http://106.14.251.200:8082/olopicture/answers/10851201801271802431517047363693.jpg
             val stickStatus: Int, //1
@@ -438,5 +438,67 @@ class ResponseBean {
             val typeName: String,
             val id: Int,
             val typeImg: String
+    )
+
+
+    data class QTitleBody(
+            val menuList: List<QTitleModel>,
+            val status: Int
+    )
+
+    data class QTitleModel(
+            val typeName: String,
+            val typeId: Int,
+            val id: Int,
+            val typeImg: String
+    )
+
+    data class DynamicBody(
+            val menuList: List<DynamicModel>,
+            val userList: UserList,
+            val status: Int
+    )
+
+    data class DynamicModel(
+            val imgs: String,
+            val answersId: Int,
+            val parent_cid: Int,
+            val remarkName: String,
+            val commentContent: String,
+            val title: String,
+            val anStatus: Int,
+            val content: String,
+            val commentImg: String,
+            val remarkContent: String,
+            val commentId: Int,
+            val taskId: Int,
+            val createDate: String
+    )
+
+    data class UserList(
+            val birthday: String,
+            val updateDate: String,
+            val sdasd: Any,
+            val address: Any,
+            val role: Int,
+            val dynamic_status: Int,
+            val faceImg: String,
+            val nickName: String,
+            val openId: Any,
+            val mobileCheck: Any,
+            val sex: Int,
+            val userPwd: Any,
+            val remarkName: Any,
+            val userName: String,
+            val cardNo: Any,
+            val token: String,
+            val active_time: String,
+            val realName: Any,
+            val phone: Any,
+            val userAccount: String,
+            val model: Int,
+            val id: Int,
+            val createDate: String,
+            val status: Int
     )
 }
