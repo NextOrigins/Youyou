@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.Window
@@ -21,16 +22,28 @@ import kotlinx.android.synthetic.main.activity_big_pig.*
 class BigPicActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+//        requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.run {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = ContextCompat.getColor(this@BigPicActivity, R.color.primaryDarkGray)
+        }
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_big_pig)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition()
+        }
+
         val url = intent.getStringExtra(EXTRA_URL)
         val opt = RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
         Glide.with(this).load(url).apply(opt).into(big_pic)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startPostponedEnterTransition()
+        }
         big_pic.setOnClickListener { onBackPressed() }
     }
 

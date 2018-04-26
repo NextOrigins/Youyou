@@ -44,13 +44,60 @@
 
     <ImageView
         android:id="@+id/item_img"
-        android:layout_width="@dimen/dp135"
+        android:layout_width="0dp"
         android:layout_height="@dimen/dp75"
         android:layout_marginTop="@dimen/dp5"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="H, 1.55"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/item_img2"
         app:layout_constraintTop_toBottomOf="@id/item_content"
         tools:src="@mipmap/bigimage" />
+
+    <ImageView
+        android:id="@+id/item_img2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/item_img"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toRightOf="@id/item_img"
+        app:layout_constraintRight_toLeftOf="@+id/item_img3"
+        app:layout_constraintTop_toTopOf="@id/item_img"
+        tools:src="@drawable/bigimage" />
+
+    <ImageView
+        android:id="@+id/item_img3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/item_img"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toRightOf="@id/item_img2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/item_img"
+        tools:src="@drawable/bigimage" />
+
+    <TextView
+        android:id="@+id/item_more"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/transparent_black"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp18"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/item_img3"
+        app:layout_constraintLeft_toLeftOf="@id/item_img3"
+        app:layout_constraintRight_toRightOf="@id/item_img3"
+        app:layout_constraintTop_toTopOf="@id/item_img3"
+        tools:text="+1" />
 
     <!--<TextView-->
     <!--android:id="@+id/item_praise_count"-->

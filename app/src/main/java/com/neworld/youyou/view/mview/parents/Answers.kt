@@ -133,29 +133,29 @@ class Answers : Activity() {
                     }
                 }
             }.let {
-                        val map = hashMapOf<CharSequence, CharSequence>().apply {
-                            val bundle = intent.extras
-                            put("userId", userId)
-                            put("taskId", bundle.getString("taskId"))
-                            put("from_uid", bundle.getString("uid"))
-                            put("comment_id", "")
-                            put("attachedContent", sb.subSequence(0, sb.length - 1))
-                            put("content", it)
-                            put("commentImg", cacheImgPath.trim('|'))
-                        }
-                        val response = NetBuild.getResponse(map, 205)
-                        uiThread {
-                            _loading.visibility = View.GONE
-                            _edit.toggleSoftInput(false)
-                            if ("0" in response) {
-                                finish()
-                                "上传成功"
-                            } else {
-                                "上传失败"
-                            }.let(ToastUtil::showToast)
-                        }
-                        Unit
-                    }
+                val map = hashMapOf<CharSequence, CharSequence>().apply {
+                    val bundle = intent.extras
+                    put("userId", userId)
+                    put("taskId", bundle.getString("taskId"))
+                    put("from_uid", bundle.getString("uid"))
+                    put("comment_id", "")
+                    put("attachedContent", sb.subSequence(0, sb.length - 1))
+                    put("content", it)
+                    put("commentImg", cacheImgPath.trim('|'))
+                }
+                val response = NetBuild.getResponse(map, 205)
+                uiThread {
+                    _loading.visibility = View.GONE
+                    _edit.toggleSoftInput(false)
+                    if ("0" in response) {
+                        finish()
+                        "上传成功"
+                    } else {
+                        "上传失败"
+                    }.let(ToastUtil::showToast)
+                }
+                Unit
+            }
         }
     }
 
@@ -221,9 +221,10 @@ class Answers : Activity() {
     override fun onBackPressed() {
         if (_edit.text.isNotEmpty()) {
             displayDialog(this, "关闭将丢失数据, 确定关闭吗",
-                    { _edit.toggleSoftInput(false); super.onBackPressed() })
+                    { super.onBackPressed() })
             return
         }
+        _edit.toggleSoftInput(false)
         super.onBackPressed()
     }
 

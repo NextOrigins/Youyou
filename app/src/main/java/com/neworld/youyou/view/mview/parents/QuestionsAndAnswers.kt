@@ -278,7 +278,7 @@ class QuestionsAndAnswers : Fragment() {
         swipe.isRefreshing = false
         if (t.result == null || t.stickNamicfoList == null || t.menuList == null || t.status == 1) {
             Toast.makeText(context,
-                    "服务器无数据, 可能此话题已被关闭, 如有疑问请到用户反馈处反馈此问题",
+                    "服务器无数据, 可能此话题已被关闭。",
                     Toast.LENGTH_LONG).show()
             Handler().postDelayed({
                 val intent = activity?.intent?.putExtra("error", true)
@@ -295,8 +295,12 @@ class QuestionsAndAnswers : Fragment() {
         mAdapter.notifyDataSetChanged()
 
         b = true
-        footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) "没有更多数据了"
-        else  "加载更多"
+        footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) {
+            b = false
+            "全部加载完成啦"
+        } else  {
+            "加载更多"
+        }
 
         result = t.result.also {
             mBundle.putString("uid", it.from_uid.toString())
@@ -371,9 +375,12 @@ class QuestionsAndAnswers : Fragment() {
 		val content = holder.find<TextView>(R.id.item_content)          // 内容
 //		val praises = holder.find<TextView>(R.id.item_praise_count)     // 点赞数
 		val read = holder.find<TextView>(R.id.item_read_count)          // 阅读数
-		val img = holder.find<ImageView>(R.id.item_img)                 // 回复图片
         val commentCount = holder.find<TextView>(R.id.item_comment)     // 评论数
         val shareCount = holder.find<TextView>(R.id.item_share)         // 分享数
+        val img = holder.find<ImageView>(R.id.item_img)                 // 回复图片
+        val img2 = holder.find<ImageView>(R.id.item_img2)
+        val img3 = holder.find<ImageView>(R.id.item_img3)
+        val more = holder.find<TextView>(R.id.item_more)
 
 		val data = mutableList[position]
 
@@ -458,24 +465,71 @@ class QuestionsAndAnswers : Fragment() {
             }
         }
 
+        more.visibility = View.GONE
+
         img.visibility = if (TextUtils.isEmpty(data.commentImg)) {
             View.GONE
         } else {
             val options = RequestOptions()
                     .placeholder(R.drawable.deftimg)
                     .error(R.drawable.deftimg)
-            Glide.with(img).load(data.commentImg!!.split('|')[0]).apply(options).into(img)
-            img.setOnClickListener { BigPicActivity.launch(activity as AppCompatActivity,
-                    img, data.commentImg) }
+
+            val split = data.commentImg!!.split('|')
+            Glide.with(img).load(split[0]).apply(options).into(img)
+
+            img.setOnClickListener {
+                if (split.size == 1) {
+                    BigPicActivity.launch(activity as AppCompatActivity, img, split[0])
+                } else {
+                    showToast("多图浏览 position = 1")
+                }
+            }
+
+            when (split.size) {
+                1 -> {
+                    img2.visibility = View.INVISIBLE
+                    img3.visibility = View.INVISIBLE
+                }
+                2 -> {
+                    img2.visibility = View.VISIBLE
+                    img3.visibility = View.INVISIBLE
+
+                    img2.setOnClickListener {
+                        showToast("多图浏览：position = 2")
+                    }
+
+                    Glide.with(img2).load(split[1]).apply(options).into(img2)
+                }
+                else -> {
+                    img2.visibility = View.VISIBLE
+                    img3.visibility = View.VISIBLE
+
+                    img2.setOnClickListener {
+                        showToast("多图浏览：position = 2")
+                    }
+                    img3.setOnClickListener {
+                        showToast("多图浏览：position = 3")
+                    }
+
+                    Glide.with(img2).load(split[1]).apply(options).into(img2)
+                    Glide.with(img3).load(split[2]).apply(options).into(img3)
+
+                    if (split.size - 3 > 0) {
+                        more.visibility = View.VISIBLE
+                        more.text = "+${split.size - 3}"
+                    }
+                }
+            }
+
             View.VISIBLE
         }
 
-        img.post {
+        /*img.post {
             img.layoutParams = img.layoutParams.also {
                 it.width = imgWideHigh
                 it.height = imgWideHigh
             }
-        }
+        }*/
 
 		holder.find<View>(R.id._parent).setOnClickListener {
             newModel(mutableList, position)

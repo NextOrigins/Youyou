@@ -122,7 +122,6 @@ class AnswerDetail : Fragment() {
         bundle?.let {
             index = 0
             commentId = it.getString("cId")
-            logE("Detail taskId = $commentId")
         }
     }
 
@@ -244,9 +243,11 @@ class AnswerDetail : Fragment() {
             val map = hashMapOf<CharSequence, CharSequence>()
             map["userId"] = userId
             map["taskId"] = commentId // 2级页面commentId
-            map["comment_id"] = fromCommentId // 评论""  回复别人commentId
-            map["from_userId"] = fromUserId // 回复的from_userId else ""
+            map["comment_id"] = if (fromCommentId.isEmpty()) commentId else fromCommentId// 评论""  回复别人commentId
+            map["from_userId"] = fromUserId // 回复的from_userId else ""  TODO :
             map["content"] = mComment.text.toString()
+
+            fromCommentId = ""
 
             doAsync {
                 val response = NetBuild.getResponse(map, 206)
@@ -386,7 +387,7 @@ class AnswerDetail : Fragment() {
 
         val data = mutableList[position]
 
-        content.text = if (data.remarkContent != null) {
+        content.text = if (data.remarkContent != null && data.remarkContent.isNotEmpty()) {
             SpannableString("${data.content}//@${data.remarkName}: ${data.remarkContent}").apply {
                 val start = data.content.length + 2
                 val end = start + if (data.remarkName != null) data.remarkName.length + 1 else 0
@@ -408,7 +409,7 @@ class AnswerDetail : Fragment() {
 
         reply.setOnClickListener {
             fromUserId = data.from_userId.toString()
-            fromCommentId = data.commentId
+            fromCommentId = data.commentId // TODO :
             replyContent = data.content
             replyUserName = data.from_nickName
             isShowSoftInput = true
@@ -492,8 +493,6 @@ class AnswerDetail : Fragment() {
                 }
                 onLoading?.invoke(newProgress)
             }
-
-
         }
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {

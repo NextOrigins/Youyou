@@ -34,12 +34,9 @@ class QAController : Activity() {
     private lateinit var eTaskId: String // 第三层
     private lateinit var eCommentId: String // 第二层
     private lateinit var eDate: String
+    private lateinit var cId: String
 
     private var userId by preference("userId", "")
-
-    /*companion object {
-        const val TO_ANSWERS_DETAIL = 233
-    }*/
 
     override fun getContentLayoutId() = R.layout.activity_parent_qa
 
@@ -57,6 +54,7 @@ class QAController : Activity() {
                 eTaskId = bundle.getString("taskId")
                 eCommentId = bundle.getString("commentId")
                 eDate = bundle.getString("date")
+                cId = bundle.getString("cId")
             }
         }
         return super.initArgs(bundle)
@@ -64,17 +62,17 @@ class QAController : Activity() {
 
     @SuppressLint("SetTextI18n")
     override fun initWidget() {
-        supportFragmentManager.beginTransaction().also {
-            it.replace(questionsAndAnswers, "fragment1")
-            it.addToBackStack("fragment1")
-        }.commit()
-
         questionsAndAnswers.setObserver {
             startAnswersDetail()
         }
 
         if (toDetail) {
             startAnswersDetail()
+        } else {
+            supportFragmentManager.beginTransaction().also {
+                it.replace(questionsAndAnswers, "fragment1")
+                it.addToBackStack("fragment1")
+            }.commit()
         }
 
         _toolbar.title = ""
@@ -90,12 +88,9 @@ class QAController : Activity() {
         }
 
         val args = if (toDetail) {
-            Bundle().also {
-                /*it.putString("taskId", eTaskId)
-                it.putString("cId", eCommentId)*/
-                it.putString("cId", eTaskId)
-                logE("Controller taskId = $eTaskId")
-            }
+            val bundle = Bundle()
+            bundle.putString("cId", cId)
+            bundle
         } else {
             questionsAndAnswers.arguments!!
         }
@@ -116,6 +111,9 @@ class QAController : Activity() {
         map["userId"] = userId
         map["taskId"] = taskId
         map["createDate"] = minDate
+
+        toDetail = false
+
         doAsync {
             val response = NetBuild.getResponse(map, 208)
             val menu = Gson().fromJson<CommentIdCollection>(response,

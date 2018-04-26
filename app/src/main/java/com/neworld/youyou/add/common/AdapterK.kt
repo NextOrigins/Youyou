@@ -78,13 +78,13 @@ AdapterK<T>(bind: (Holder, MutableList<T>, Int) -> Unit,
     fun getSize() = bean.size
 
     override fun remove(position: Int) {
-        if (headView == null) {
+        if (headView == null && footView == null) {
             super.remove(position)
             return
         }
 
         bean.removeAt(position)
-        notifyItemRemoved(position + 1)
+        notifyItemRemoved(if (headView != null) position + 1 else position)
 
         notifyDataSetChanged()
 

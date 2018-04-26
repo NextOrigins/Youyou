@@ -95,7 +95,11 @@ class DynamicActivity : Activity() {
     }
 
     override fun initData() {
-        response(::onResponse, 215, mDict)
+        if (!_swipe.isRefreshing) _swipe.isRefreshing = true
+        response(::onResponse, 215, mDict, {
+            if (_swipe.isRefreshing) _swipe.isRefreshing = false
+            showToast("网络状态不佳，请稍后重试~")
+        })
     }
 
     private fun onResponse(body: ResponseBean.DynamicBody) {
@@ -108,12 +112,13 @@ class DynamicActivity : Activity() {
 
         if (body.menuList.size < 10) {
             mFootPro.visibility = View.GONE
-            mFootText.text = "没有更多了"
+            mFootText.text = if (body.menuList.isEmpty()) "您还没有动态哦" else "已全部加载完成"
             over = true
         }
 
         mUser = body.userList
 
+        logE("model.size = ${body.menuList.size}")
         mAdapter.addData(body.menuList)
         mAdapter.notifyDataSetChanged()
     }
@@ -141,21 +146,18 @@ class DynamicActivity : Activity() {
         val other = holder.find<ImageView>(R.id.item_other)
 
         holder.find<View>(R.id.item_parent).setOnClickListener {
-            logE("type = ${model.anStatus}")
             val taskId = when (model.anStatus) {
                 1 -> model.commentId
                 2 -> model.taskId
                 else -> model.answersId
             }.toString()
 
-            logE("dynamic taskId = $taskId")
-
             val intent = Intent(this, QAController::class.java)
-                    .putExtra("taskId", taskId)
+                    .putExtra("taskId", model.taskId.toString())
                     .putExtra("commentId", model.commentId.toString())
                     .putExtra("date", model.createDate)
                     .putExtra("toDetail", model.anStatus != 1)
-                    .putExtra("position", position)
+                    .putExtra("cId", taskId)
             startActivity(intent)
         }
 
@@ -170,7 +172,8 @@ class DynamicActivity : Activity() {
         content.visibility = if (model.commentContent.isEmpty()) {
             View.GONE
         } else {
-            content.text = if (model.remarkContent.isNotEmpty()) {
+            content.text = if (model.remarkContent != null && model.remarkName != null &&
+                    model.remarkContent.isNotEmpty()) {
                 SpannableString("${model.commentContent}//@${model.remarkName}: ${model.remarkContent}").apply {
                     val start = model.commentContent.length + 2
                     val end = start + if (model.remarkName.isNotEmpty()) model.remarkName.length + 1 else 0
@@ -183,7 +186,10 @@ class DynamicActivity : Activity() {
             View.VISIBLE
         }
 
-        val replyIcon = model.imgs.split('|').first()
+        var replyIcon = ""
+        if (model.imgs != null) {
+             replyIcon = model.imgs.split('|').first()
+        }
 
         Glide.with(big).load(replyIcon).apply(option).into(big)
         reply.text = model.content
@@ -201,7 +207,7 @@ class DynamicActivity : Activity() {
                         url = 211
                     }
                     2 -> {
-                        map["commentId"] = model.commentId.toString()
+                        map["commentId"] = model.taskId.toString()
                         url = 212
                     }
                     else -> {
@@ -228,7 +234,7 @@ class DynamicActivity : Activity() {
                 mAdapter.remove(position)
                 mDialog.dismiss()
             } else {
-                showToast("出现未知问题，请稍后重试")
+                showToast("您操作的内容可能已被删除，请刷新后重试")
             }
         }
     }

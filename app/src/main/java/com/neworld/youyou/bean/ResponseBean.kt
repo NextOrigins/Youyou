@@ -460,16 +460,16 @@ class ResponseBean {
     )
 
     data class DynamicModel(
-            val imgs: String,
+            val imgs: String?,
             val answersId: Int,
             val parent_cid: Int,
-            val remarkName: String,
+            val remarkName: String?,
             val commentContent: String,
             val title: String,
             val anStatus: Int,
             val content: String,
             val commentImg: String,
-            val remarkContent: String,
+            val remarkContent: String?,
             val commentId: Int,
             val taskId: Int,
             val createDate: String
