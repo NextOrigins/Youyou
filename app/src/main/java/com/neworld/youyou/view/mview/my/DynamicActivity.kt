@@ -75,7 +75,7 @@ class DynamicActivity : Activity() {
         r.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         r.adapter = AdapterK(::onBind, arrayOf(R.layout.item_dynamic), arrayListOf())
                 .also { mAdapter = it }
-        r.addItemDecoration(HorizontalDecoration(this, 1))
+        r.addItemDecoration(HorizontalDecoration(this, 2))
         r.setLoadMore()
 
         layoutInflater.inflate(R.layout.footview_load_more, r, false).run {

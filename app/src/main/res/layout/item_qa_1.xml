@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_selector"
+    android:paddingBottom="@dimen/dp15"
     android:paddingLeft="@dimen/dp15"
     android:paddingRight="@dimen/dp15">
 
@@ -60,18 +61,19 @@
         android:id="@+id/item_reply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dp10"
         android:layout_marginTop="@dimen/dp5"
         android:textSize="@dimen/sp12"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_img1"
+        app:layout_constraintVertical_bias="1"
         tools:text="1402回答" />
 
-    <View
-        android:id="@+id/item_line1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/dp10"
-        android:background="@color/gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_reply" />
+    <!--<View-->
+    <!--android:id="@+id/item_line1"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginTop="@dimen/dp10"-->
+    <!--android:background="@color/gray"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/item_reply" />-->
 </android.support.constraint.ConstraintLayout>

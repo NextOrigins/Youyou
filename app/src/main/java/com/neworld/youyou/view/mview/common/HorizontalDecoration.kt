@@ -2,6 +2,7 @@ package com.neworld.youyou.view.mview.common
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.support.v4.app.ActivityCompat
@@ -11,7 +12,9 @@ import com.neworld.youyou.R
 /**
  * @author by hhhh on 2018/4/16.
  */
-class HorizontalDecoration(context: Context, height: Int) : RecyclerView.ItemDecoration() {
+class HorizontalDecoration
+(context: Context, height: Int,
+ color: Int = ActivityCompat.getColor(context, R.color.line_bg)) : RecyclerView.ItemDecoration() {
 
     private val mPaint: Paint
     private var mDividerHeight = 0
@@ -19,7 +22,7 @@ class HorizontalDecoration(context: Context, height: Int) : RecyclerView.ItemDec
     init {
         val paint = Paint()
         paint.isAntiAlias = true
-        paint.color = ActivityCompat.getColor(context, R.color.line_bg)
+        paint.color = color
 
         mPaint = paint
         mDividerHeight = height

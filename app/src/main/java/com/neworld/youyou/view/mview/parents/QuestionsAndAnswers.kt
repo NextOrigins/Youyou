@@ -39,7 +39,7 @@ import kotlin.properties.Delegates
  */
 class QuestionsAndAnswers : Fragment() {
 
-	// property
+    // property
     private val mContext by lazy {
         context ?: MyApplication.sContext
     }
@@ -49,15 +49,14 @@ class QuestionsAndAnswers : Fragment() {
     private val dp15 by lazy {
         resources.getDimensionPixelOffset(R.dimen.dp15)
     }
-	private val list = arrayListOf<ResponseBean.AnswerList>()
-	private var result: ResponseBean.Result by Delegates.notNull()
+    private val list = arrayListOf<ResponseBean.AnswerList>()
+    private var result: ResponseBean.Result by Delegates.notNull()
     private val options by lazy {
         return@lazy RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
     }
-    private var dateFilter by Delegates.vetoable("") {
-        _, old, new ->
+    private var dateFilter by Delegates.vetoable("") { _, old, new ->
         if (old.isNotEmpty()) {
             val one = toDateLong(new)
             val two = toDateLong(old)
@@ -81,11 +80,11 @@ class QuestionsAndAnswers : Fragment() {
             it?.setBounds(0, 0, dp15, dp15)
         }
     }
-    private val imgWideHigh by lazy {
+    /*private val imgWideHigh by lazy {
         val point = Point()
         activity?.windowManager?.defaultDisplay?.getSize(point)
         (point.x - (resources.getDimensionPixelOffset(R.dimen.dp10) - dp15 * 2)) / 3
-    }
+    }*/
 
     // observer
     private lateinit var obs: View.() -> Unit
@@ -114,60 +113,59 @@ class QuestionsAndAnswers : Fragment() {
         }
     }
 
-	// adapter
-	private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
-	// fields
-	private val userId by preference("userId", "")
+    // adapter
+    private var mAdapter by notNullSingleValue<AdapterK<ResponseBean.AnswerList>>()
+    // fields
+    private val userId by preference("userId", "")
     private lateinit var taskId: String
     private var starWidth = 0
     private var answerCountWidth = 0
 
 
-	// View
-	private var recycle by notNullSingleValue<RecyclerView>()
-	private var answerCount by notNullSingleValue<TextView>()
-	private var star by notNullSingleValue<CheckBox>()
-	private var answer by notNullSingleValue<Button>()
-	private var swipe by notNullSingleValue<SwipeRefreshLayout>()
-	// header
-	private var headTitle by notNullSingleValue<TextView>()
-	private var headIcon by notNullSingleValue<ImageView>()
-	private var headContent by notNullSingleValue<TextView>()
+    // View
+    private var recycle by notNullSingleValue<RecyclerView>()
+    private var answerCount by notNullSingleValue<TextView>()
+    private var star by notNullSingleValue<CheckBox>()
+    private var answer by notNullSingleValue<Button>()
+    private var swipe by notNullSingleValue<SwipeRefreshLayout>()
+    // header
+    private var headTitle by notNullSingleValue<TextView>()
+    private var headIcon by notNullSingleValue<ImageView>()
+    private var headContent by notNullSingleValue<TextView>()
     private var headShowAll by notNullSingleValue<View>()
-	// footer
-	private var footText by notNullSingleValue<TextView>()
-	private var footPrg by notNullSingleValue<ProgressBar>()
+    // footer
+    private var footText by notNullSingleValue<TextView>()
+    private var footPrg by notNullSingleValue<ProgressBar>()
 
-	// state
-	private var b = true
-	private var measured = false
+    // state
+    private var b = true
+    private var measured = false
 
-	override fun getContentLayoutId()
-			= R.layout.fragment_questions_answers
+    override fun getContentLayoutId() = R.layout.fragment_questions_answers
 
     override fun initArgs(bundle: Bundle?) {
         if (bundle == null) return
         taskId = bundle.getString("taskId", "")
     }
 
-	override fun initWidget(root: View) {
-		root.findViewById<RecyclerView>(R.id._recycle).apply {
-			layoutManager = LinearLayoutManager(DeviceConfig.context, LinearLayoutManager.VERTICAL, false)
-			adapter = AdapterK(this@QuestionsAndAnswers::bind,
+    override fun initWidget(root: View) {
+        root.findViewById<RecyclerView>(R.id._recycle).apply {
+            layoutManager = LinearLayoutManager(DeviceConfig.context, LinearLayoutManager.VERTICAL, false)
+            adapter = AdapterK(this@QuestionsAndAnswers::bind,
                     arrayOf(R.layout.item_answer), list).also { mAdapter = it }
-			addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-			addOnScrollListener(object : RecyclerView.OnScrollListener() {
-				override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-					if (newState == RecyclerView.SCROLL_STATE_IDLE)
-						if (!canScrollVertically(1))
-							upData()
-				}
-			})
-		}.let { recycle = it }
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                        if (!canScrollVertically(1))
+                            upData()
+                }
+            })
+        }.let { recycle = it }
 
-		root.findViewById<CheckBox>(R.id._star).apply {
-			setOnClickListener {
-				val map = hashMapOf<CharSequence, CharSequence>()
+        root.findViewById<CheckBox>(R.id._star).apply {
+            setOnClickListener {
+                val map = hashMapOf<CharSequence, CharSequence>()
                 map["userId"] = userId
                 map["taskId"] = taskId
                 map["type"] = "5"
@@ -181,51 +179,51 @@ class QuestionsAndAnswers : Fragment() {
                         text = if (isChecked) "已收藏" else "${tag}人收藏"
                     }
                 }
-			}
-		}.let { star = it }
+            }
+        }.let { star = it }
 
-		root.findViewById<Button>(R.id._answer).apply {
-			setOnClickListener {
-				startActivityForResult(Intent(context, Answers::class.java)
+        root.findViewById<Button>(R.id._answer).apply {
+            setOnClickListener {
+                startActivityForResult(Intent(context, Answers::class.java)
                         .putExtras(arguments), 5)
-			}
-		}.let { answer = it }
+            }
+        }.let { answer = it }
 
-		root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
-			setOnRefreshListener {
-				requestData()
-			}
-		}.let { swipe = it }
+        root.findViewById<SwipeRefreshLayout>(R.id._swipe).apply {
+            setOnRefreshListener {
+                requestData()
+            }
+        }.let { swipe = it }
 
-		layoutInflater.inflate(R.layout.footview_load_more, recycle, false).run {
-			footText = findViewById(R.id.foot_loading)
-			footPrg = findViewById(R.id.foot_progress)
-			mAdapter.footView = this
-		}
+        layoutInflater.inflate(R.layout.footview_load_more, recycle, false).run {
+            footText = findViewById(R.id.foot_loading)
+            footPrg = findViewById(R.id.foot_progress)
+            mAdapter.footView = this
+        }
 
-		layoutInflater.inflate(R.layout.header_parent_qa, recycle, false).run {
-			headTitle = findViewById(R.id.head_title)
-			headIcon = findViewById(R.id.head_img)
-			headContent = findViewById(R.id.head_content)
-			headShowAll = findViewById<View>(R.id.head_toggle).apply {
+        layoutInflater.inflate(R.layout.header_parent_qa, recycle, false).run {
+            headTitle = findViewById(R.id.head_title)
+            headIcon = findViewById(R.id.head_img)
+            headContent = findViewById(R.id.head_content)
+            headShowAll = findViewById<View>(R.id.head_toggle).apply {
                 setOnClickListener {
                     it.visibility = View.GONE
                     headContent.setSingleLine(false)
                 }
             }
-			mAdapter.headView = this
-		}
+            mAdapter.headView = this
+        }
 
-		answerCount = root.findViewById(R.id._answer_count)
+        answerCount = root.findViewById(R.id._answer_count)
 
         setHasOptionsMenu(false)
-	}
+    }
 
-	override fun initData() {
+    override fun initData() {
         // 从其他页面切换过来之后防止多次加载 .
         if (list.isNotEmpty()) return
         requestData()
-	}
+    }
 
     // 防止重复加载
     private fun requestData() {
@@ -240,15 +238,15 @@ class QuestionsAndAnswers : Fragment() {
     }
 
     // 上拉加载
-	private fun upData() {
-		if (list.isEmpty()) return
+    private fun upData() {
+        if (list.isEmpty()) return
 
         list.forEach { dateFilter = it.createDate }
 
-		if (b) {
-			footText.text = "加载中"
-			footPrg.visibility = View.VISIBLE
-		}
+        if (b) {
+            footText.text = "加载中"
+            footPrg.visibility = View.VISIBLE
+        }
 
         val map = hashMapOf<CharSequence, CharSequence>()
 
@@ -257,7 +255,7 @@ class QuestionsAndAnswers : Fragment() {
         map["createDate"] = dateFilter
 
         response<ResponseBean.AnswerBody>({
-            if (it.menuList == null || it.menuList.isEmpty()){
+            if (it.menuList == null || it.menuList.isEmpty()) {
                 if (b) {
                     footText.text = if (mAdapter.bean.isEmpty()) "还没有人回答_(:з」∠)_" else "全部加载完成啦"
                     footPrg.visibility = View.GONE
@@ -270,17 +268,15 @@ class QuestionsAndAnswers : Fragment() {
             footText.text = "加载更多"
             footPrg.visibility = View.GONE
         }, 200, map)
-	}
+    }
 
     // 数据返回
     @SuppressLint("SetTextI18n")
     private fun success(t: ResponseBean.AnswerBody) {
         swipe.isRefreshing = false
         if (t.result == null || t.stickNamicfoList == null || t.menuList == null || t.status == 1) {
-            Toast.makeText(context,
-                    "服务器无数据, 可能此话题已被关闭。",
-                    Toast.LENGTH_LONG).show()
-            Handler().postDelayed({
+            showToast("无法打开，可能此话题已被关闭")
+            if (t.status == 1) Handler().postDelayed({
                 val intent = activity?.intent?.putExtra("error", true)
                 activity?.setResult(21, intent)
                 activity?.finish()
@@ -298,7 +294,7 @@ class QuestionsAndAnswers : Fragment() {
         footText.text = if (t.stickNamicfoList.custom() && t.menuList.custom()) {
             b = false
             "全部加载完成啦"
-        } else  {
+        } else {
             "加载更多"
         }
 
@@ -336,8 +332,10 @@ class QuestionsAndAnswers : Fragment() {
         } else {
             try {
                 Glide.with(headIcon).load(split.first()).apply(options).into(headIcon)
-                headIcon.setOnClickListener { BigPicActivity
-                        .launch(activity as AppCompatActivity, it, split.first()) }
+                headIcon.setOnClickListener {
+                    BigPicActivity
+                            .launch(activity as AppCompatActivity, it, split.first())
+                }
             } catch (e: Exception) {
                 return
             }
@@ -366,15 +364,15 @@ class QuestionsAndAnswers : Fragment() {
     }
 
     // 填充item数据
-	@SuppressLint("SetTextI18n")
-	private fun bind(holder: Adapter.Holder,
-	                 mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
-		val name = holder.find<TextView>(R.id.item_name)                // Authors
-		val praise = holder.find<TextView>(R.id.item_praise)            // 点赞状态展示
-		val icon = holder.find<ImageView>(R.id.item_icon)               // 头像
-		val content = holder.find<TextView>(R.id.item_content)          // 内容
+    @SuppressLint("SetTextI18n")
+    private fun bind(holder: Adapter.Holder,
+                     mutableList: MutableList<ResponseBean.AnswerList>, position: Int) {
+        val name = holder.find<TextView>(R.id.item_name)                // Authors
+        val praise = holder.find<TextView>(R.id.item_praise)            // 点赞状态展示
+        val icon = holder.find<ImageView>(R.id.item_icon)               // 头像
+        val content = holder.find<TextView>(R.id.item_content)          // 内容
 //		val praises = holder.find<TextView>(R.id.item_praise_count)     // 点赞数
-		val read = holder.find<TextView>(R.id.item_read_count)          // 阅读数
+        val read = holder.find<TextView>(R.id.item_read_count)          // 阅读数
         val commentCount = holder.find<TextView>(R.id.item_comment)     // 评论数
         val shareCount = holder.find<TextView>(R.id.item_share)         // 分享数
         val img = holder.find<ImageView>(R.id.item_img)                 // 回复图片
@@ -382,19 +380,19 @@ class QuestionsAndAnswers : Fragment() {
         val img3 = holder.find<ImageView>(R.id.item_img3)
         val more = holder.find<TextView>(R.id.item_more)
 
-		val data = mutableList[position]
+        val data = mutableList[position]
 
-		content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
+        content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
 
-		name.text = data.from_nickName
+        name.text = data.from_nickName
         praise.text = if (data.commentLike > 0) "${data.commentLike}" else "赞"
-		read.text = if (data.clickSum > 0) "${data.clickSum} 阅读" else "0 阅读"
+        read.text = if (data.clickSum > 0) "${data.clickSum} 阅读" else "0 阅读"
         commentCount.text = data.comment_count.toString()
         shareCount.text = if (data.transmit_count > 0) data.transmit_count.toString() else "分享"
 
         praise.tag = data.commentLike
 
-		Glide.with(icon).load(data.faceImg).into(icon)
+        Glide.with(icon).load(data.faceImg).into(icon)
 
         commentCount.setCompoundDrawables(reviewBg, null, null, null)
 
@@ -531,12 +529,12 @@ class QuestionsAndAnswers : Fragment() {
             }
         }*/
 
-		holder.find<View>(R.id._parent).setOnClickListener {
+        holder.find<View>(R.id._parent).setOnClickListener {
             newModel(mutableList, position)
             mBundle.putBoolean("review", false)
             obs.invoke(it)
-		}
-	}
+        }
+    }
 
     // 回答后刷新页面
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

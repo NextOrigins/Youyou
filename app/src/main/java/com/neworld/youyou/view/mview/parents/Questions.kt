@@ -22,8 +22,10 @@ import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
+import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.common.HorizontalDecoration
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
@@ -45,6 +47,7 @@ class Questions : Fragment() {
     // fields
     private var userId by preference("userId", "")
     private var token by preference("token", "")
+    private val mContext by lazy { MyApplication.sContext }
     // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
     private val prefs = getPefStorage()
     private lateinit var cacheJson: String
@@ -127,6 +130,7 @@ class Questions : Fragment() {
         mRecycle.adapter = AdapterK(this::itemBind,
                 arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
                 .also { mAdapter = it }
+        mRecycle.addItemDecoration(HorizontalDecoration(mContext, 2))
 
         setScrollChangedListener()
 
@@ -401,13 +405,13 @@ class Questions : Fragment() {
         val split = data.imgs.split('|')
 
         if (split.size >= 3) {
-            Glide.with(img1).load(split[0]).apply(options).into(img1)
+            Glide.with(mContext).load(split[0]).apply(options).into(img1)
             if (img2 != null && img3 != null) {
-                Glide.with(img2).load(split[1]).apply(options).into(img2)
-                Glide.with(img3).load(split[2]).apply(options).into(img3)
+                Glide.with(mContext).load(split[1]).apply(options).into(img2)
+                Glide.with(mContext).load(split[2]).apply(options).into(img3)
             }
         } else {
-            Glide.with(img1).load(split[0]).apply(options).into(img1)
+            Glide.with(mContext).load(split[0]).apply(options).into(img1)
         }
     }
 
@@ -462,8 +466,6 @@ class Questions : Fragment() {
             i++
         }
         if (savedList.size > 2) filterArray.add(filterArray.size, savedList.last())
-
-        logE("filter array = $filterArray; savedList = $savedList")
 
         val map = hashMapOf<String, Any>()
         map["end"] = minDate
