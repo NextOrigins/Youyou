@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 		                        @Override
 		                        public void onFailed(@NotNull String error) {
-			                        Toast.makeText(LoginActivity.this, "role获取失败, 请到用户反馈处反馈此信息, 我们会尽快处理, 谢谢", Toast.LENGTH_LONG).show();
+			                        Toast.makeText(LoginActivity.this, "出现未知错误，请反馈此问题！谢谢！", Toast.LENGTH_LONG).show();
 		                        }
 	                        }, 126, PersonDataBean.class, map);
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));

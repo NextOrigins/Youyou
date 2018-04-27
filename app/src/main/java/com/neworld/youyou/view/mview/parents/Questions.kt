@@ -106,6 +106,7 @@ class Questions : Fragment() {
 
         // 相应刷新event
         val obtain = MyEventBus.INSTANCE.obtain(mType.toInt(), {
+            mRecycle.smoothScrollToPosition(0)
             downData()
             null
         })
@@ -155,7 +156,6 @@ class Questions : Fragment() {
                 minDate = readCache.end
                 cacheList.addAll(readCache.menu)
                 savedList.addAll(cacheList)
-
             }
 
             mDict["userId"] = userId
@@ -290,7 +290,7 @@ class Questions : Fragment() {
                 if (cacheList.isNotEmpty() && cacheIndex < cacheList.size) {
                     mDict["id"] = spliceId()
 
-                    response<ResponseBean.QABody>({ onResponse(s, it) }, "199_1", mDict, ::onFailed)
+                    response<ResponseBean.QABody>({ onResponse(s, it, true) }, "199_1", mDict, ::onFailed)
                 } else {
                     cacheCompleted = true
 
@@ -307,7 +307,7 @@ class Questions : Fragment() {
     }
 
     // 统一处理后分发
-    private fun onResponse(s: (ResponseBean.QABody) -> Unit, model: ResponseBean.QABody) {
+    private fun onResponse(s: (ResponseBean.QABody) -> Unit, model: ResponseBean.QABody, isCache: Boolean = false) {
         // 判断是否多端登录
         if (model.tokenStatus > 1) {
             toLogin()
@@ -318,7 +318,7 @@ class Questions : Fragment() {
             showToast("出错啦，如果多次出现此问题请重新登录账号[0b-327]")
             return
         }
-        model.menuList.forEach {
+        if (!isCache) model.menuList.forEach {
             // ForEach 循环过滤最大 & 最小 createDate
             maxDate = it.createDate
             minDate = it.createDate
@@ -461,10 +461,12 @@ class Questions : Fragment() {
             }
             i++
         }
-        if (savedList.isNotEmpty()) filterArray.add(filterArray.size, savedList.last())
+        if (savedList.size > 2) filterArray.add(filterArray.size, savedList.last())
+
+        logE("filter array = $filterArray; savedList = $savedList")
 
         val map = hashMapOf<String, Any>()
-        map["nEnd"] = minDate
+        map["end"] = minDate
         map["top"] = maxDate
         map["menu"] = filterArray
 

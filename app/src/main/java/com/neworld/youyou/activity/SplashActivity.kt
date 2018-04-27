@@ -11,12 +11,16 @@ import android.widget.Toast
 import com.neworld.youyou.MainActivity
 import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
+import com.neworld.youyou.utils.preference
 import com.neworld.youyou.utils.showToast
+import kotlinx.android.synthetic.main.item_parent.*
 
 /**
  * @author by user on 2018/3/5.
  */
 class SplashActivity : Activity() {
+
+    private val userId by preference("userId", "")
 
     override fun getContentLayoutId() = R.layout.activity_splash
 
@@ -47,7 +51,11 @@ class SplashActivity : Activity() {
 
     private fun toHome() {
         Handler().postDelayed({
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            if (userId.isEmpty()) {
+                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+            } else {
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
             finish()
         }, 2000)
     }

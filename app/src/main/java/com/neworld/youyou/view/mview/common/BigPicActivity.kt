@@ -32,18 +32,11 @@ class BigPicActivity : AppCompatActivity() {
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_big_pig)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            postponeEnterTransition()
-        }
-
         val url = intent.getStringExtra(EXTRA_URL)
         val opt = RequestOptions()
                 .placeholder(R.drawable.deftimg)
                 .error(R.drawable.deftimg)
         Glide.with(this).load(url).apply(opt).into(big_pic)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startPostponedEnterTransition()
-        }
         big_pic.setOnClickListener { onBackPressed() }
     }
 
