@@ -23,7 +23,6 @@ import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.manager.MyApplication
-import com.neworld.youyou.showSnackBar
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.HorizontalDecoration
 import java.util.*
@@ -130,7 +129,7 @@ class Questions : Fragment() {
         mRecycle.adapter = AdapterK(this::itemBind,
                 arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
                 .also { mAdapter = it }
-        mRecycle.addItemDecoration(HorizontalDecoration(mContext, 2))
+        mRecycle.addItemDecoration(HorizontalDecoration(context!!, 2))
 
         setScrollChangedListener()
 
@@ -162,6 +161,8 @@ class Questions : Fragment() {
                 savedList.addAll(cacheList)
             }
 
+            logE("load cache json type = $mType; cacheList = $cacheList")
+
             mDict["userId"] = userId
             mDict["token"] = token
 
@@ -180,7 +181,7 @@ class Questions : Fragment() {
             val bean = it.menuList!!
 
             if (bean.isEmpty()) {
-                showSnackBar(mRecycle, "暂时没有新的话题_(:з」∠)_")
+                showToast(context!!, "暂时没有新的话题_(:з」∠)_")
                 nEnd = false
                 mFootText.text = "—我是有底线的—"
                 mFootPrg.visibility = View.GONE
@@ -465,7 +466,9 @@ class Questions : Fragment() {
             }
             i++
         }
-        if (savedList.size > 2) filterArray.add(filterArray.size, savedList.last())
+        if (savedList.isNotEmpty()) filterArray.add(savedList.last())
+
+        logE("type = $mType; saved list = $savedList; filter list = $filterArray")
 
         val map = hashMapOf<String, Any>()
         map["end"] = minDate
@@ -518,6 +521,8 @@ class Questions : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 20) {
             if (data == null) return
+
+            logE("onActivity result invoke")
 
             val position = data.getIntExtra("position", -1)
             if (data.getBooleanExtra("error", false) && position != -1) {

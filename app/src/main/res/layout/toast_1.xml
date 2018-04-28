@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/dp10"
+    app:cardElevation="1dp"
+    app:contentPaddingBottom="@dimen/dp15"
+    app:contentPaddingLeft="@dimen/dp25"
+    app:contentPaddingRight="@dimen/dp25"
+    app:contentPaddingTop="@dimen/dp15">
+
+    <TextView
+        android:id="@+id/toast_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp16"
+        tools:text="测试Toast！！" />
+</android.support.v7.widget.CardView>

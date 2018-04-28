@@ -71,11 +71,13 @@ class DynamicActivity : Activity() {
     override fun getContentLayoutId() = R.layout.activity_dynamic
 
     override fun initWidget() {
+        val dp5 = resources.getDimensionPixelSize(R.dimen.dp5)
+
         val r = _recycle
         r.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         r.adapter = AdapterK(::onBind, arrayOf(R.layout.item_dynamic), arrayListOf())
                 .also { mAdapter = it }
-        r.addItemDecoration(HorizontalDecoration(this, 2))
+        r.addItemDecoration(HorizontalDecoration(this, dp5, Color.parseColor("#F4F5F6")))
         r.setLoadMore()
 
         layoutInflater.inflate(R.layout.footview_load_more, r, false).run {
@@ -192,7 +194,7 @@ class DynamicActivity : Activity() {
         }
 
         Glide.with(big).load(replyIcon).apply(option).into(big)
-        reply.text = model.content
+        reply.text = model.title
 
         other.setOnClickListener {
             mDialog.show()

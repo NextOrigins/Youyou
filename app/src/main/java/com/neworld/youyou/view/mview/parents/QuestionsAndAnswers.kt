@@ -321,7 +321,7 @@ class QuestionsAndAnswers : Fragment() {
         headContent.text = result.content
         if (TextUtils.isEmpty(result.content)) {
             headContent.visibility = View.GONE
-        } else {
+        } else if (headShowAll.visibility == View.INVISIBLE) {
             headShowAll.visibility = View.VISIBLE
         }
 

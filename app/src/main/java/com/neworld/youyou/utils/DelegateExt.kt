@@ -57,6 +57,8 @@ fun showToast(text: String) {
     ToastUtil.showToast(text)
 }
 
+fun showToast(context: Context, text: String) = ToastUtil.showToast(context, text)
+
 /**
  * Log.e
  */
