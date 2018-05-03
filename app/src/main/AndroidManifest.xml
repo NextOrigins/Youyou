@@ -129,6 +129,9 @@
 
         <activity android:name=".view.mview.my.DynamicActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
+
+        <activity android:name=".view.mview.common.ImgViewer"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

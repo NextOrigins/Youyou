@@ -24,7 +24,7 @@ android {
 
         /*signingConfigs {
             debug {
-                storeFile file('C:\\Users\\user\\Desktop\\youyou.jks')
+                storeFile file('/Users/hhhh/WorkSpace/youyou.jks')
                 storePassword "123456"
                 keyAlias "you"
                 keyPassword "123456"

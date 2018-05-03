@@ -16,6 +16,7 @@
     <color name="status_bar">#08000000</color>
     <color name="light_gray">#F4F5F6</color>
     <color name="gray">#EAEAF0</color>
+    <color name="grayDark">#7b7b7b</color>
     <color name="transparent_black">#88000000</color>
     <color name="line_bg">#dfdfdf</color>
     <color name="blue">#0066EE</color>

@@ -21,9 +21,9 @@ import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.BigPicActivity
+import com.neworld.youyou.view.mview.common.ImgViewer
 import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -40,9 +40,6 @@ import kotlin.properties.Delegates
 class QuestionsAndAnswers : Fragment() {
 
     // property
-    private val mContext by lazy {
-        context ?: MyApplication.sContext
-    }
     private val mBundle by lazy {
         arguments ?: Bundle()
     }
@@ -94,9 +91,7 @@ class QuestionsAndAnswers : Fragment() {
                 val body = "{\"taskId\":\"$taskId\", \"type\":\"5\"}"
                 val response = NetBuild.getResponse(body, 144)
                 if (response != null && "0" in response) {
-                    uiThread { showToast("分享成功!") }
-                } else {
-                    uiThread { showToast("分享失败, 错误代码[QAA88]") }
+                    uiThread { showToast(mContext, "分享成功!") }
                 }
             }
         }
@@ -120,7 +115,11 @@ class QuestionsAndAnswers : Fragment() {
     private lateinit var taskId: String
     private var starWidth = 0
     private var answerCountWidth = 0
-
+    private val mContext by lazy {
+        context!!
+    }
+    private var tempView: Array<ImageView> = arrayOf()
+    private var mCurrentPosition = 0
 
     // View
     private var recycle by notNullSingleValue<RecyclerView>()
@@ -380,6 +379,13 @@ class QuestionsAndAnswers : Fragment() {
         val img3 = holder.find<ImageView>(R.id.item_img3)
         val more = holder.find<TextView>(R.id.item_more)
 
+        img.post {
+            val width = img.measuredWidth
+            img.layoutParams = img.layoutParams.also {
+                it.height = width
+            }
+        }
+
         val data = mutableList[position]
 
         content.text = (data.attachedContent?.replace("￼", "") ?: "null").trim('\n')
@@ -407,8 +413,8 @@ class QuestionsAndAnswers : Fragment() {
         holder.find<View>(R.id.item_share_c).setOnClickListener {
             // debug
             val url = "http://192.168.1.123:8080/neworld/user/210?commentId=${data.commentId}&userId=$userId"
-            // release
-//            val url = "http://192.168.1.123:8080/neworld/user/210?commentId=${data.commentId}&userId=$userId"
+            // release TODO : release版本URL不对
+//            val url = "http://192.168.1.123:8082/neworld/user/210?commentId=${data.commentId}&userId=$userId"
             val um = UMWeb(url)
             um.title = result.title
             um.description = data.content
@@ -472,14 +478,17 @@ class QuestionsAndAnswers : Fragment() {
                     .placeholder(R.drawable.deftimg)
                     .error(R.drawable.deftimg)
 
-            val split = data.commentImg!!.split('|')
+            val u = data.commentImg!!
+
+            val split = u.split('|')
             Glide.with(img).load(split[0]).apply(options).into(img)
 
             img.setOnClickListener {
                 if (split.size == 1) {
                     BigPicActivity.launch(activity as AppCompatActivity, img, split[0])
                 } else {
-                    showToast("多图浏览 position = 1")
+                    img.openImgViewer(u, 0, if (split.size == 2) arrayOf(img, img2)
+                    else arrayOf(img, img2, img3))
                 }
             }
 
@@ -493,7 +502,7 @@ class QuestionsAndAnswers : Fragment() {
                     img3.visibility = View.INVISIBLE
 
                     img2.setOnClickListener {
-                        showToast("多图浏览：position = 2")
+                        img2.openImgViewer(u, 1, arrayOf(img, img2))
                     }
 
                     Glide.with(img2).load(split[1]).apply(options).into(img2)
@@ -503,10 +512,10 @@ class QuestionsAndAnswers : Fragment() {
                     img3.visibility = View.VISIBLE
 
                     img2.setOnClickListener {
-                        showToast("多图浏览：position = 2")
+                        img2.openImgViewer(u, 1, arrayOf(img, img2, img3))
                     }
                     img3.setOnClickListener {
-                        showToast("多图浏览：position = 3")
+                        img3.openImgViewer(u, 2, arrayOf(img, img2, img3))
                     }
 
                     Glide.with(img2).load(split[1]).apply(options).into(img2)
@@ -521,13 +530,6 @@ class QuestionsAndAnswers : Fragment() {
 
             View.VISIBLE
         }
-
-        /*img.post {
-            img.layoutParams = img.layoutParams.also {
-                it.width = imgWideHigh
-                it.height = imgWideHigh
-            }
-        }*/
 
         holder.find<View>(R.id._parent).setOnClickListener {
             newModel(mutableList, position)
@@ -563,12 +565,19 @@ class QuestionsAndAnswers : Fragment() {
         bundle.putString("taskId", data.taskId.toString())
         bundle.putString("fromUID", data.from_userId.toString())
         bundle.putString("minCreateDate", minDate)
+        bundle.putString("title", result.title)
         bundle.putStringArray("nextArray", array)
         mBundle.putAll(bundle)
     }
 
     fun setObserver(listener: View.() -> Unit) {
         this@QuestionsAndAnswers.obs = listener
+    }
+
+    private fun ImageView.openImgViewer(url: String, position: Int, temp: Array<ImageView>) {
+        tempView = temp
+        mCurrentPosition = position
+        ImgViewer.launch(activity as AppCompatActivity, this, url, position)
     }
 
     // 对外开放设置底部的宽度
@@ -587,6 +596,10 @@ class QuestionsAndAnswers : Fragment() {
         star.paddingSet(width)
     }
 
+    fun getCurrentPosition() = mCurrentPosition
+
+    fun getTempView(position: Int) = tempView[position]
+
     private fun View.paddingSet(offset: Int) {
         setPadding(offset, 0, offset, 0)
     }
@@ -595,5 +608,10 @@ class QuestionsAndAnswers : Fragment() {
     override fun onStop() {
         arguments?.putAll(mBundle)
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        unregisterStation()
+        super.onDestroy()
     }
 }

@@ -266,6 +266,7 @@ class ResponseBean {
     )
 
     data class CommentBean(
+            val imgUrl: String?,
             val clickSum: Int, //333
             val parent_cid: Int, //0
             val dynamic_id: Int, //1613

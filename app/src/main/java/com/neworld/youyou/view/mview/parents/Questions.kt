@@ -1,6 +1,7 @@
 package com.neworld.youyou.view.mview.parents
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
@@ -22,7 +23,6 @@ import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.add.common.Adapter
 import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
-import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.mview.common.HorizontalDecoration
 import java.util.*
@@ -46,7 +46,7 @@ class Questions : Fragment() {
     // fields
     private var userId by preference("userId", "")
     private var token by preference("token", "")
-    private val mContext by lazy { MyApplication.sContext }
+    private lateinit var mContext: Context
     // 缓存以Json格式存储本地 , 也可以存储到服务器 :: UserId当key 区别不同用户缓存
     private val prefs = getPefStorage()
     private lateinit var cacheJson: String
@@ -89,7 +89,7 @@ class Questions : Fragment() {
 
     // cache
     private var cacheIndex = 0 // 读取缓存下标
-    private var readLength = 6 // 每次读取缓存的个数
+    private var readLength = 0 // 每次读取缓存的个数
 
     // status
     private var nEnd = true // 加载完成提示 只显示一次
@@ -108,11 +108,33 @@ class Questions : Fragment() {
 
         // 相应刷新event
         val obtain = MyEventBus.INSTANCE.obtain(mType.toInt(), {
-            mRecycle.smoothScrollToPosition(0)
-            downData()
+            mRecycle.scrollToPosition(0)
+
+            if (mAdapter.bean.isEmpty() && cacheJson.isNotEmpty()) upData() else downData()
+
             null
         })
         registerStation(obtain, this@Questions.hashCode())
+
+        if (cacheJson.isNotEmpty()) {
+            val readCache = Gson()
+                    .fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
+            maxDate = readCache.top
+            minDate = readCache.end
+            if (cacheList.isEmpty()) {
+                cacheList.addAll(readCache.menu)
+                savedList.addAll(cacheList)
+            }
+        }
+
+        if (cacheList.isNotEmpty()) {
+            readLength = if (cacheList.size >= 6) 6 else cacheList.size
+        }
+
+        mDict["userId"] = userId
+        mDict["token"] = token
+
+        mContext = context!!
     }
 
     //    初始化控件
@@ -150,24 +172,7 @@ class Questions : Fragment() {
             startActivity(Intent(context, LoginActivity::class.java))
             return
         }
-        if (mAdapter.bean.isEmpty()) {
-
-            if (cacheJson.isNotEmpty()) {
-                val readCache = Gson()
-                        .fromJson<ReadCache>(cacheJson, object : TypeToken<ReadCache>() {}.type)
-                maxDate = readCache.top
-                minDate = readCache.end
-                cacheList.addAll(readCache.menu)
-                savedList.addAll(cacheList)
-            }
-
-            logE("load cache json type = $mType; cacheList = $cacheList")
-
-            mDict["userId"] = userId
-            mDict["token"] = token
-
-            upData()
-        }
+        if (mAdapter.bean.isEmpty()) upData()
     }
 
     //    下拉加载
@@ -181,7 +186,7 @@ class Questions : Fragment() {
             val bean = it.menuList!!
 
             if (bean.isEmpty()) {
-                showToast(context!!, "暂时没有新的话题_(:з」∠)_")
+                showToast(mContext, "暂时没有新的话题_(:з」∠)_")
                 nEnd = false
                 mFootText.text = "—我是有底线的—"
                 mFootPrg.visibility = View.GONE
@@ -221,7 +226,6 @@ class Questions : Fragment() {
         if (bean.isEmpty() && cacheCompleted) {
             if (nEnd) {
                 mFootText.text = "—我是有底线的—"
-                mFootPrg.visibility = View.GONE
                 nEnd = false
             }
             return
@@ -257,7 +261,6 @@ class Questions : Fragment() {
 
         // 改变FooterView状态
         mFootText.text = "加载更多"
-        mFootPrg.visibility = View.GONE
         nEnd = true
 
         // 缓存
@@ -269,7 +272,6 @@ class Questions : Fragment() {
             downData()
         } else if (mAdapter.getSize() < 6 && cacheCompleted) {
             mFootText.text = "—我是有底线的—"
-            mFootPrg.visibility = View.GONE
             nEnd = false
         }
     }
@@ -329,19 +331,35 @@ class Questions : Fragment() {
             minDate = it.createDate
         }
 
+        if (mFootPrg.visibility == View.VISIBLE) {
+            mFootPrg.visibility = View.GONE
+            mFootText.text = if (cacheCompleted) "—我是有底线的—" else "加载更多"
+        }
+
         s.invoke(model)
     }
 
     private fun onFailed(e: String) {
         logE(e)
         isUpdate = false
-        cacheIndex -= readLength
-        if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
         if (mFootPrg.visibility == View.VISIBLE) {
             mFootPrg.visibility = View.GONE
             mFootText.text = "请检查网络后重试"
         }
         showToast("请检查您的网络")
+
+        if (cacheCompleted) return
+
+//        cacheIndex -= readLength TODO : 不能直接减readLength  在某些条件下会出问题。导致角标越界
+        val localSize = mAdapter.getSize()
+        val cacheSize = cacheList.size
+        val finallySize = localSize + readLength
+        cacheIndex -= if (finallySize < cacheSize) {
+            readLength
+        } else {
+            cacheSize - localSize
+        }
+        if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
     }
 
     //    多type判断

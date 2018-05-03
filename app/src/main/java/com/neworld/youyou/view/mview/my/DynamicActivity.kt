@@ -160,6 +160,8 @@ class DynamicActivity : Activity() {
                     .putExtra("date", model.createDate)
                     .putExtra("toDetail", model.anStatus != 1)
                     .putExtra("cId", taskId)
+                    .putExtra("title", model.title)
+                    .putExtra("inDynamic", true)
             startActivity(intent)
         }
 

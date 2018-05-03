@@ -377,9 +377,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             mBackPressedTime = System.currentTimeMillis()
+            return true
         }
 
-        return true
+        return false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

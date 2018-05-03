@@ -30,6 +30,11 @@ import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
 import com.neworld.youyou.view.nine.CircleImageView
+import com.umeng.socialize.ShareAction
+import com.umeng.socialize.UMShareListener
+import com.umeng.socialize.bean.SHARE_MEDIA
+import com.umeng.socialize.media.UMImage
+import com.umeng.socialize.media.UMWeb
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
@@ -55,6 +60,32 @@ class AnswerDetail : Fragment() {
                 .error(R.drawable.deftimg)
     }
     private lateinit var user: ResponseBean.Userbean
+    private val umListener = object : UMShareListener {
+        override fun onResult(p0: SHARE_MEDIA?) {
+            doAsync {
+                val dict = hashMapOf<CharSequence, CharSequence>()
+                dict["taskId"] = mTaskId
+                dict["type"] = "5"
+                val body = "{\"taskId\":\"$mTaskId\", \"type\":\"5\"}"
+                logE("dict = $dict; body = $body")
+                val response = NetBuild.getResponse(body, 144)
+                if (response != null && "0" in response) {
+                    uiThread { showToast(mContext, "分享成功!") }
+                }
+            }
+        }
+
+        override fun onCancel(p0: SHARE_MEDIA?) {
+            showToast("取消分享")
+        }
+
+        override fun onError(p0: SHARE_MEDIA?, p1: Throwable?) {
+            Toast.makeText(context, p1.toString(), Toast.LENGTH_LONG).show()
+        }
+
+        override fun onStart(p0: SHARE_MEDIA?) {
+        }
+    }
 
     //View
     private var mRecycle by notNullSingleValue<RecyclerView>()
@@ -86,6 +117,11 @@ class AnswerDetail : Fragment() {
     private var onLoading: ((new: Int) -> Unit)? = null
     private var onStop: (() -> Unit)? = null
     private var toPos = 1
+    private var mInDynamic = false
+    private val mContext by lazy { context!! }
+    private lateinit var mTaskId: String
+    private lateinit var mCommentBean: ResponseBean.CommentBean
+    private lateinit var mTitle: String
 
     // by observer
     private var isShowSoftInput by Delegates.observable(false) { _, old, new ->
@@ -119,10 +155,13 @@ class AnswerDetail : Fragment() {
     }
 
     override fun initArgs(bundle: Bundle?) {
-        bundle?.let {
-            index = 0
-            commentId = it.getString("cId")
-        }
+        if (bundle == null) return
+
+        index = 0
+        commentId = bundle.getString("cId")
+        mInDynamic = bundle.getBoolean("inDynamic")
+        mTaskId = bundle.getString("taskId", "")
+        mTitle = bundle.getString("title", "优优家长")
     }
 
     override fun getContentLayoutId() = R.layout.fragment_answers_detail
@@ -355,6 +394,7 @@ class AnswerDetail : Fragment() {
         mAdapter.notifyDataSetChanged()
 
         user = t.userbean
+        mCommentBean = t.commentBean
         mLike.post { mLike.isChecked = t.commentBean.likeCommentStatus == 0 }
 
         nextArray = arguments!!.getStringArray("nextArray")
@@ -498,7 +538,8 @@ class AnswerDetail : Fragment() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 url?.let {
                     if ("http://106.14.251.200/neworld/user/143" in it) {
-                        startActivity(Intent(context, Answers::class.java).putExtras(arguments))
+                        if (!mInDynamic) startActivity(Intent(context, Answers::class.java)
+                                .putExtras(arguments))
                     } else if ("http://106.14.251.200/neworld/user/153" in it) {
 //                            mRecycle.toPosition(1)
                         activity?.onKeyDown(KeyEvent.KEYCODE_BACK, null)
@@ -564,7 +605,23 @@ class AnswerDetail : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        showToast("shared") // TODO : 分享
+        // debug
+//        val url = "http://192.168.1.123:8080/neworld/user/210?commentId=$commentId&userId=$userId"
+        // release TODO : release版本URL不对
+        val url = "http://192.168.1.123:8082/neworld/user/210?commentId=$commentId&userId=$userId"
+        val um = UMWeb(url)
+        um.title = mTitle
+        um.description = mCommentBean.attachedContent
+        if (!TextUtils.isEmpty(mCommentBean.imgUrl)) {
+            um.setThumb(UMImage(context, mCommentBean.imgUrl))
+        } else {
+            um.setThumb(UMImage(context, R.drawable.bigimage))
+        }
+        ShareAction(activity)
+                .withMedia(um)
+                .setDisplayList(SHARE_MEDIA.QZONE, SHARE_MEDIA.QQ, SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
+                .setCallback(umListener)
+                .open()
 
         return true
     }

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.app.SharedElementCallback
 import android.support.v4.content.ContextCompat
 import android.view.*
 import com.google.gson.Gson
@@ -13,6 +14,7 @@ import com.neworld.youyou.R
 import com.neworld.youyou.add.base.Activity
 import com.neworld.youyou.add.base.Fragment
 import com.neworld.youyou.utils.*
+import com.neworld.youyou.view.mview.common.ImgViewer
 import kotlinx.android.synthetic.main.activity_parent_qa.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -35,6 +37,9 @@ class QAController : Activity() {
     private lateinit var eCommentId: String // 第二层
     private lateinit var eDate: String
     private lateinit var cId: String
+    private lateinit var eTitle: String
+    private var mInDynamic = false
+    private var mExitPos = -1
 
     private var userId by preference("userId", "")
 
@@ -48,6 +53,14 @@ class QAController : Activity() {
     }
 
     override fun initArgs(bundle: Bundle?): Boolean {
+        val obtain = MyEventBus.INSTANCE.obtain(ImgViewer.EVENT_IMG, {
+            mExitPos = it as Int
+
+            null
+        })
+
+        registerStation(obtain)
+
         if (bundle != null) {
             toDetail = bundle.getBoolean("toDetail", false)
             if (toDetail) {
@@ -55,6 +68,8 @@ class QAController : Activity() {
                 eCommentId = bundle.getString("commentId")
                 eDate = bundle.getString("date")
                 cId = bundle.getString("cId")
+                mInDynamic = bundle.getBoolean("inDynamic")
+                eTitle = bundle.getString("title", "优优家长")
             }
         }
         return super.initArgs(bundle)
@@ -79,6 +94,26 @@ class QAController : Activity() {
         setSupportActionBar(_toolbar)
 
         _close.setOnClickListener { onKeyDown(KeyEvent.KEYCODE_BACK, null) }
+
+        setExitSharedElementCallback(object : SharedElementCallback() {
+            override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
+                val current = questionsAndAnswers.getCurrentPosition()
+                if (mExitPos != -1 && mExitPos != current) {
+                    names?.clear()
+                    sharedElements?.clear()
+
+                    val name = getString(R.string.transitionName_pic)
+                    val view = questionsAndAnswers.getTempView(mExitPos)
+
+                    names?.add(name)
+                    sharedElements?.put(name, view)
+
+                    mExitPos = -1
+                }
+//                logE("sharedElements = null? ${sharedElements == null}")
+//                sharedElements?.put(getString(R.string.transitionName_pic), tempView[viewerPos]) // TODO : 角标对应的view。
+            }
+        })
     }
 
     private fun startAnswersDetail() {
@@ -90,6 +125,9 @@ class QAController : Activity() {
         val args = if (toDetail) {
             val bundle = Bundle()
             bundle.putString("cId", cId)
+            bundle.putBoolean("inDynamic", mInDynamic)
+            bundle.putString("taskId", eTaskId)
+            bundle.putString("title", eTitle)
             bundle
         } else {
             questionsAndAnswers.arguments!!
@@ -214,8 +252,11 @@ class QAController : Activity() {
             statusBarColor = ContextCompat.getColor(this@QAController, R.color.colorPrimaryDark)
         }
 
+        unregisterStation()
+
         super.onDestroy()
     }
+
 //	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //		menuInflater.inflate(R.menu.menu_item, menu)
 //		val item = menu?.findItem(R.id.menu_item1)
