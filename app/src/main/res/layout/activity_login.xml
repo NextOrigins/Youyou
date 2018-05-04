@@ -34,6 +34,7 @@
 
         <EditText
             android:id="@+id/et_number"
+            android:maxLength="11"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"

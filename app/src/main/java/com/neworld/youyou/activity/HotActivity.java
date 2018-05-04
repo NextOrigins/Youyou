@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.Fields;
 import com.neworld.youyou.utils.GsonUtil;
+import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.SPUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.comment.HProgress;
@@ -33,6 +35,8 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
+
+import java.util.HashMap;
 
 public class HotActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -376,23 +380,24 @@ public class HotActivity extends AppCompatActivity implements View.OnClickListen
 
     //点赞
     private void like() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //type 家长圈 status 是否点赞 typestatus 1是点赞  2是收藏
-                String url = Fields.BASEURL + "111?userId=" + userId + "&taskId=" + taskId + "&type=3&status=" + likeStatus + "&typeStatus=1";
-                String content = NetManager.getInstance().getDanContent(url);
-                if (content != null && content.length() > 0) {
-                    ReturnStatus returnStatus = GsonUtil.parseJsonToBean(content, ReturnStatus.class);
-                    if (returnStatus != null && returnStatus.getStatus() == 0) {
-                        Util.uiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                refeshView();
-                            }
-                        });
-                    }
-                }
+        new Thread(() -> {
+            /*HashMap<String, String> map = new HashMap<>();
+            map.put("userId", userId);
+            map.put("taskId", String.valueOf(taskId));
+            map.put("type", "3");
+            map.put("status", String.valueOf(likeStatus));
+
+            String response = NetBuild.getResponse(map, 111);
+
+            if (response.contains("0")) {
+                Util.uiThread(this::refeshView);
+            }*/
+
+            //type 家长圈 status 是否点赞 typestatus 1是点赞  2是收藏
+            String url = Fields.BASEURL + "111?userId=" + userId + "&taskId=" + taskId + "&type=3&status=" + likeStatus + "&typeStatus=1";
+            String content = NetManager.getInstance().getDanContent(url);
+            if (content != null && content.contains("0")) {
+                Util.uiThread(this::refeshView);
             }
         }).start();
     }

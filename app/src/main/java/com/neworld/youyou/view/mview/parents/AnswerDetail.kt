@@ -360,8 +360,8 @@ class AnswerDetail : Fragment() {
     override fun initData() {
 //        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "${Fields.BASEURL}201?userId=$userId&commentId=$commentId"
-        configWeb(mWeb)
         mWeb.loadUrl(url)
+        configWeb(mWeb)
 
         val map = hashMapOf<CharSequence, CharSequence>()
         map["userId"] = userId
