@@ -163,7 +163,10 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
             // 强制更新
             // 返回键拦截
             mDialog.setCancelable(false)
-            mDialog.setOnKeyListener { _, keyCode, _ -> keyCode == KeyEvent.KEYCODE_BACK }
+            mDialog.setOnKeyListener { _, keyCode, _ ->
+                onKeyDown(keyCode, null)
+                keyCode == KeyEvent.KEYCODE_BACK
+            }
 
             mDialog.show()
             mUpContent.text = msg ?: "不更新可能会出现不可预测的问题的噢。"
