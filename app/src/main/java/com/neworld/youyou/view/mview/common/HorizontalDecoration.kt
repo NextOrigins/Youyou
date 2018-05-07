@@ -30,15 +30,31 @@ class HorizontalDecoration
     override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
         super.getItemOffsets(outRect, view, parent, state)
 
-        if (parent != null && outRect != null && parent.getChildAdapterPosition(view) != 0) {
+        outRect?.set(0, 0, 0, mDividerHeight)
+        /*if (parent != null && outRect != null && parent.getChildAdapterPosition(view) != 0) {
             outRect.top = mDividerHeight
-        }
+        }*/
     }
 
     override fun onDraw(c: Canvas?, parent: RecyclerView?, state: RecyclerView.State?) {
         super.onDraw(c, parent, state)
+        if (parent != null) {
+            val l = parent.paddingLeft.toFloat()
+            val r = (parent.width - parent.paddingRight).toFloat()
 
-        if (parent != null && c != null) {
+            for (i in 0 until parent.childCount) {
+                val v = parent.getChildAt(i)
+
+                val p = v.layoutParams as RecyclerView.LayoutParams
+
+                val t = (v.bottom + p.bottomMargin).toFloat()
+                val b = t + mDividerHeight
+
+                c?.drawRect(l, t, r, b, mPaint)
+            }
+        }
+
+        /*if (parent != null && c != null) {
             for (i in 0 until parent.childCount) {
                 val view = parent.getChildAt(i)
                 val index = parent.getChildAdapterPosition(view)
@@ -54,6 +70,6 @@ class HorizontalDecoration
 
                 c.drawRect(left, top, right, btm, mPaint)
             }
-        }
+        }*/
     }
 }

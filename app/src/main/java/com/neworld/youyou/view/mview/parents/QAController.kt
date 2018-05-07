@@ -97,8 +97,7 @@ class QAController : Activity() {
 
         setExitSharedElementCallback(object : SharedElementCallback() {
             override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
-                val current = questionsAndAnswers.getCurrentPosition()
-                if (mExitPos != -1 && mExitPos != current) {
+                if (mExitPos != -1) {
                     names?.clear()
                     sharedElements?.clear()
 
@@ -179,6 +178,9 @@ class QAController : Activity() {
                     _progress.visibility = View.VISIBLE
                 }, onLoading = {
                     _progress.newProgress = it.toFloat()
+                    if (it > 99) {
+                        _progress.visibility = View.INVISIBLE
+                    }
                 }, onStop = {
                     _progress.visibility = View.INVISIBLE
                 })
@@ -215,12 +217,16 @@ class QAController : Activity() {
                 val tag = fm.getBackStackEntryAt(fm.backStackEntryCount - 1).name
                 val bt = fm.beginTransaction()
                 when (tag) {
-                    "fragment1" -> bt.also {
-                        it.replace(questionsAndAnswers, "fragment1")
-//                        questionsAndAnswers?.refreshData()
+                    "fragment1" -> {
+                        answersDetail.clearWebCache()
+                        if (_progress.visibility == View.VISIBLE) {
+                            _progress.newProgress = 0F
+                            _progress.visibility = View.INVISIBLE
+                        }
+                        bt.replace(questionsAndAnswers, "fragment1")
                     }
-                    "fragment2" -> bt.also {
-                        it.replace(answersDetail, "fragment2")
+                    "fragment2" -> {
+                        bt.replace(answersDetail, "fragment2")
                     }
                 }
                 bt.commit()

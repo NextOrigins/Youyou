@@ -596,8 +596,6 @@ class QuestionsAndAnswers : Fragment() {
         star.paddingSet(width)
     }
 
-    fun getCurrentPosition() = mCurrentPosition
-
     fun getTempView(position: Int) = tempView[position]
 
     private fun View.paddingSet(offset: Int) {

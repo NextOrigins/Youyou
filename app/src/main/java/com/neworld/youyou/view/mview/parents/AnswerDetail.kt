@@ -70,7 +70,7 @@ class AnswerDetail : Fragment() {
                 logE("dict = $dict; body = $body")
                 val response = NetBuild.getResponse(body, 144)
                 if (response != null && "0" in response) {
-                    uiThread { showToast(mContext, "分享成功!") }
+                    showToast(mContext, "分享成功!")
                 }
             }
         }
@@ -360,8 +360,8 @@ class AnswerDetail : Fragment() {
     override fun initData() {
 //        if (!mSwipe.isRefreshing) mSwipe.isRefreshing = true
         val url = "${Fields.BASEURL}201?userId=$userId&commentId=$commentId"
-        mWeb.loadUrl(url)
         configWeb(mWeb)
+        mWeb.loadUrl(url)
 
         val map = hashMapOf<CharSequence, CharSequence>()
         map["userId"] = userId
@@ -402,7 +402,7 @@ class AnswerDetail : Fragment() {
 
     private fun addMore(t: ResponseBean.AnswersDetailBody) {
         if (t.status == 1) {
-            showToast("{数据异常, 请反馈此问题: 错误代码[202:360]}")
+            showToast(mContext, "出现未知错误~如反复出现请尝试重新登录账号")
             return
         }
         mAdapter.addData(t.menuList)
@@ -566,6 +566,7 @@ class AnswerDetail : Fragment() {
     // 下一个回答
     private fun toNext() {
         if (nextArray != null && nextArray!!.size > index) {
+            clearWebCache()
             val id = nextArray!![index++]
             commentId = id
             initData()
@@ -636,6 +637,12 @@ class AnswerDetail : Fragment() {
         mReview.layoutParamsWidth(x)
         mLike.layoutParamsWidth(x)
         mNext.layoutParamsWidth(x)
+    }
+
+    fun clearWebCache() {
+        mWeb.pauseTimers()
+        mWeb.stopLoading()
+        mWeb.clearCache(true)
     }
 
     fun loadingListener(onStart: () -> Unit, onLoading: (new: Int) -> Unit, onStop: () -> Unit) {

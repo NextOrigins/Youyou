@@ -151,7 +151,7 @@ class Questions : Fragment() {
         mRecycle.adapter = AdapterK(this::itemBind,
                 arrayOf(R.layout.item_qa_1, R.layout.item_qa_2), list, this::viewType)
                 .also { mAdapter = it }
-        mRecycle.addItemDecoration(HorizontalDecoration(context!!, 2))
+        mRecycle.addItemDecoration(HorizontalDecoration(mContext, 2))
 
         setScrollChangedListener()
 

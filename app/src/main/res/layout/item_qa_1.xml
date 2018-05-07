@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_selector"
-    android:paddingBottom="@dimen/dp15"
+    android:paddingBottom="@dimen/dp5"
     android:paddingLeft="@dimen/dp15"
-    android:paddingRight="@dimen/dp15">
+    android:paddingRight="@dimen/dp15"
+    android:paddingTop="@dimen/dp5">
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp5"
         android:lineSpacingExtra="@dimen/dp5"
         android:maxLines="2"
         android:textColor="@color/black"
