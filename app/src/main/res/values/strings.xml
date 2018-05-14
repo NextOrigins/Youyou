@@ -133,5 +133,10 @@
     <string name="hot">热文</string>
     <string name="error">加载失败，轻触重试。</string>
     <string name="my_dynamic">我的动态</string>
+    <string name="encourage">点赞是美意，打赏是鼓励!</string>
+    <string name="money10">￥10.00</string>
+    <string name="reward">打赏</string>
+    <string name="money0">00.00</string>
+    <string name="reward_hint">最多打赏200元</string>
 
 </resources>

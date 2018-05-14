@@ -114,7 +114,7 @@ class Questions : Fragment() {
 
             null
         })
-        registerStation(obtain, this@Questions.hashCode())
+        registerStation(obtain)
 
         if (cacheJson.isNotEmpty()) {
             val readCache = Gson()

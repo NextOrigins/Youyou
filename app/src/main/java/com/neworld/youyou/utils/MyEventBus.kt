@@ -2,13 +2,13 @@ package com.neworld.youyou.utils
 
 
 // 注册
-inline fun <reified T : Any> T.registerStation(msg: MyEventBus.Configuration, def: Int? = null) {
-    MyEventBus.INSTANCE.registerObserver<T>(msg, def)
+fun <T : Any> T.registerStation(msg: MyEventBus.Configuration) {
+    MyEventBus.INSTANCE.registerObserver(msg, this.hashCode())
 }
 
 // 取消注册
-inline fun <reified T : Any> T.unregisterStation(def: Int? = null) {
-    MyEventBus.INSTANCE.unregisterObserver<T>(def)
+fun <T : Any> T.unregisterStation() {
+    MyEventBus.INSTANCE.unregisterObserver(this.hashCode())
 }
 
 /**
@@ -17,7 +17,7 @@ inline fun <reified T : Any> T.unregisterStation(def: Int? = null) {
 
 class MyEventBus private constructor() {
 
-    val mHandle = hashMapOf<Int, Configuration>()
+    private val mHandle = hashMapOf<Int, Configuration>()
 
     companion object {
         val INSTANCE by lazy { MyEventBus() }
@@ -41,15 +41,11 @@ class MyEventBus private constructor() {
         return p1.toTypedArray()
     }
 
-    inline fun <reified T : Any> registerObserver(msg: Configuration, def: Int?) {
-        val key = def ?: T::class.java.hashCode()
-        logE("register key = $key")
+    fun registerObserver(msg: Configuration, key: Int) {
         mHandle[key] = msg
     }
 
-    inline fun <reified T : Any> unregisterObserver(def: Int?) {
-        val key = def ?: T::class.java.hashCode()
-        logE("unregister key = $key")
+    fun unregisterObserver(key: Int) {
         mHandle.remove(key)
     }
 
