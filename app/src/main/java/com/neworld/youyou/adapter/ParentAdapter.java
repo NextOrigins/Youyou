@@ -2,10 +2,8 @@ package com.neworld.youyou.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.view.View;
@@ -19,8 +17,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.neworld.youyou.R;
 import com.neworld.youyou.bean.ParentBean;
-import com.neworld.youyou.utils.LogUtils;
-import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.view.gridlayout.NineGridTestLayout;
 import com.neworld.youyou.view.nine.CircleImageView;
 import com.neworld.youyou.view.nine.FlowLayout;
@@ -42,6 +38,7 @@ public class ParentAdapter extends BaseAdapter {
         this.menuList = parentList;
     }
 
+<<<<<<< HEAD
     public ParentAdapter(Context context, ParentBean bean) {
         this.context = context;
         addBean(bean);
@@ -64,6 +61,8 @@ public class ParentAdapter extends BaseAdapter {
         return menuList.size();
     }
 
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
     @Override
     public int getCount() {
         return menuList.size();
@@ -105,13 +104,17 @@ public class ParentAdapter extends BaseAdapter {
             holder.llFav = (LinearLayout) convertView.findViewById(R.id.ll_fav);
             holder.llShare = (LinearLayout) convertView.findViewById(R.id.ll_share);
             holder.ivFav = (ImageView) convertView.findViewById(R.id.iv_fav);
+<<<<<<< HEAD
 //            holder.video = convertView.findViewById(R.id._video);
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
 
             convertView.setTag(holder);
 
         } else {
             holder = (ParentHolder) convertView.getTag();
         }
+
 
         //数据展示
         if (menuList != null) {
@@ -170,6 +173,7 @@ public class ParentAdapter extends BaseAdapter {
             holder.ivFav.setImageResource(R.mipmap.parent_collect);
         }
 
+
         int sex = menuListBean.getSex();
         if (sex == 0) {
             //性别
@@ -183,29 +187,27 @@ public class ParentAdapter extends BaseAdapter {
         //设置内容
         String title = menuListBean.getTitle();
         String content = menuListBean.getContent();
-        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#5184BC"));
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(title + "//" + content);
-        if (!TextUtils.isEmpty(content)) {
+        if (content != null && content.length() > 0) {
             holder.tvContent.setVisibility(View.VISIBLE);
             if (title != null && title.length() > 0) {
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#5184BC"));
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(title + "//" + content);
                 spannableStringBuilder.setSpan(foregroundColorSpan, 0, menuListBean.getTitle().length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                 holder.tvContent.setText(spannableStringBuilder);
             } else {
                 holder.tvContent.setText(content);
             }
-        } else if (!TextUtils.isEmpty(title)) {
-            spannableStringBuilder.clear();
-            spannableStringBuilder.append(title);
-            spannableStringBuilder.setSpan(foregroundColorSpan, 0, menuListBean.getTitle().length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            holder.tvContent.setText(spannableStringBuilder);
-        } else
+        } else {
             holder.tvContent.setVisibility(View.GONE);
-
+        }
         //图片
         final String imgs = menuListBean.getImgs();
         if (imgs != null && imgs.length() > 0) {
             if (menuListBean.sort == 1) {
+<<<<<<< HEAD
 //                holder.video.setVisibility(View.GONE);
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
                 holder.ivNine.setVisibility(View.VISIBLE);
                 final String[] split = imgs.split("\\|");
                 List<String> list = Arrays.asList(split);
@@ -216,6 +218,7 @@ public class ParentAdapter extends BaseAdapter {
                 }
                 holder.ivNine.setUrlList(list);
             } else {
+<<<<<<< HEAD
 //                holder.ivNine.setIsShowAll(true);
 //                String[] s = {menuListBean.voideImg};
 //                holder.ivNine.setUrlList(Arrays.asList(s));
@@ -248,6 +251,15 @@ public class ParentAdapter extends BaseAdapter {
         } else {
             holder.ivNine.setVisibility(View.GONE);
 //            holder.video.setVisibility(View.GONE);
+=======
+                holder.ivNine.setVisibility(View.VISIBLE);
+                holder.ivNine.setIsShowAll(true);
+                String[] s = {menuListBean.voideImg};
+                holder.ivNine.setUrlList(Arrays.asList(s));
+            }
+        } else {
+            holder.ivNine.setVisibility(View.GONE);
+>>>>>>> parent of 8d52dad... 17_12_19
         }
         //收藏数 评论数 分享数
         int collect_count = menuListBean.getCollect_count();
@@ -286,16 +298,6 @@ public class ParentAdapter extends BaseAdapter {
         //添加图片
     }
 
-//    private boolean b; TODO : 不知道为什么全屏崩溃, 暂时关闭全屏按钮
-//
-//    private boolean notDelay() {
-//        if (!b) {
-//            b = true;
-//            new Handler().postDelayed(() -> b = false, 1500);
-//            return b;
-//        } else return !b;
-//    }
-
 /*    private int getListSize(List<String> list) {
         if (list == null || list.size() == 0) {
             return 0;
@@ -325,8 +327,11 @@ public class ParentAdapter extends BaseAdapter {
         public LinearLayout llComment;
 
         public ImageView ivFav;
+<<<<<<< HEAD
 
 //        public StandardGSYVideoPlayer video;
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
 

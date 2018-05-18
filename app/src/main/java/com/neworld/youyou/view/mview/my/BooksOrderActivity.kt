@@ -19,6 +19,7 @@ import com.neworld.youyou.view.mview.books.BooksShopPay
 import kotlinx.android.synthetic.main.activity_books_order.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.slf4j.MDC.put
 
 /**
  * @author by user on 2017/12/7.
@@ -29,7 +30,7 @@ class BooksOrderActivity : Activity() {
     private var mAdapter: Adapter<ResponseBean.OrderMenu> by notNullSingleValue()
     private val list = arrayListOf<ResponseBean.OrderMenu>()
 
-    private val obs = object : Adapter.AdapterObs<ResponseBean.OrderMenu> {
+    val obs = object : Adapter.AdapterObs<ResponseBean.OrderMenu> {
 
         override fun onBind(holder: Adapter.Holder, bean: MutableList<ResponseBean.OrderMenu>, position: Int) {
             val data = bean[position]
@@ -124,7 +125,7 @@ class BooksOrderActivity : Activity() {
             NetBuild.response({
                 list.addAll(it.menuList)
                 mAdapter.notifyDataSetChanged()
-            }, ToastUtil::showToast, 190, ResponseBean.BooksOrderBody::class.java, this@with)
+            }, ToastUtil::showToast, 190, ResponseBean.BooksOrderBean::class.java, this@with)
         }
         Unit
     }

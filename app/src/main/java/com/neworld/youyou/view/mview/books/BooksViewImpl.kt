@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 /**
  * @author by user on 2017/11/17.
  */
-class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
+class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBean> {
 
     private val spacing = 40F
     private val spanCount = 3
@@ -43,7 +43,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
 
     private val list: ArrayList<ResponseBean.Menu> = ArrayList()
     private var mAdapter: Adapter<ResponseBean.Menu> by notNullSingleValue()
-    private var presenter: BooksImpl<ResponseBean.BooksBody>? = null
+    private var presenter: BooksImpl<ResponseBean.BooksBean>? = null
 
     private var recycler: RecyclerView by notNullSingleValue()
     private var progress: ProgressBar by notNullSingleValue()
@@ -66,7 +66,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
                     put("CreateDate", list[list.size - 1].createDate)
                     put("token", token)
                     put("userId", userId)
-                    presenter?.up(this, 178, ResponseBean.BooksBody::class.java)
+                    presenter?.up(this, 178, ResponseBean.BooksBean::class.java)
                     b = false
                 }
             }
@@ -147,12 +147,19 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
     }
 
     override fun initData() {
+<<<<<<< HEAD
         if (mAdapter.bean.isEmpty()) {
             swipe?.setOnRefreshListener {
                 presenter?.down(map, 178, ResponseBean.BooksBody::class.java)
             }
             presenter?.down(map, 178, ResponseBean.BooksBody::class.java)
         }
+=======
+        swipe?.setOnRefreshListener {
+            presenter?.down(map, 178, ResponseBean.BooksBean::class.java)
+        }
+        presenter?.down(map, 178, ResponseBean.BooksBean::class.java)
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
     override fun notifyData() {
@@ -164,7 +171,7 @@ class BooksViewImpl : Fragment(), RecyclerDataView<ResponseBean.BooksBody> {
         list.removeAt(index)
     }
 
-    override fun addAll(t: ResponseBean.BooksBody) {
+    override fun addAll(t: ResponseBean.BooksBean) {
         if (list.isNotEmpty()) {
             list.run {
                 val menu = get(size - 1)

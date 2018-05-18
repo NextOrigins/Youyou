@@ -23,8 +23,12 @@ import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.DialogUtil;
 import com.neworld.youyou.utils.GsonUtil;
+<<<<<<< HEAD
 import com.neworld.youyou.utils.NetBuild;
 import com.neworld.youyou.utils.SPUtil;
+=======
+import com.neworld.youyou.utils.Sputil;
+>>>>>>> parent of 8d52dad... 17_12_19
 import com.neworld.youyou.utils.ToastUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -102,8 +106,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         new Thread(() -> {
             String trim = etPsw.getText().toString().trim();
+<<<<<<< HEAD
             if (trim.equals(userName) || (etNumber.getText().toString().trim().equals("123456789") && etPsw.getText().toString().equals("123456"))) {
                 photoNumber = TextUtils.isEmpty(photoNumber) ? "123456789" : photoNumber;
+=======
+            if (trim.equals(userName) || etNumber.getText().toString().trim().equals("123456789")) {
+>>>>>>> parent of 8d52dad... 17_12_19
                 String base64 = Base64.encodeToString(("{\"mobile\":\"" + photoNumber + "\"}").getBytes(), Base64.DEFAULT);
                 String replace = base64.replace("\n", "");
                 String content = NetManager.getInstance().getContent(replace, "125");

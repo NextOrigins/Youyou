@@ -16,7 +16,11 @@ import com.neworld.youyou.R;
 import com.neworld.youyou.bean.PersonDataBean;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
+<<<<<<< HEAD
 import com.neworld.youyou.utils.SPUtil;
+=======
+import com.neworld.youyou.utils.Sputil;
+>>>>>>> parent of 8d52dad... 17_12_19
 import com.neworld.youyou.utils.ToastUtil;
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.nine.CircleImageView;
@@ -67,7 +71,12 @@ public class PersonDataActivity extends AppCompatActivity implements View.OnClic
                     if (personDataBean!=null && personDataBean.getStatus() == 0) {
                         final PersonDataBean.MenuListBean menuList = personDataBean.getMenuList();
                         if (menuList != null) {
-                            Util.uiThread(() -> initData(menuList));
+                            Util.uiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    initData(menuList);
+                                }
+                            });
                         }
                     } else {
                         ToastUtil.showToast("未知异常");

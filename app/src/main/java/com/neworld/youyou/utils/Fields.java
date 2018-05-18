@@ -13,20 +13,20 @@ public class Fields {
 
     public static final String APK_URL = "http://www.uujz.me:8082/olopicture/uujz.apk";
 
-//    public static final String USERID = "userId";
-//    public static final String FROM_UID = "from_uid";
-//    public static final String CREATEDATE = "createDate";
-//    public static final String CONTENT = "content";
-//    public static final String IMAGE = "image";
-//    public static final String TASKID = "taskId";
-//    public static final String TITLE = "title";
-//    public static final String TOKEN = "token";
-//    public static final String PARENTURL = "107";
+    public static final String USERID = "userId";
+    public static final String FROM_UID = "from_uid";
+    public static final String CREATEDATE = "createDate";
+    public static final String CONTENT = "content";
+    public static final String IMAGE = "image";
+    public static final String TASKID = "taskId";
+    public static final String TITLE = "title";
+    public static final String TOKEN = "token";
+    public static final String PARENTURL = "107";
 
     // 成绩查询
     public static final String ACHIEVEMENT = "http://www.uujz.me:8082/neworld/admin/jsp/chengji/query_android.jsp";
 
-//    public static final String YOUYOU = "";
+    public static final String YOUYOU = "";
 
-//    public static final String SP_KEY_USER = "sp_key_default_userId";
+    public static final String SP_KEY_USER = "sp_key_default_userId";
 }

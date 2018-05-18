@@ -31,7 +31,11 @@ import com.neworld.youyou.bean.ReturnStatus;
 import com.neworld.youyou.manager.MyApplication;
 import com.neworld.youyou.manager.NetManager;
 import com.neworld.youyou.utils.GsonUtil;
+<<<<<<< HEAD
 import com.neworld.youyou.utils.SPUtil;
+=======
+import com.neworld.youyou.utils.Sputil;
+>>>>>>> parent of 8d52dad... 17_12_19
 import com.neworld.youyou.utils.Util;
 import com.neworld.youyou.view.mview.my.BooksOrderActivity;
 import com.neworld.youyou.view.mview.my.DynamicActivity;
@@ -65,6 +69,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private LinearLayout parent;
     private View dialogView;
 
+<<<<<<< HEAD
     private View msgHint;
 
     private int newMsg;
@@ -78,6 +83,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
             typeArrays = arguments.getStringArray("typeArray");
         }
     }
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
 
     @Override
     public View createView() {
@@ -142,7 +149,12 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
             if (data != null) {
                 boolean isRefresh = data.getBooleanExtra("isRefresh", false);
                 if (isRefresh) {
-                    new Thread(this::getData).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getData();
+                        }
+                    }).start();
                 }
             }
         } else if (requestCode == 5) {
@@ -150,7 +162,12 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 boolean isRefresh = data.getBooleanExtra("isRefresh", false);
                 String url = data.getStringExtra("url");
                 if (isRefresh) {
-                    new Thread(this::getData).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getData();
+                        }
+                    }).start();
                 } else {
                     if (!TextUtils.isEmpty(url)) {
                         RequestOptions MyFragmentOptions = new RequestOptions();
@@ -182,8 +199,14 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlSetting.setOnClickListener(this);
         rlMoving.setOnClickListener(this);
 
+<<<<<<< HEAD
 //        view.findViewById(R.id.chengji) // TODO : 成绩查询暂时去掉
 //                .setOnClickListener(v -> startActivity(new Intent(getContext(), AchievementActivity.class)));
+=======
+        view.findViewById(R.id.chengji).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), AchievementActivity.class));
+        });
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
     @Override
@@ -191,22 +214,25 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         String base64 = Base64.encodeToString(("{\"userId\":\"" + userId + "\", \"token\":\"" + token + "\"}").getBytes(), Base64.DEFAULT);
         String replace = base64.replace("\n", "");
         final String content = NetManager.getInstance().getContent(replace, "126");
+//        System.out.println(content);
         if (!TextUtils.isEmpty(content)) {
             PersonDataBean personDataBean = GsonUtil.parseJsonToBean(content, PersonDataBean.class);
             if (personDataBean != null && personDataBean.getStatus() == 0) {
-
                 int tokenStatus = personDataBean.getTokenStatus();
                 judgeToken(tokenStatus);
                 final PersonDataBean.MenuListBean menuList = personDataBean.getMenuList();
                 if (menuList != null) {
-                    Util.uiThread(() -> {
-                        if (!TextUtils.isEmpty(menuList.getFaceImg())) {
-                            imageUrl = menuList.getFaceImg();
-                            Glide.with(context).load(menuList.getFaceImg()).into(circleImageView);
-                        } else {
-                            Glide.with(context).load(R.mipmap.my_icon).into(circleImageView);
-                        }
+                    Util.uiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!TextUtils.isEmpty(menuList.getFaceImg())) {
+                                imageUrl = menuList.getFaceImg();
+                                Glide.with(context).load(menuList.getFaceImg()).into(circleImageView);
+                            } else {
+                                Glide.with(context).load(R.mipmap.my_icon).into(circleImageView);
+                            }
 
+<<<<<<< HEAD
                         if (!TextUtils.isEmpty(menuList.getNickName())) {
                             tvName.setText(menuList.getNickName());
                         } else if (!TextUtils.isEmpty(menuList.getUserAccount())) {
@@ -215,11 +241,27 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                             tvName.setText(menuList.getUserName());
                         } else {
                             tvName.setText("Nil");
+=======
+                            if (!TextUtils.isEmpty(menuList.getNickName())) {
+                                tvName.setText(menuList.getNickName());
+                            } else if (!TextUtils.isEmpty(menuList.getUserAccount())) {
+                                tvName.setText(menuList.getUserAccount());
+                            } else if (!TextUtils.isEmpty(menuList.getUserName())) {
+                                tvName.setText(menuList.getUserName());
+                            } else {
+                                tvName.setText("fjhjh");
+                            }
+>>>>>>> parent of 8d52dad... 17_12_19
                         }
                     });
                 }
             } else {
-                Util.uiThread(() -> circleImageView.setImageResource(R.mipmap.my_icon));
+                Util.uiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        circleImageView.setImageResource(R.mipmap.my_icon);
+                    }
+                });
             }
         }
         return content;
@@ -238,7 +280,12 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     //根据token挤掉线
     private void judgeToken(final int tokenStatus) {
         if (tokenStatus == 2) {
-            Util.uiThread(this::quit);
+            Util.uiThread(new Runnable() {
+                @Override
+                public void run() {
+                    quit();
+                }
+            });
         }
     }
 

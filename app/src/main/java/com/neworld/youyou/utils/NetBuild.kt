@@ -107,7 +107,14 @@ object NetBuild {
     // 解析map
     @JvmStatic
     fun getResponse(map: Map<out CharSequence, CharSequence>, url: Int): String {
+<<<<<<< HEAD
         return getResponse(map, url.toString())
+=======
+        val json = Gson().toJson(map)
+        val base64 = Base64.encodeToString(json.toByteArray(), Base64.DEFAULT)
+        val replace = base64.replace("\n", "")
+        return NetManager.getInstance().getContent(replace, url.toString())
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
     // 解析map
@@ -124,13 +131,5 @@ object NetBuild {
         fun onSuccess(t: T)
 
         fun onFailed(error: String = "网络错误, 请稍后重试")
-    }
-
-    fun <T> enqueue(map: Map<CharSequence, CharSequence>, clazz: Class<T>, url: String): T? {
-        val content = getResponse(map, url)
-        return if (!TextUtils.isEmpty(content)) {
-            GsonUtil.parseJsonToBean(content, clazz)
-        } else
-            null
     }
 }

@@ -72,7 +72,16 @@ class MainActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener, Pa
         private set
     private var netObs: NetworkObs? = null
 
+<<<<<<< HEAD
     //    private var booksFragment: EBooks? = null
+=======
+    private var userId: String by preference("userId", "")
+    private var token: String by preference("token", "");
+
+    val windowData: WindowManager
+        get() = windowManager
+
+>>>>>>> parent of 8d52dad... 17_12_19
     private var booksFragment: BooksViewImpl? = null
 
     private var mBackPressedTime by Delegates.observable(0L) { _, old, new ->

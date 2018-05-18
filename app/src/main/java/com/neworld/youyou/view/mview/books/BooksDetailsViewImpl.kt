@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.activity_books_detail.*
 /**
  * @author by user on 2017/11/23.
  */
-class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDetailBody> {
+class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDetailBean> {
 
     private val width by lazy {
         val point = Point()
@@ -76,7 +76,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     private var bkId: Int by notNullSingleValue()
     private var expressFee: Double by notNullSingleValue()
 
-    private var presenter: DetailImpl<ResponseBean.BooksDetailBody>? = null
+    private var presenter: DetailImpl<ResponseBean.BooksDetailBean>? = null
 
     private var images: ArrayList<ImageView> = arrayListOf()
     private var mAdapter: PageAdapter? = null
@@ -136,9 +136,15 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
     override fun initData() {
         val bookId = intent.getStringExtra("bookId")
         val map = HashMap<CharSequence, CharSequence>()
+<<<<<<< HEAD
         map["bookId"] = bookId
         map["userId"] = userId
         presenter?.down(map, 179, ResponseBean.BooksDetailBody::class.java)
+=======
+        map.put("bookId", bookId)
+        map.put("userId", userId)
+        presenter?.down(map, 179, ResponseBean.BooksDetailBean::class.java)
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
     private fun setText(isChecked: Boolean, i: Int) =
@@ -155,7 +161,7 @@ class BooksDetailsViewImpl : Activity(), BooksDetailsView<ResponseBean.BooksDeta
         loadingPage.visibility = View.GONE
     }
 
-    override fun setData(t: ResponseBean.BooksDetailBody) {
+    override fun setData(t: ResponseBean.BooksDetailBean) {
         val menuList = t.menuList
         val list = menuList.contentImg.split('|').flatMap {
             val imageView = ImageView(this)

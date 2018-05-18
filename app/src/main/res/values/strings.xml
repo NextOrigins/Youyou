@@ -102,6 +102,7 @@
     <string name="login_out">退出登录</string>
     <string name="address_manager">地址管理</string>
     <string name="message_control">消息中心</string>
+<<<<<<< HEAD
     <string name="top">置顶</string>
     <string name="adm_revert">管理员回复</string>
     <string name="QA">问答</string>
@@ -138,5 +139,7 @@
     <string name="reward">打赏</string>
     <string name="money0">00.00</string>
     <string name="reward_hint">最多打赏200元</string>
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
 
 </resources>

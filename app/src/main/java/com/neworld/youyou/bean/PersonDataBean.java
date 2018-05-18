@@ -6,6 +6,7 @@ package com.neworld.youyou.bean;
 
 public class PersonDataBean {
 
+
     /**
      * tokenStatus : 1
      * menuList : {"birthday":"","updateDate":"2017-09-28 11:45:18","sdasd":"","address":"","role":1,"faceImg":"http://www.uujz.me:8082/olopicture/icon/10001201709281113431506568423525.jpg","nickName":"123有何不可","openId":"otm2auDHdAYIqoPWMJfj76TtOwgY","mobileCheck":"","sex":0,"userPwd":"","remarkName":"","userName":"15821450047","cardNo":"","token":"f361e2a6-d7bf-4a82-8922-ef23eec12cd8","active_time":"2017-09-28 11:45:18","realName":"","phone":"","userAccount":"","id":10001,"createDate":"2017-08-20 11:05:58","status":0}
@@ -88,8 +89,6 @@ public class PersonDataBean {
         private int id;
         private String createDate;
         private int status;
-
-        public int dynamic_status;
 
         public String getBirthday() {
             return birthday;

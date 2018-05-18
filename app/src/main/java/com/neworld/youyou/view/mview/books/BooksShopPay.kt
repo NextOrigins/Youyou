@@ -20,6 +20,8 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.android.synthetic.main.activity_books_pay.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.exp
 import kotlin.properties.Delegates
 
 /**
@@ -278,6 +280,7 @@ class BooksShopPay : Activity() {
         map["userId"] = userId
         NetBuild.response({
             val list = it.menuList
+<<<<<<< HEAD
             if (list.isEmpty()) {
                 dialog.show()
             } else {
@@ -289,6 +292,17 @@ class BooksShopPay : Activity() {
                 }
             }
         }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBody::class.java, map)
+=======
+            if (list.isEmpty()) dialog.show()
+            else list.firstOrNull { it.status == 0 } ?: list[0]
+                    .let {
+                        _name.text = it.consignee
+                        _phone.text = it.phone
+                        _address.text = it.address
+                        addressId = it.id
+                    }
+        }, { ToastUtil.showToast(it) }, 180, ResponseBean.AddressBean::class.java, map)
+>>>>>>> parent of 8d52dad... 17_12_19
     }
 
     override fun onBackPressed() {

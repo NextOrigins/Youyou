@@ -116,6 +116,7 @@
         <activity android:name=".view.mview.books.BooksShopPay"
             android:screenOrientation="portrait" />
         <activity android:name=".view.mview.my.BooksOrderActivity" />
+<<<<<<< HEAD
         <activity android:name=".view.mview.parents.Answers" />
 
         <activity android:name=".view.mview.ebook.EBookDetail"
@@ -132,6 +133,8 @@
 
         <activity android:name=".view.mview.common.ImgViewer"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize" />
+=======
+>>>>>>> parent of 8d52dad... 17_12_19
         <!-- ============================ -->
 
         <activity android:name=".activity.AddNewAddressActivity">

@@ -30,10 +30,11 @@ public class DataTransmissionManager {
         context.startActivity(intent);
     }
 
-    public static void putString (Intent intent, BaseFragment context, Class clazz, HashMap<CharSequence, CharSequence> map, int requestCode) {
+
+    public static void putString (Intent intent, BaseFragment context, Class clazz, HashMap<String, String> map, int requestCode) {
         Bundle bundle = getData(intent, context.getContext(), clazz);
-        for(HashMap.Entry<CharSequence, CharSequence> entry : map.entrySet()) {
-            bundle.putString(entry.getKey().toString(), entry.getValue().toString());
+        for(HashMap.Entry<String, String> entry : map.entrySet()) {
+            bundle.putString(entry.getKey(), entry.getValue());
         }
         intent.putExtras(bundle);
 
