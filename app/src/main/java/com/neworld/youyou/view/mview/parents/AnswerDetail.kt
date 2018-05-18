@@ -9,7 +9,6 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -30,7 +29,6 @@ import com.neworld.youyou.add.common.AdapterK
 import com.neworld.youyou.bean.ResponseBean
 import com.neworld.youyou.manager.MyApplication
 import com.neworld.youyou.utils.*
-import com.neworld.youyou.view.mview.common.MoneyTextWatcher
 import com.neworld.youyou.view.nine.CircleImageView
 import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareListener
@@ -104,37 +102,6 @@ class AnswerDetail : Fragment() {
     private var mReply by notNullSingleValue<TextView>()
     private var mReview by notNullSingleValue<ImageView>()
     private var mNext by notNullSingleValue<ImageView>()
-    private lateinit var dCancel: ImageView // 关闭
-    private lateinit var dIcon: CircleImageView // 头像
-    private lateinit var dMoney: TextView // 默认10 , 点击按钮隐藏
-    private lateinit var dMoneyEdit: EditText // EditText
-    private lateinit var dMoneySet: ImageView // 按钮
-    private lateinit var dPay: Button // 跳转付款
-    private val mDialog by lazy {
-        val dialog = AlertDialog.Builder(mContext).create()
-        dialog.setView(mRewardView)
-        dialog.window.setBackgroundDrawableResource(R.drawable.reward_dg_bg)
-
-        dialog.setOnCancelListener {
-            dMoney.text = getString(R.string.money10)
-            dMoneyEdit.visibility = View.GONE
-            dMoneyEdit.setText("")
-            dMoneyEdit.toggleSoftInput(false)
-        }
-        dialog
-    }
-    private val mRewardView by lazy {
-        val r = layoutInflater.inflate(R.layout.dialog_reward, mRoot as ViewGroup, false)
-        dCancel = r.findViewById(R.id.dismiss)
-        dIcon = r.findViewById(R.id.icon)
-        dMoney = r.findViewById(R.id.money)
-        dMoneyEdit = r.findViewById(R.id.input_m)
-        dMoneySet = r.findViewById(R.id.money_set)
-        dPay = r.findViewById(R.id.pay)
-
-        dMoneyEdit.addTextChangedListener(MoneyTextWatcher(dMoneyEdit))
-        r
-    }
 
     //fields
     private val userId by preference("userId", "")
@@ -556,7 +523,7 @@ class AnswerDetail : Fragment() {
 
         webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                if (newProgress == 100) {
+                if (newProgress > 95) {
                     if (mSwipe.isRefreshing) mSwipe.isRefreshing = false
                     if (arguments!!.getBoolean("review", false)) {
                         mRecycle.toPosition(1)
@@ -569,33 +536,15 @@ class AnswerDetail : Fragment() {
         }
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                if (url == null) return false
-
-                if ("user/143" in url && !mInDynamic) {
-                    startActivity(Intent(context, Answers::class.java).putExtras(arguments))
-                } else if ("user/153" in url) {
-                    activity?.onKeyDown(KeyEvent.KEYCODE_BACK, null)
-                } /*else if ("user/154" in url) {
-                    val sp = url.split("faceImg=")
-
-                    mDialog.setCancelable(false)
-                    mDialog.show()
-
-                    Glide.with(dIcon).load(sp.last()).apply(options).into(dIcon)
-                    dPay.setOnClickListener {
-                        showToast(mContext, "跳转支付页面")
+                url?.let {
+                    if ("http://106.14.251.200/neworld/user/143" in it) {
+                        if (!mInDynamic) startActivity(Intent(context, Answers::class.java)
+                                .putExtras(arguments))
+                    } else if ("http://106.14.251.200/neworld/user/153" in it) {
+//                            mRecycle.toPosition(1)
+                        activity?.onKeyDown(KeyEvent.KEYCODE_BACK, null)
                     }
-                    dMoneySet.setOnClickListener {
-                        dMoney.text = "￥"
-                        dMoneyEdit.visibility = View.VISIBLE
-                        dMoneyEdit.toggleSoftInput(true)
-                    }
-                    dCancel.setOnClickListener {
-                        dMoneyEdit.toggleSoftInput(false)
-                        mDialog.cancel()
-                    }
-                }*/
-
+                }
                 return true
             }
 
@@ -688,15 +637,6 @@ class AnswerDetail : Fragment() {
         mReview.layoutParamsWidth(x)
         mLike.layoutParamsWidth(x)
         mNext.layoutParamsWidth(x)
-    }
-
-    private fun EditText.toggleSoftInput(show: Boolean) {
-        val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (show) {
-            imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
-        } else {
-            imm.hideSoftInputFromWindow(this.windowToken, 0)
-        }
     }
 
     fun clearWebCache() {
